@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+       <head>
+        {% include "partials/_head.html.twig" %}
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200;1,200;1,300;1,700&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/05141a746a.js" crossorigin="anonymous"></script>
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body>
+        <div class="wrapper">
+        <!--header start -->
+        {% include "partials/_header.html.twig" %}
+        <!--header end-->
+
+        <!--Section start -->
+        {% include "partials/_sidebar.html.twig" %}
+        <!--Section end -->
+
+        <!--main start -->
+        <main role="main">
+            {% block body %}{% endblock %}
+        </main>
+        <!--main end -->
+
+        <!--footer start -->
+       {% include "partials/_footer.html.twig" %}
+        <!--footer end-->
+    </div>
+    </body>
+</html>
