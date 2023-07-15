@@ -7,6 +7,7 @@
     "sass": "sass assets/sass/manzowa.scss:assets/styles/manzowa.css",
     "sass:min": "sass assets/sass/manzowa.scss:assets/styles/manzowa.min.css  --style compressed",
     "copy:css": "copyfiles -f assets/styles/*  public/styles",
+    "copy:scripts": "copyfiles -f assets/scripts/*  public/scripts",
     "copy:images": "copyfiles -f assets/images/*  public/images"
   },
   "keywords": [],

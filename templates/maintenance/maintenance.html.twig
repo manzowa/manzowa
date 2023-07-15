@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Site en maintenance{% endblock %}
+
+{% block body %}
+   <div class="mo-w-75 maintenance mo-bg-warning mo-sw-2" >
+      <h1 class="mo-align-txt-center mo-txt-light mo-ft-weight-bold"> En maintenance </h1>
+      <div class="mo-fx-d mo-fx-content-between mo-fx-align-item-stretch mo-p-1 mo-box-border">
+         <div class="mo-fx-item-1">
+            <hgroup class="mo-mt-2 mo-mb-2">
+               <h2 class="mo-txt-light">SITE MONZOWA</h2>
+               <p>En cours de construction</p>
+            </hgroup>
+            <p class="mo-mb-1 mo-ft-weight-bold " >Je travaille actuellement sur la création <br/>de quelque chose de fantastique</p>
+            <p class="mo-mb-1 mo-ft-weight-bold ">Je serais là bientôt.</p>
+            <div id="rebours_maintenance" class="mo-ft-size-2 mo-mt-3 mo-ft-weight-bold mo-txt-default"></div>
+         </div>
+         <div class="mo-fx-item-1">
+           <img class="mo-w-75 mo-h-75" src="{{asset('images/maintenance.gif')}}">
+         </div>
+      </div>
+   </div>
+{% endblock %}
+{% block javascripts %}
+   <script src="{{ asset('scripts/rebours.js') }}"></script>
+{% endblock %}

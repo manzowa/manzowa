@@ -18,3 +18,4 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
 /assets/*
+/public/*.maintenance

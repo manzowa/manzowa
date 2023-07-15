@@ -1,5 +1,7 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
+    globals:
+        is_maintenance: '%is_maintenance_bool%'
 
 when@test:
     twig:
