@@ -4,16 +4,13 @@
         {% include "partials/_head.html.twig" %}
 
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
         {% endblock %}
-
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200;1,200;1,300;1,700&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/05141a746a.js" crossorigin="anonymous"></script>
-
     </head>
     <body>
-        <div class="wrapper">
+        <div class="mo-wrapper">
          {% if is_maintenance == false  %}
             <!--header start -->
             {% include "partials/_header.html.twig" %}

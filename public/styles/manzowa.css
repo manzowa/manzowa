@@ -24,7 +24,7 @@ html {
 }
 
 :root {
-  --mo-font-family: "Comfortaa", cursive;
+  --mo-font-family: "Comfortaa", cursive, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --mo-primary:#2980b9;
   --mo-primary-low: #3498db;
   --mo-secondary:#2c3e50;
@@ -41,7 +41,26 @@ html {
   --mo-dark: #1e272e;
   --mo-divider:#ecf0f1;
   --mo-hint: #f4f4f4;
+  --mo-rx: #c2185b;
   --mo-box-shadow: 0 1px 2px rgba(60, 64, 67, 0.1), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+}
+
+/*!
+ * Manzowa v0.0.1 (https://manzowa.com/styles/manzowa.min.css/)
+ * Copyright 2023 Manzowa Authors
+ * Licensed under MIT (https://github.com/manzowa//master/LICENSE)
+ */
+body {
+  font-size: 1.6rem;
+  font-family: var(--mo-font-family);
+  margin: 0;
+  padding: 0;
+}
+
+a,
+a:link,
+a:visited {
+  color: var(--mo-secondary);
 }
 
 .mo-bg-primary {
@@ -78,6 +97,10 @@ html {
 
 .mo-bg-light {
   background-color: var(--mo-light);
+}
+
+.mo-bg-rx {
+  background-color: var(--mo-rx);
 }
 
 .mo-sw-1 {
@@ -157,6 +180,14 @@ html {
   flex: 2;
 }
 
+.mo-ga-1 {
+  gap: 1rem;
+}
+
+.mo-ga-2 {
+  gap: 2rem;
+}
+
 /*Fin Flex *
 
 /* Debut CSS Margin et Padding  */
@@ -180,7 +211,7 @@ html {
   width: 100%;
 }
 
-.mo-w-auto {
+.mo-w-o {
   width: auto;
 }
 
@@ -200,7 +231,7 @@ html {
   height: 100%;
 }
 
-.mo-h-auto {
+.mo-h-o {
   height: auto;
 }
 
@@ -244,6 +275,14 @@ html {
   margin-top: 3rem;
 }
 
+.mo-mt-4 {
+  margin-top: 4rem;
+}
+
+.mo-mt-5 {
+  margin-top: 5rem;
+}
+
 .mo-mb-0 {
   margin-bottom: 0rem;
 }
@@ -258,6 +297,14 @@ html {
 
 .mo-mb-3 {
   margin-bottom: 3rem;
+}
+
+.mo-mb-4 {
+  margin-bottom: 4rem;
+}
+
+.mo-mb-5 {
+  margin-bottom: 5rem;
 }
 
 .mo-mr-0 {
@@ -276,6 +323,14 @@ html {
   margin-right: 3rem;
 }
 
+.mo-mr-4 {
+  margin-right: 4rem;
+}
+
+.mo-mr-5 {
+  margin-right: 5rem;
+}
+
 .mo-ml-0 {
   margin-left: 0rem;
 }
@@ -288,8 +343,16 @@ html {
   margin-left: 2rem;
 }
 
-.mo-mo-ml-3 {
+.mo-ml-3 {
   margin-left: 3rem;
+}
+
+.mo-ml-4 {
+  margin-left: 4rem;
+}
+
+.mo-ml-5 {
+  margin-left: 5rem;
 }
 
 .mo-mx-0 {
@@ -312,12 +375,47 @@ html {
   margin-left: 3rem;
 }
 
-.mo-mx-auto {
+.mo-mx-4 {
+  margin-right: 4rem;
+  margin-left: 4rem;
+}
+
+.mo-mx-5 {
+  margin-right: 5rem;
+  margin-left: 5rem;
+}
+
+.mo-mx-o {
   margin-right: auto;
   margin-left: auto;
 }
 
-.mo-my-auto {
+.mo-my-1 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mo-my-2 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.mo-my-3 {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.mo-my-4 {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+}
+
+.mo-my-5 {
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+}
+
+.mo-my-o {
   margin-top: auto;
   margin-bottom: auto;
 }
@@ -362,6 +460,14 @@ html {
   padding-top: 3rem;
 }
 
+.mo-pt-4 {
+  padding-top: 4rem;
+}
+
+.mo-pt-5 {
+  padding-top: 5rem;
+}
+
 .mo-pb-0 {
   padding-bottom: 0rem;
 }
@@ -376,6 +482,14 @@ html {
 
 .mo-pb-3 {
   padding-bottom: 3rem;
+}
+
+.mo-pb-4 {
+  padding-bottom: 4rem;
+}
+
+.mo-pb-5 {
+  padding-bottom: 5rem;
 }
 
 .mo-pr-0 {
@@ -394,6 +508,14 @@ html {
   padding-right: 3rem;
 }
 
+.mo-pr-4 {
+  padding-right: 4rem;
+}
+
+.mo-pr-5 {
+  padding-right: 5rem;
+}
+
 .mo-pl-0 {
   padding-left: 0rem;
 }
@@ -408,6 +530,14 @@ html {
 
 .mo-pl-3 {
   padding-left: 3rem;
+}
+
+.mo-pl-4 {
+  padding-left: 4rem;
+}
+
+.mo-pl-5 {
+  padding-left: 5rem;
 }
 
 .mo-px-0 {
@@ -428,6 +558,16 @@ html {
 .mo-px-3 {
   padding-right: 3rem;
   padding-left: 3rem;
+}
+
+.mo-px-4 {
+  padding-right: 4rem;
+  padding-left: 4rem;
+}
+
+.mo-px-5 {
+  padding-right: 5rem;
+  padding-left: 5rem;
 }
 
 .mo-px-0 {
@@ -547,20 +687,6 @@ html {
 }
 
 /* Fin font-weight  */
-/* Debut Font size */
-.mo-ft-size-base {
-  font-size: 1rem;
-}
-
-.mo-ft-size-1 {
-  font-size: 2.5rem;
-}
-
-.mo-ft-size-2 {
-  font-size: 3.5rem;
-}
-
-/* FFin ont size */
 /* debut box-sizing */
 .mo-box-content {
   -webkit-box-sizing: content-box;
@@ -648,21 +774,7 @@ html {
   color: var(--mo-light);
 }
 
-/* Basic theme configuration */
-body {
-  font-size: 1.6rem;
-  font-family: var(--mo-font-family);
-  margin: 0;
-  padding: 0;
-}
-
-a,
-a:link,
-a:visited {
-  color: var(--mo-secondary);
-}
-
-.wrapper {
+.mo-wrapper {
   margin: 0;
   padding: 0;
   background-color: var(--ga-divider);
@@ -691,10 +803,17 @@ footer {
   padding: 1rem;
 }
 
-.content {
+.mo-content {
   margin: 0;
   padding: 1rem;
   box-sizing: content-box;
+}
+
+.mo-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
 }
 
 header {
