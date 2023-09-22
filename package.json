@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
+    "type": "module",
     "scripts": {
       "sass": "sass assets/sass/manzowa.scss:assets/styles/manzowa.css",
       "sass:min": "sass assets/sass/manzowa.scss:assets/styles/manzowa.min.css  --style compressed",

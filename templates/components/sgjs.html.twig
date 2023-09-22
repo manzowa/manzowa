@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/night-owl.min.css">
+    <link rel="stylesheet" href="{{ asset('lib/sgjs.min.css') }}">
+{% endblock %}
+{% block title %}sgjs{% endblock %}
+{% block body %}
+<div class="mo-content">
+    <div class="row">
+        <div class="col-md-3">
+            <hgroup class="mo-bg-secondary p-4">
+                <h4 class="text-light"><i class="fa fa-home mo-txt-warning" aria-hidden="true"></i>&nbsp;skill grid javascripts (sgjs)</h4>
+            </hgroup>
+            <aside class="border border-secondary mt-4 p-3">
+                <article>
+                    <h4 class="fw-bold">GETTING STARTED</h4>
+                    <ul>
+                        <li><a class="line-none" href="#introduction">Introduction</a></li>
+                        <li><a class="line-none" href="#installation">Installation</a></li>
+                        <li><a class="line-none" href="#simpleExample">Simple example</a></li>
+                    </ul>
+                </article>
+                <article>
+                    <h4 class="fw-bold">CORE API</h4>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a class="line-none" href="#functionOption">option</a></li>
+                        <li class="list-group-item"><a class="line-none" href="#functionAdd">add</a></li>
+                        <li class="list-group-item"><a class="line-none" href="#functionAnimate">animate &nbsp;show|progress</a></li>
+                    </ul>
+                </article>
+            </aside>
+           
+        </div>
+        <div  role="main" class="col-md-8">
+            <article id="introduction">
+                <h2 class="display-5 lh-1 fw-bold">Skill Grid</h2>
+                <div class="d-flex bd-highlight mb-2" style="margin-top: -0.5rem;">
+                    <a class="line-none p-2 bd-highlight" href={{ relative_path('https://github.com/manzowa/manzowa-sgjs-scripts') }} target="_blank">
+                        <span class="text-light px-2 py-1 mo-bg-secondary" style="margin-right: -0.4rem;">source</span>
+                        <span class="text-light bg-primary px-2 py-1">manzowa\manzowa-sgjs-scripts</span>
+                    </a>
+                    <a class="line-none p-2 bd-highlight" href={{ relative_path('https://github.com/manzowa/manzowa-sgjs-scripts') }} target="_blank">
+                        <span class="text-light px-2 py-1 mo-bg-secondary" style="margin-right: -0.4rem;">packagist</span>
+                        <span class="text-light bg-warning px-2 py-1">v1.1.1</span>
+                    </a>
+                    <a class="line-none p-2 bd-highlight " href={{ relative_path('https://github.com/manzowa/manzowa-sgjs-scripts/blob/master/LICENCE') }} target="_blank">
+                        <span class="text-light px-2 py-1 mo-bg-secondary" style="margin-right: -0.4rem;">license</span>
+                        <span class="text-light bg-success px-2 py-1">MIT</span>
+                    </a>
+                </div>
+                <p>SGJS is very small library javascript.. <br/> It offerts:</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item fw-bold">1. Function </li>
+                    <li class="list-group-item fw-bold">2. core api </li>
+                    <li class="list-group-item "></li>
+                </ul>
+            </article>
+            <article id="installation">
+                <div class="card">
+                    <h4 class="text-light card-title mo-bg-secondary p-2">Installation</h4>
+                    <div class="card-body mo-bg-default">
+                        https://github.com/manzowa/manzowa-sgjs-scripts.git
+                    </div>
+                </div>
+            </article>
+            <article id="simpleExample" class="mt-2">
+                <h3 class="display-6 mt-3">Simple example</h3>
+                <hr/>
+                <p class="h3 font-italic">Look how to use this module.</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item fw-bold">
+                        1.First of all, you must declare in your HTML page the block  like that:
+                        <span><pre><code class="language-javascript hljs"><span class="hljs-string"><</span>div id="app-sgjs"></<span class="hljs-string">div></span></code></pre></span>
+                    </li>
+                    <li class="list-group-item fw-bold">2. Second, you can put your code in javascript. Look at the code</li>
+                    <li class="list-group-item "></li>
+                </ul>
+                <pre><code class="language-javascript hljs">
+<span class="hljs-keyword">import</span>&nbsp;<span class="hljs-title">{sgjs}</span><span class="hljs-title">&nbsp;from&nbsp;</span><span class="hljs-title">"./sgjs"</span>;&#013;&#013;
+<span class="hljs-keyword">sgjs().</span><span class="hljs-title">option({selected: 'app', frame: "cercle" , ladder: 10, Function: 'progress'})</span>&#013;
+&emsp;&emsp;<span class="hljs-title">.add({</span>&#013;
+<span class="hljs-variable">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;titre:</span>'Langage & Framework',&#013;
+<span class="hljs-variable">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;frames: </span>[&#013;
+<span class="hljs-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ name: 'html/css', level: 5 },</span>&#013;
+<span class="hljs-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ name: 'angular', level: 9 },</span>&#013;
+<span class="hljs-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ name: 'javascript', level: 5 },</span>&#013;
+<span class="hljs-variable">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>]&#013;
+<span class="hljs-title">&nbsp;&nbsp;&nbsp;]).</span><span class="hljs-title">animate();</span>&#013;</code></pre>
+            </article>
+            <article>
+                <h3 class="display-6 mt-3">Resultats example</h3>
+                <hr/>
+                <div id="app-sgjs"></div>
+            </article>
+            <article>
+                <div class="d-block p-2" id="functionOption">
+                    <h5 class="h3 mt-3 fw-bold">Function option</h5>
+                    <hr/>
+                    <p class="h3">return object</p>
+                    <span><pre><code class="language-javascript hljs">sgjs().option()</code></pre></span>
+                </div>
+                <div class="d-block p-2" id="functionAdd">
+                    <h5 class="h3 mt-3 fw-bold">Function add</h5>
+                    <hr/>
+                    <p class="h3">return object</p>
+                    <span><pre><code class="language-javascript hljs">sgjs().add();</code></pre></span>
+                </div>
+                <div class="d-block p-2" id="functionAnimate">
+                    <h5 class="h3 mt-3 fw-bold">Function animate</h5>
+                    <hr/>
+                    <p class="h3">return void</p>
+                    <span><pre><code class="language-javascript hljs">sgjs().animate();</code></pre></span>
+                </div>          
+            </article>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <!-- and it's easy to individually load additional languages -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="{{ asset('scripts/sgjs.js') }}" type="module"></script>
+{% endblock %}

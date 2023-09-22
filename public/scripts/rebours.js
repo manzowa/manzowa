@@ -35,5 +35,4 @@ class Rebours {
         }
     }
 }
-
-const rebours = new Rebours(rebours_maintenance);
+new Rebours(rebours_maintenance);

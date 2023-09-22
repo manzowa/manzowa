@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/night-owl.min.css">
+{% endblock %}
+{% block title %}Manzowa Validator{% endblock %}
+{% block body %}
+<div class="mo-content">
+    <div class="row">
+        <div class="col-md-3">
+            <hgroup class="mo-bg-secondary p-4">
+                <h4 class="text-light"><i class="fa fa-home mo-txt-warning" aria-hidden="true"></i>&nbsp;manzowa\manzowa-validator</h4>
+            </hgroup>
+            <aside class="border border-secondary mt-4 p-3">
+                <article>
+                    <h4 class="fw-bold">GETTING STARTED</h4>
+                    <ul>
+                        <li><a class="line-none" href="#introduction">Introduction</a></li>
+                        <li><a class="line-none" href="#installation">Installation</a></li>
+                        <li><a class="line-none" href="#simpleExample">Simple example</a></li>
+                    </ul>
+                </article>
+                <article>
+                    <h4 class="fw-bold">CORE API</h4>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a class="line-none" href="#functionErrors">errors</a></li>
+                        <li class="list-group-item"><a class="line-none" href="#functionFailed">failed</a></li>
+                        <li class="list-group-item">isEmail</li>
+                        <li class="list-group-item">isEmpty</li>
+                        <li class="list-group-item">isNumber</li>
+                        <li class="list-group-item">size</li>
+                        <li class="list-group-item">same</li>
+                        <li class="list-group-item"><a class="line-none" href="#functionResultats">Resultats</a></li>
+                        <li class="list-group-item"><a class="line-none" href="#functionMethod">method</a></li>
+                        <li class="list-group-item">get</li>
+                        <li class="list-group-item"><a class="line-none" href="#functionValidation">validation</a></li>
+                    </ul>
+                </article>
+            </aside>
+           
+        </div>
+        <div  role="main" class="col-md-8">
+            <article id="introduction">
+                <h2 class="display-5 lh-1 fw-bold">Manzowa Validation</h2>
+                <div class="d-flex bd-highlight mb-2" style="margin-top: -0.5rem;">
+                    <a class="line-none p-2 bd-highlight" href={{ relative_path('https://github.com/manzowa/manzowa-validator') }} target="_blank">
+                        <span class="text-light px-2 py-1 mo-bg-secondary" style="margin-right: -0.4rem;">source</span>
+                        <span class="text-light bg-primary px-2 py-1">manzowa\manzowa-validator</span>
+                    </a>
+                    <a class="line-none p-2 bd-highlight" href={{ relative_path('https://packagist.org/packages/manzowa/manzowa-validator') }} target="_blank">
+                        <span class="text-light px-2 py-1 mo-bg-secondary" style="margin-right: -0.4rem;">packagist</span>
+                        <span class="text-light bg-warning px-2 py-1">v1.1.1</span>
+                    </a>
+                    <a class="line-none p-2 bd-highlight " href={{ relative_path('https://github.com/manzowa/manzowa-validator') }} target="_blank">
+                        <span class="text-light px-2 py-1 mo-bg-secondary" style="margin-right: -0.4rem;">license</span>
+                        <span class="text-light bg-success px-2 py-1">MIT</span>
+                    </a>
+                </div>
+                <p>Manzowa Validation is very small library for data Validation. <br/> It offerts:</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item fw-bold">1. validation Object</li>
+                    <li class="list-group-item fw-bold">2. core api </li>
+                    <li class="list-group-item "></li>
+                </ul>
+            </article>
+            <article id="installation">
+                <div class="card">
+                    <h4 class="text-light card-title mo-bg-secondary p-2">Installation</h4>
+                    <div class="card-body mo-bg-default">
+                        composer require manzowa\manzowa-validator
+                    </div>
+                </div>
+            </article>
+            <article id="simpleExample" class="mt-2">
+                <h3 class="display-6 mt-3">Simple example</h3>
+                <hr/>
+                <p class="h3 font-italic">Initialize your validator class</p>
+                <p>Let's consider a simple test form that the following field: email, confirm_email and code.</p>
+                <pre><code class="language-php hljs">
+<span class="hljs-keyword">use</span>&nbsp;<span class="hljs-title">Manzowa</span>\<span class="hljs-title">Validator</span>\<span class="hljs-title">Validator</span>;
+<span class="hljs-variable">$validator</span>=&nbsp;<span class="hljs-keyword">new</span>&nbsp;Validator();&#013;&#013;
+<span class="hljs-keyword">if</span>&nbsp;<span class="hljs-title">($validator->method())</span><span class="hljs-keyword">{</span>
+<span class="hljs-variable">&nbsp;&nbsp;&nbsp;$validator</span>->validation([&#013;
+<span class="hljs-comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// the key is in the form [code]</span>&#013;
+<span class="hljs-string">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"code" =></span>&nbsp;<span class="hljs-title">function () {</span>&#013;
+<span class="hljs-title">&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;Validator::isEmpty()->isNumber()->get();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&emsp;},&#013;<span class="hljs-string">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"email" =></span>&nbsp;<span class="hljs-title">function () {</span>&#013;
+<span class="hljs-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Validator::isEmpty()->get();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},&#013;<span class="hljs-string">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"confirm_email" =></span>&nbsp;<span class="hljs-title">function () {</span>&#013;
+<span class="hljs-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Validator::isEmpty()->same("email")->get();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},&#013;&nbsp;&nbsp;&emsp;<span>]);</span>&#013;&#013;
+&nbsp;&nbsp;&emsp;<span class="hljs-keyword">if</span>&nbsp;<span class="hljs-title">($validator->failed())</span><span class="hljs-keyword">{</span>&#013;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-variable">&emsp;&emsp;echo&nbsp;</span><span class="hljs-string">"<</span>pre><span class="hljs-string">";</span>&#013;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-variable">&emsp;&emsp;print_r($validator->errors());&nbsp;</span>&#013;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-variable">&emsp;&emsp;echo&nbsp;</span><span class="hljs-string">"<</span>/pre><span class="hljs-string">";</span>&#013;
+&nbsp;&nbsp;&emsp;<span class="hljs-keyword"> } else {</span>&#013;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-variable">&emsp;&emsp;echo&nbsp;</span><span class="hljs-string">"<</span>pre><span class="hljs-string">";</span>&#013;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-variable">&emsp;&emsp;print_r($validator->resultats());&nbsp;</span>&#013;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="hljs-variable">&emsp;&emsp;echo&nbsp;</span><span class="hljs-string">"<</span>/pre><span class="hljs-string">";</span>&#013;
+&nbsp;&nbsp;&emsp;<span class="hljs-keyword">&nbsp;}</span>&#013;
+}&#013;</code></pre>
+            </article>
+            <article>
+                <div class="d-block p-2" id="functionErrors">
+                    <h5 class="h3 mt-3 fw-bold">Function errors</h5>
+                    <hr/>
+                    <p class="h3">return array errors</p>
+                    <span><pre><code class="language-php hljs">print_r($validator->errors());</code></pre></span>
+                </div>
+                <div class="d-block p-2" id="functionFailed">
+                    <h5 class="h3 mt-3 fw-bold">Function failed</h5>
+                    <hr/>
+                    <p class="h3">return boolean</p>
+                    <span><pre><code class="language-php hljs">print_r($validator->failed());</code></pre></span>
+                </div>
+                <div class="d-block p-2" id="functionResultats">
+                    <h5 class="h3 mt-3 fw-bold">Function resultats</h5>
+                    <hr/>
+                    <p class="h3">return data array valide</p>
+                    <span><pre><code class="language-php hljs">print_r($validator->resultats());</code></pre></span>
+                </div>
+                <div class="d-block p-2" id="functionMethod">
+                    <h5 class="h3 mt-3 fw-bold">Function method</h5>
+                    <hr/>
+                    <p class="h3">return boolean</p>
+                    <span><pre><code class="language-php hljs">print_r($validator->method());</code></pre></span>
+                </div>
+                 <div class="d-block p-2" id="functionValidation">
+                    <h5 class="h3 mt-3 fw-bold">Function validation</h5>
+                    <hr/>
+                    <p class="h3">return empty</p>
+                    <p class="h3">parameter array</p>
+                    <span><pre><code class="language-php hljs">print_r($validator->validation());</code></pre></span>
+                </div>
+             
+            </article>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <!-- and it's easy to individually load additional languages -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="{{ asset('scripts/validator.js') }}"></script>
+{% endblock %}
