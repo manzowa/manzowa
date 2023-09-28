@@ -1046,6 +1046,7 @@ footer {
 .link-image {
   width: 150px;
   height: 25px;
+  display: block;
 }
 
 /* Fin image */
