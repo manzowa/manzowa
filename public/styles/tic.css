@@ -1,0 +1,20 @@
+.tictactoe {
+    flex-direction: column;
+    align-items: center;
+}
+.tictactoe-ui {
+    width: 99%;
+    margin: auto;
+    flex-direction: column;
+    align-items: center;
+}
+.cell {
+    align-items: center;
+    justify-content: center;
+    line-height:4;
+    text-align: center;
+    cursor: pointer;
+}  
+.cell:active {
+    outline: none;
+}
