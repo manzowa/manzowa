@@ -10,7 +10,7 @@
       "copy:css": "copyfiles -f assets/styles/*  public/styles",
       "copy:scripts": "copyfiles -f assets/scripts/*  public/scripts",
       "copy:images": "copyfiles -f assets/images/*  public/images",
-      "start": "npm run sass & npm run sass:min & npm run copy:css & npm run copy:scripts"
+      "start": "npm run sass & npm run sass:min & npm run copy:css & npm run copy:scripts & npm run copy:images"
     },
     "keywords": [],
     "author": "",

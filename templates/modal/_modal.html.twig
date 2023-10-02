@@ -1,0 +1,47 @@
+<!-- The Modal -->
+<div class="modal" id="myModal">
+    <div class="modal-dialog modal-fullscreen modal-fullscreen-sm-down modal-fullscreen-md-down modal-fullscreen-lg-down">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-headermo-bg-secondary  border border-warning">
+                <hgroup class="d-flex flex-row p-1">
+                    <img src="{{ asset('images/touch/im-120x53.png') }}" alt="source github" class="logo" />
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </hgroup>
+                
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="d-flex flex-row p-1">
+                    <div class="mo-fx-item-1">
+                        <img src="{{ asset('images/maintenance.gif') }}" alt="source github"  class=""/>
+                    </div>
+                    <div class="mo-fx-item-2 mo-txt-secondary">
+                       <h4 class="display-6 text-decoration-underline">Page under construction</h4>
+                       <p>Here is the list of pages under construction:</p>
+                       <ul class="list-group">
+                            <li class="list-group-item">TypeScript Article</li>
+                            <li class="list-group-item"> React Article</li>
+                            <li class="list-group-item"> RxJS Article</li>
+                        </ul>
+                        <p class="h4 mt-2">The list of components in operation :</hp>
+                        <div class="btn-group btn-group-lg">
+                            <a class="btn btn-primary btn-lg" href="{{ path('components.todos') }}">Todo</a>
+                        </div>
+                        <div class="btn-group btn-group-lg">
+                            <a class="btn btn-primary btn-lg" href="{{ path('components.sgjs') }}">SGJS</a>
+                        </div>
+                         <div class="btn-group btn-group-lg">
+                            <a class="btn btn-primary btn-lg" href="{{ path('components.validator') }}">Validation Form</a>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer mo-bg-warning">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

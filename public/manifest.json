@@ -1,0 +1,50 @@
+{
+    "name": "manzowa.com",
+    "short_name": "manzowa",
+    "start_url": "/",
+    "version": "0.1",
+    "display_override": ["fullscreen", "minimal-ui"],
+    "display": "standalone",
+    "theme_color": "#011627",
+    "background_color": "#fff",
+    "description": "Personal work",
+    "manifest_version": 2,
+    "orientation": "any",
+    "default_locale": "en",
+    "icons": [
+        {
+            "src": "images/touch/ie-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+          "src": "images/touch/ie-48x48.png",
+          "sizes": "48x48",
+          "type": "image/png"
+        },
+        {
+          "src": "images/touch/ie-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        },
+        {
+            "src": "images/touch/ie-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png"
+        },
+        {
+            "src": "images/touch/ie-310x310.png",
+            "sizes": "310x310",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "background": {
+        "scripts": ["scripts/background.js"],
+        "persistent": false
+      },
+      "permissions": [
+        "alarms"
+    ],
+    "path": "https://manzowa.com/"
+}

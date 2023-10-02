@@ -2,10 +2,19 @@
 {% block stylesheets %}
     <link rel="stylesheet"  href="{{ asset('styles/todojs.min.css') }}">
 {% endblock %}
-{% block title %} Todos {% endblock %}
+{% block title %} TODOS {% endblock %}
 {% block body %}
 <div class="mo-content">
-    <div class="mo-fx-d mo-my-2 mo-fx-content-evenly mo-ga-2">
+    <div class="app-todos">
+        <h2 class="mo-ft-weight-bold">Todo Simple</h2>
+        <form action="" method="post">
+            <input type="text" name="todo" />
+            <button class="fas fa-plus"></button>
+        </form>
+        <ul class="todolist"></ul>
+        <div class="todotasks"></div>
+    </div>
+     <div class="mo-fx-d mo-my-2 mo-fx-content-evenly mo-ga-2">
         <div class="mo-p-1 mo-fx-item-1 mo-bg-dark">
             <h3 class="mo-txt-light mo-align-txt-center"> ReactJs</h3>
             <div class="mo-fx-d">
@@ -27,15 +36,6 @@
                     <i class="fas fa-sign-in-alt"></i>&nbsp;Aller vers Github</a>
             </div>
         </div>
-    </div>
-    <div class="app-todos">
-        <h2 class="mo-ft-weight-bold">Todo Simple</h2>
-        <form action="" method="post">
-            <input type="text" name="todo" />
-            <button class="fas fa-plus"></button>
-        </form>
-        <ul class="todolist"></ul>
-        <div class="todotasks"></div>
     </div>
 </div>
 {% endblock %}

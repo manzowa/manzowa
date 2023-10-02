@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         {% include "partials/_head.html.twig" %}
         {% block stylesheets %}{% endblock %}
         <link rel="preconnect" href="https://fonts.googleapis.com">
-        <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,100;1,200;1,300;1,400;1,500&display=swap" rel="stylesheet"> -->
         <script src="https://kit.fontawesome.com/05141a746a.js" crossorigin="anonymous"></script>
+        <title>{% block title %}Manzowa{% endblock %}</title>
     </head>
     <body>
         <div class="mo-wrapper">
@@ -24,6 +23,8 @@
         <!--main start -->
         <main role="main">
             {% block body %}{% endblock %}
+            <!-- Inclusion The Modal -->
+            {% include "modal/_modal.html.twig" %}
         </main>
         <!--main end -->
 
@@ -32,7 +33,6 @@
             {% include "partials/_footer.html.twig" %}
             <!--footer end-->
          {% endif %}
-    </div>
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
