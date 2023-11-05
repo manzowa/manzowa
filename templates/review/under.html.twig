@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Under Construction{% endblock %}
+
+{% block body %}
+<div class="mo-content">
+    <div class="mo-under-wrapper">
+        <div class="mo-under-construction">
+            <div class="mo-under mo-under-row">
+                <div class="mo-under__profil mo-under-col">
+                    <div class="mo-profil--image">
+                        <img src="{{ asset('images/builder.png') }}" alt="my profil">
+                    </div>
+                </div>
+                <div class="mo-under__infos  mo-under-col">
+                    <div class="mo-infos--img">
+                        <img src="{{ asset('images/under-construction.png') }}" alt="under construction">
+                    </div>
+                    <div class="mo-infos--main">
+                        <p>I am working hard to finish the development of this site.</p>
+                    </div>
+                    <div class="mo-infos--footer">
+                        <a href="https://www.linkedin.com/in/christian-shungu-4964b2121" class="link-none "><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mo-under-animation">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('scripts/under.js') }}" type="module"></script>
+{% endblock %}
