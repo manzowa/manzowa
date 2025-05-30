@@ -16,4 +16,6 @@
 use App\Runtime;
 
 require_once join(DIRECTORY_SEPARATOR, [dirname(__DIR__), 'app', 'app.php']);
-require_once App\path('views','base.phtml');
+Runtime::run($environment);
+
+

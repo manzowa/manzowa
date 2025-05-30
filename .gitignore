@@ -1,11 +1,11 @@
 app/api-school
-public/css
+
 public/docs
 public/images/ecoles/*
-public/images/rss/*
 public/lib/*
 
 .env.*
 *.env
 *.txt
+.back
 /vendor/
