@@ -6,8 +6,8 @@
 SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
 
 RewriteEngine On
-RewriteCond %{SERVER_NAME} =www.manzowa.local [OR]
-RewriteCond %{SERVER_NAME} =manzowa.local
+# RewriteCond %{SERVER_NAME} =www.manzowa.local [OR]
+# RewriteCond %{SERVER_NAME} =manzowa.local
 RewriteCond %{REQUEST_FILENAME}% !-d 
 RewriteCond %{REQUEST_FILENAME}% !-f 
 
