@@ -1,0 +1,18 @@
+.page-footer {
+  background: lighten($gray-200, 4%);
+  .mo-row {
+    height: 80px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  p {
+    margin-bottom: 0;
+  }
+  .mo-socials {
+    max-width: 210px;
+    margin-left: auto;
+    .mo-social-item {
+      margin-left: auto;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "manzowa",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "description": "Site de présentation personnelle",
+  "scripts": {
+    "sass:min": "sass public/sass/manzowa.scss:public/css/manzowa.min.css --style compressed",
+    "sass": "sass --watch public/sass/manzowa.scss:public/css/manzowa.css",
+    "clean": "npm cache clean --force"
+  },
+  "keywords": [],
+  "author": "Christian SHUNGU",
+  "license": "ISC"
+}

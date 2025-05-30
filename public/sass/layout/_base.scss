@@ -1,0 +1,47 @@
+html {
+  display: block;
+  font-size: 62.5%;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  list-style: none;
+  -webkit-box-sizing: inherit;
+  -moz-box-sizing: inherit;
+  box-sizing: inherit;
+  color: var($primary);
+}
+
+:root {
+  --mo-font-size: 16px;
+  --mo-font-family: Arial, sans-serif;
+  --mo-primary: rgb(0.4%, 11.8%, 25.9%);
+  --mo-primary-hover: rgb(0.4%, 18.4%, 40.4%);
+  --mo-warning: rgb(100%, 64.7%, 0.4%);
+  --mo-warning-hover: rgb(100%, 75.3%, 30.6%);
+  --mo-success: rgb(20.8%, 45.9%, 0.4%);
+  --mo-success-hover: rgb(29.8%, 65.9%, 0.4%);
+  --mo-danger: rgb(90.2%, 0%, 0%);
+  --mo-danger-hover: rgb(100%, 10.2%, 10.2%);
+  --mo-info: rgb(56.1%, 92.5%, 100%);
+  --mo-info-hover: rgb(76.1%, 96.1%, 100%);
+  --mo-dark: rgb(0%, 5.9%, 6.7%);
+  --mo-light: rgb(255, 255, 255);
+  --mo-secondary: rgb(0%, 33.3%, 65.5%);
+  --mo-secondary-hover: rgb(0%, 43.5%, 85.5%);
+  --mo-default: rgb(231, 231, 231);
+  --mo-default-hover: rgb(224, 224, 224);
+}
+body {
+  color: var(--mo-primary);
+  font-size: var(--mo-font-size);
+  font-family: var(--mo-font-family);
+  box-sizing: border-box;
+}

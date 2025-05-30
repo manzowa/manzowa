@@ -1,0 +1,11 @@
+app/*
+public/css
+public/docs
+public/images/ecoles/*
+public/images/rss/*
+public/lib/*
+
+.env.*
+*.env
+*.txt
+/vendor/

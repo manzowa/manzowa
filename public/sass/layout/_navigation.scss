@@ -1,0 +1,110 @@
+.mo-layout-nav {
+  background: #fff;
+  padding: 1rem;
+  .mo-nav-content {
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+    position: relative;
+    @include mo-d-flex;
+    @include mo-flex-wrap;
+    @include mo-align-items;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    align-items: center;
+    .mo-nav-brand {
+      flex: 1 1 auto;
+      @include mo-d-flex;
+      justify-content: space-between;
+      align-items: center;
+      .mo-nav-logo {
+        max-width: 35px;
+        max-height: 35px;
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        color: $orange;
+        img {
+          max-width: 100%;
+          max-height: 100%;
+          margin-right: 2px;
+        }
+      }
+      .mo-nav-toggler {
+        display: none; //none
+        max-width: 35px;
+        max-height: 35px;
+        border: 1px solid $orange;
+        .mo-nav-toggler-icon  i {
+          font-size: 30px;
+          color: $orange;
+        }
+      }
+    }
+    .mo-nav-menu {
+      flex: 2 1 auto;
+      .mo-nav-nav {
+        @include mo-d-flex;
+        @include mo-flex-wrap;
+        @include mo-align-items;
+        justify-content: space-evenly;
+        >.mo-nav-item {
+          margin: 0.8rem;
+          &:hover {
+            border-bottom: 1px solid $orange;
+          }
+        }
+        .mo-nav-link {
+          color: $primary !important;
+          font-size: 1.8rem;
+          padding: 0;
+        }
+      }
+    }
+  }
+}
+@media all and (max-width: 768px) {
+  .mo-nav-content {
+    flex-direction: column;
+    align-items: start !important;
+    gap: 0;
+    .mo-nav-brand {
+      width: 100%;
+      flex: 1 1 auto;
+      .mo-nav-toggler {
+        display: block !important;
+      }
+    }
+    .mo-nav-menu {
+      flex: 1 1 auto;
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 1rem;
+      display: none;
+      .mo-nav-item{
+        border-bottom: 1px solid $orange;
+        &:hover {
+          border-bottom: 1px solid $primary !important;
+        }
+      }
+    }
+  }
+}
+@media (width <= 599px) {
+  .mo-nav-content {
+    .mo-nav-menu {
+      .mo-nav-nav {
+        flex-direction: column !important;
+        .mo-nav-item{
+          width: 100%;
+          padding: 0.5rem;
+          border-bottom: 1px solid $orange;
+          &:hover {
+            border-bottom: 1px solid $primary !important;
+          }
+        }
+      }
+    }
+  }
+}
