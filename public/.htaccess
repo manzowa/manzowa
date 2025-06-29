@@ -5,38 +5,8 @@
 SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
 
 RewriteEngine On
-
-RewriteCond %{REQUEST_FILENAME} !\.(css|js|ico|fonts)$
-RewriteCond %{REQUEST_FILENAME}% !-d 
-RewriteCond %{REQUEST_FILENAME}% !-f 
-
-#Start API
-RewriteRule ^api$ index.php [QSA]
-RewriteRule ^api/v1$ index.php [QSA]
-
-#Authentification
-RewriteRule ^api/v1/sessions$ index.php [QSA]
-RewriteRule ^api/v1/sessions/([0-9]+)$ index.php?sessionid=$1 [QSA]
-
-#Schools
-RewriteRule ^api/v1/ecoles$ index.php [QSA]
-RewriteRule ^api/v1/ecoles/([0-9]+)$ index.php?ecoleid=$1 [QSA]
-
-#Adresses
-RewriteRule ^api/v1/ecoles/([0-9]+)/adresses$ index.php?ecoleid=$1 [QSA]
-RewriteRule ^api/v1/ecoles/([0-9]+)/adresses/([0-9]+)$ index.php?ecoleid=$1&adresseid=$2 [QSA]
-
-#Page
-RewriteRule ^api/v1/ecoles/page/([0-9]+)$ index.php?page=$1 [QSA]
-
-#Images
-RewriteRule ^api/v1/ecoles/([0-9]+)/images$ index.php?ecoleid=$1 [QSA]
-RewriteRule ^api/v1/ecoles/([0-9]+)/images/([0-9]+)$ index.php?ecoleid=$1&imageid=$2 [QSA]
-RewriteRule ^api/v1/ecoles/([0-9]+)/images/([0-9]+)/attributes$ index.php?ecoleid=$1&imageid=$2 [QSA]
-
-#Articles
-RewriteRule ^api/v1/articles$ index.php [QSA]
-RewriteRule ^api/v1/articles/page/([0-9]+)$ index.php?page=$1 [QSA]
-
-#Users
-RewriteRule ^api/v1/users$ index.php [QSA]
+RewriteCond %{REQUEST_FILENAME} !\.(css|js|ico|png|jpg|jpge|json|fonts)$
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+# RewriteRule ^(.*)$ index.php [QSA,L] 

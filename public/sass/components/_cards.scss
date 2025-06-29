@@ -1,0 +1,84 @@
+@use "../base/variables" as v;
+@use "../base/mixins" as m;
+
+.mo-custom-card {
+	border-radius: v.$border-radius;
+	@include m.transition(all);
+	.mo-card-body {
+		padding: 55px 0;
+		background-color: v.$white;
+		i {
+			display: block;
+			font-size: 40px;
+			margin-bottom: 18px;
+			color: v.$primary;			
+		}
+	}
+	&:hover,
+	&:active {
+		border-color: v.$primary !important;
+		color: v.$primary;
+		i {
+			color: v.$primary !important;
+		}
+	}
+}
+// Testmonial cards
+.testmonial-card {
+	background: v.$white;
+	@include m.box-shadow;
+	//box-shadow: 2px 3px 10px rgba($gray-400,.3);
+	border-radius: v.$border-radius;
+	max-width: 700px;
+	margin: 10px auto;
+	padding: 20px 15px;
+
+	img {
+		@include m.circle(80);
+		@include m.box-shadow;
+		//box-shadow: 2px 3px 10px rgba($gray-400,.3);
+		margin-bottom: 30px;
+	}
+
+	.title {
+		margin-top: 30px;
+		font-size: 20px;
+	}
+}
+.mo-card-img-top {
+	width: 100%;
+	border-top-left-radius: calc(0.25rem - 1px);
+	border-top-right-radius: calc(0.25rem - 1px);
+}
+.mo-card-img-overlay {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	padding: 1.25rem;
+}
+.mo-card-img {
+	width: 100%;
+	border-radius: calc(0.25rem - 1px);
+}
+.mo-card-body {
+	-webkit-box-flex: 1;
+	-webkit-flex: 1 1 auto;
+		-ms-flex: 1 1 auto;
+			flex: 1 1 auto;
+			padding: 1.25rem;
+}
+.mo-card-title {
+	margin-bottom: 0.75rem;
+}
+.mo-card .post-details a {
+	opacity: .6;
+	color: #444;
+	font-size: 15px;
+}
+.mo-card .post-details a i {
+	padding-right: 5px;
+}
+@media (width <= 599px) {
+}

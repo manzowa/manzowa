@@ -1,0 +1,82 @@
+@use "../base/variables" as v;
+@use "../base/mixins" as m;
+
+// Layout styles
+html {
+  display: block;
+  font-size: 62.5%;
+  @include m.box-sizing;
+}
+:root {
+  --mo-font-size: 16px;
+  --mo-font-family: Arial, sans-serif;
+  --mo-primary: v.$primary;
+  --mo-primary-hover: rgb(0.4%, 18.4%, 40.4%);
+  --mo-warning: v.$warning;
+  --mo-warning-hover: rgb(100%, 75.3%, 30.6%);
+  --mo-success: v.$success;
+  --mo-success-hover: rgb(29.8%, 65.9%, 0.4%);
+  --mo-danger: rgb(90.2%, 0%, 0%);
+  --mo-danger-hover: rgb(100%, 10.2%, 10.2%);
+  --mo-info: rgb(56.1%, 92.5%, 100%);
+  --mo-info-hover: rgb(76.1%, 96.1%, 100%);
+  --mo-dark: rgb(0%, 5.9%, 6.7%);
+  --mo-light: rgb(255, 255, 255);
+  --mo-secondary: rgb(0%, 33.3%, 65.5%);
+  --mo-secondary-hover: rgb(0%, 43.5%, 85.5%);
+  --mo-default: rgb(231, 231, 231);
+  --mo-default-hover: rgb(224, 224, 224);
+}
+body {
+  color: var(--mo-primary);
+  font-size: var(--mo-font-size);
+  font-family: var(--mo-font-family);
+  box-sizing: border-box;
+}
+.mo-container-fluid {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.mo-container {
+  width: 100%;
+  padding-right: 1.2em;
+  padding-left: 1.2em;
+  margin-right: auto;
+  margin-left: auto;
+}
+.mo-skill-container {
+  width: 100%;
+  margin: 0 auto;
+}
+@media (min-width: 1400px) {
+    .mo-container {
+      max-width: 1320px;
+    }
+    .mo-skill-container {
+        max-width: 1000px;
+      }
+  }
+
+@media (min-width: 1200px) {
+  .mo-container {
+    max-width: 1140px;
+  }
+  .mo-skill-container {
+    max-width: 800px;
+  }
+}
+@media screen and (min-width: 992px) {
+    .mo-container {
+        max-width: 960px;
+    }
+    .mo-skill-container {
+      max-width: 600px;
+    }
+}
+@media only screen and (min-width : 768px) and (max-width : 991px) and (orientation : portrait) {
+}
+@media screen and (min-width: 320px) and (max-width:  767px) {
+}
+@media screen and (min-width: 319px) {
+}

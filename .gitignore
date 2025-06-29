@@ -6,4 +6,6 @@ public/images/ecoles/*
 *.env
 *.txt
 .back
-/vendor/
+vendor/*
+var/*
+*.phpunit.result.cache

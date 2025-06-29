@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+{% block content %}
+    <div class="mo-container mo-mt-5">
+        <div class="mo-acount-wrap mo-row">
+            <div class="mo-w-25">
+                {% include 'account/menu/_sidebar.html.twig' %}
+            </div>
+            <div class="mo-w-75">
+                <h2>Mon Profile </h2>
+                <div class="profile-card">
+                    <span class="profile-name">Nom complet: {{ user.fullname }}</span><br/>
+                    <span class="profile-email">Email: {{ user.email }}</span><br/>
+                    <span class="profile-role">Role: Admin </span><br/>
+                </div>
+            </div>
+        </div>
+    </div>    
+{% endblock %}
+

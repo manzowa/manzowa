@@ -1,3 +1,9 @@
+@use "../base/variables" as v;
+@use "../base/mixins" as m;
+@use "sass:color";
+@use "sass:map";
+
+/* =========== Header layout =================== */
 .mo-layout-header {
   height: 94vh;
   min-height: 650px;
@@ -13,34 +19,31 @@
     width: 20em; 
     top: 35vh;
     left: 6vw;;
-    background-color: #fff;
-    border: 2px dotted $primary;
+    background-color: v.$white;
+    border: 2px dotted v.$primary;
     padding: 0.5rem;
   }
   .mo-widget {
+    @include m.flex;
     position: relative;
     max-width: 650px;
     width: 95%;
     margin: 0 auto;
     border-radius: 50px;
-    @include mo-d-flex;
-    border: 1px solid #dee2e6;
+    border: 1px solid #dee2e6; //mo-widget
     padding: 20px 0;
-    margin-top:  68vh ; //  565px; // -50
+    margin-top:  66vh;
     z-index: 999;
-    background: $white;
-    box-shadow: 0 0 30px rgba($gray-500, 0.4);
-
+    background: v.$white;
+    @include m.box-shadow;
     .mo-widget-item {
       flex-grow: 1;
       flex-basis: 0;
       text-align: center;
       border-right: 1px solid #dee2e6;
-
       &:last-child {
         border-right: 0;
       }
-
       h2,
       p {
         margin: 0;
@@ -55,8 +58,7 @@
       }
     }
   }
-
 }
 .mo-subtitle {
-  color: $orange;
+  color: v.$orange;
 }

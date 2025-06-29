@@ -1,0 +1,30 @@
+html {
+    box-sizing: border-box;
+    overflow: -moz-scrollbars-vertical;
+    overflow-y: scroll;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+body {
+    margin: 0;
+    background: #fafafa;
+}
+
+.swagger-ui .topbar {
+  background-color: #2a2f45;
+}
+
+.swagger-ui .topbar-wrapper span {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.swagger-ui .topbar-wrapper img {
+  display: none; /* supprime le logo Swagger si présent */
+}

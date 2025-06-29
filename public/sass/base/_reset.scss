@@ -1,0 +1,91 @@
+// _reset.scss
+
+/* 1. Supprimer les marges et les paddings par défaut */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  color: #011627;
+}
+
+/* 2. Réinitialiser les tailles de police et les tailles de texte par défaut */
+body {
+  font-family: sans-serif;
+  font-size: 100%;
+  line-height: 1.5;
+}
+
+/* 3. Réinitialiser les styles des éléments de formulaire */
+input,
+textarea,
+select,
+button {
+  border: none;
+  outline: none;
+  background: none;
+}
+
+/* 4. Les liens (a) ne doivent pas avoir de soulignement par défaut */
+a {
+  text-decoration: none;
+  color: inherit; /* Les liens prendront la couleur du texte par défaut */
+}
+
+/* 5. Supprimer les bordures et les espacements des listes */
+ul,
+ol {
+  list-style: none;
+}
+
+/* 6. Enlever les bordures autour des éléments de tableau */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* 7. Cacher les éléments vidéo, audio et iframe (utile si tu veux éviter des espacements indésirables) */
+video,
+audio,
+iframe {
+  max-width: 100%;
+  display: block;
+}
+
+/* 8. Styliser les boutons pour qu'ils n'aient pas d'apparence par défaut dans tous les navigateurs */
+button {
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* 9. Réinitialiser les styles pour les images */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: none;
+}
+
+/* 10. Réinitialiser les styles des éléments HTML comme les divs et les spans */
+html,
+body,
+div,
+section,
+article,
+header,
+footer,
+main,
+nav,
+aside {
+  display: block;
+}
+
+/* 11. Réinitialiser la largeur des éléments inline-block */
+* {
+  vertical-align: baseline;
+}

@@ -1,0 +1,118 @@
+/* Mixin pour les boutons */
+@mixin button($bg-color, $text-color: #fff, $border-radius: 4px, $padding: 10px) {
+  background-color: $bg-color;
+  color: $text-color;
+  padding: $padding;
+  border-radius: $border-radius;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($bg-color, 10%);
+  }
+}
+/* Mixin pour une grille flexible (flexbox) */
+@mixin flex-container($direction: row, $justify-content: flex-start, $align-items: stretch) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify-content;
+  align-items: $align-items;
+}
+/* Mixin pour un ombrage léger (box-shadow) */
+@mixin box-shadow($x: 0, $y: 4px, $blur: 6px, $color: rgba(0, 0, 0, 0.1)) {
+  box-shadow: $x $y $blur $color;
+}
+/* Mixin pour les transitions */
+@mixin transition($property, $duration: 0.3s, $timing-function: ease) {
+  transition: $property $duration $timing-function;
+  -webkit-transition: $property $duration $timing-function;
+}
+/* Mixin pour centrer un élément */
+@mixin center($position: absolute, $top: 50%, $left: 50%) {
+  position: $position;
+  top: $top;
+  left: $left;
+  transform: translate(-50%, -50%);
+}
+/* Mixin pour les bordures arrondies */
+@mixin rounded($radius: 4px) {
+  border-radius: $radius;
+}
+@mixin flex() {
+    display: -webkit-box; 
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex; 
+    display: flex;
+}
+@mixin flex-column($property: column) {
+    -webkit-box-orient: $property;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: $property;
+        -ms-flex-direction: $property;
+            flex-direction: $property;
+}
+@mixin flex-wrap($property: wrap) {
+    -webkit-flex-wrap: $property;
+        -ms-flex-wrap: $property;
+            flex-wrap: $property;
+}
+@mixin align-items($property: center) {
+    -webkit-box-align: $property;
+    -webkit-align-items: $property;
+    -ms-flex-align: $property;
+     align-items: $property;
+}
+@mixin justify-content($property: space-between) {
+  -webkit-justify-content: $property;
+          justify-content: $property;
+}
+@mixin pack($property: justify) {
+    -webkit-box-pack: $property;
+       -ms-flex-pack: $property;
+}
+@mixin circle($width) {
+    width: $width + px;
+    height: $width + px;
+    border-radius: 50%;
+}
+@mixin box-sizing($property: border-box) {
+   -webkit-box-sizing: $property;
+     -moz-box-sizing: $property;
+          box-sizing: $property;
+}
+@mixin link-border-bottom($link, $visited, $hover, $active) {
+  /* unvisited link */
+  border-bottom: 1px solid $link;
+  /* visited link */
+  &:visited {
+    border-bottom: 1px solid $visited;
+  }
+  /* mouse over link */
+  &:hover {
+    border-bottom: 1px solid $hover;
+  }
+  /* selected link */
+  &:active {
+    border-bottom: 1px solid $active;
+  }
+}
+@mixin link-colors($link, $hover, $active) {
+  /* unvisited link */
+  color: $link;
+  /* visited link */
+  &:visited {
+    color: $link; 
+  }
+  /* mouse over link */
+  &:hover {
+    color: $hover;
+  }
+  /* selected link */
+  &:active {
+    color: $active;
+  }
+}

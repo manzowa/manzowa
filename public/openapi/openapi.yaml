@@ -1,0 +1,381 @@
+openapi: 3.0.3
+info:
+  title: API V1
+  version: 1.0.0
+  description: Documentation de l'API V1
+servers:
+  - url: /api/v1
+paths:
+  /token:
+    post:
+      summary: Créer un token
+      operationId: postToken
+      tags: [Token]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Token créé
+
+  /token/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    delete:
+      summary: Supprimer un token
+      operationId: deleteToken
+      tags: [Token]
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Supprimé
+    patch:
+      summary: Modifier un token
+      operationId: patchToken
+      tags: [Token]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Token modifié
+
+  /ecoles:
+    get:
+      summary: Liste des écoles
+      operationId: getSchools
+      tags: [Écoles]
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Ajouter une école
+      operationId: postSchool
+      tags: [Écoles]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Créé
+
+  /ecoles/page/{page}:
+    get:
+      summary: Récupérer les écoles par page
+      operationId: getSchoolsByPage
+      tags: [Écoles]
+      parameters:
+        - name: page
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+
+  /ecoles/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Obtenir une école
+      operationId: getSchool
+      tags: [Écoles]
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Modifier une école (remplacement)
+      operationId: putSchool
+      tags: [Écoles]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: OK
+    patch:
+      summary: Modifier partiellement une école
+      operationId: patchSchool
+      tags: [Écoles]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Supprimer une école
+      operationId: deleteSchool
+      tags: [Écoles]
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Supprimé
+
+  /ecoles/{id}/adresses:
+    get:
+      summary: Liste des adresses de l'école
+      operationId: getAdresses
+      tags: [Adresses]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Ajouter une adresse
+      operationId: postAdresse
+      tags: [Adresses]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Créée
+
+  /ecoles/{id}/adresses/{adresseid}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: adresseid
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Obtenir une adresse
+      operationId: getAdresse
+      tags: [Adresses]
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Modifier une adresse
+      operationId: putAdresse
+      tags: [Adresses]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: OK
+    patch:
+      summary: Modifier partiellement une adresse
+      operationId: patchAdresse
+      tags: [Adresses]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Supprimer une adresse
+      operationId: deleteAdresse
+      tags: [Adresses]
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Supprimée
+
+  /ecoles/{id}/images:
+    get:
+      summary: Liste des images de l'école
+      operationId: getImages
+      tags: [Images]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Ajouter une image
+      operationId: postImage
+      tags: [Images]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Créée
+
+  /ecoles/{id}/images/{imageid}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: imageid
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Obtenir une image
+      operationId: getImage
+      tags: [Images]
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Supprimer une image
+      operationId: deleteImage
+      tags: [Images]
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Supprimée
+
+  /ecoles/{id}/images/{imageid}/attributes:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: imageid
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Obtenir les attributs d'une image
+      operationId: getImageAttributes
+      tags: [Images]
+      responses:
+        '200':
+          description: OK
+    patch:
+      summary: Modifier les attributs d'une image
+      operationId: patchImageAttributes
+      tags: [Images]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Modifiés
+
+  /ecoles/{nom}:
+    get:
+      summary: Obtenir une école par nom
+      operationId: getSchoolByName
+      tags: [Écoles]
+      parameters:
+        - name: nom
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /ecoles/{nom}/{limit}:
+    get:
+      summary: Obtenir une école par nom avec une limite
+      operationId: getSchoolByNameLimit
+      tags: [Écoles]
+      parameters:
+        - name: nom
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,12 +1,24 @@
-<?php 
+<?php
 
 namespace App\Controller\Account;
-use App\Controller\AppController;
 
-class IndexController extends AppController
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+
+class IndexController extends \App\Controller\Controller
 {
-    public function index()
+    public function indexAction(Request $request, Response $response): Response
     {
-        $this->view->render('account/index');
+        if (!$this->check()) {
+            return $this->redirectTo(
+                $request, $response, 
+                "auth.login" 
+            );
+        }
+        return $this->render(
+            $response, 'account/index.html.twig', [
+            'hasContentHeader' => false, 
+            'hasFooter' => false, 
+        ]);
     }
 }

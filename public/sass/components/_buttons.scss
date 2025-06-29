@@ -1,0 +1,64 @@
+/*================================================================== 
+  :: _buttons.scss 
+  ===================================================================*/
+@use "../base/variables" as v;
+@use "../base/mixins" as m;
+
+.mo-btn {
+    display: inline-block;
+    font-size: 14px;
+    margin: 0 2px;
+    padding: 1rem;
+    border: none;
+    color: v.$primary;
+    &.mo-o-warning {
+        background-color: v.$light; 
+        border: 2px solid v.$warning;
+    }
+    &.mo-o-success {
+        background-color: v.$light; 
+        border: 2px solid v.$success;
+    }
+    &.mo-o-danger {
+        background-color: v.$light; 
+        border: 2px solid v.$danger;
+    }
+    &.mo-o-primary {
+        background-color: v.$light; 
+        border: 2px solid v.$primary;
+    }
+    &.mo-o-secondary {
+        background-color: v.$light; 
+        border: 2px solid v.$secondary;
+    }
+    &.mo-o-info {
+        background-color: v.$light; 
+        border: 2px solid v.$info;
+    }
+
+    &.mo-warning {
+        color: v.$light;
+        background-color: v.$warning;
+    }
+    &.mo-success {
+        color: v.$light;
+        background-color: v.$success; 
+    }
+    &.mo-danger {
+        color: v.$light;
+        background-color: v.$danger ; 
+    }
+    &.mo-primary {
+        color: v.$light;
+        background-color: v.$primary; 
+    }
+    &.mo-secondary {
+        color: v.$light;
+        background-color: v.$secondary; 
+    }
+    &.mo-info {
+         color: v.$light;
+        background-color:  v.$info; 
+        border: 2px solid v.$light;
+    }
+}

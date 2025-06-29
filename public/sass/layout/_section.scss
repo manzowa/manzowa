@@ -1,10 +1,18 @@
+@use "../base/variables" as v;
+@use "../base/mixins" as m;
+@use "sass:map";
+@use "sass:color";
+
+/* ===========  Section layout =================== */
 .section {
 	position: relative;
 	padding: 8.5rem 0;
-	&:nth-child(even) {background: lighten($gray-300, 5%);}
-	&.bg-white {background-color: $white;}
+	&:nth-child(even) {
+        background: color.adjust(map.get(v.$grays, "300") , $lightness: 5%, $alpha: 0.2);
+  }
+	&.bg-white {background-color: v.$white;}
 	&.bg-gray {
-		background: lighten($gray-200, 5%); 
+        background: color.adjust(map.get(v.$grays, "200") , $lightness: 5%, $alpha: 0.2);
 	}
 }
 .mo-img-wrapper {
@@ -20,7 +28,7 @@
 	z-index: 8;
 }
 .mo-img-wrapper .mo-overlay {
-	background: #f39c12;
+	background: v.$orange;
 	position: absolute;
 	left: 0;
 	bottom: 100%;
@@ -47,7 +55,7 @@
 }
 .mo-img-wrapper .mo-overlay .mo-overlay-infos h5 {
 	margin-bottom: 15px;
-	color: $white;
+	color: v.$white;
 	font-weight: 900;
 }
 .mo-img-wrapper .mo-overlay .mo-overlay-infos a {
@@ -55,15 +63,15 @@
 	width: 35px;
 	height: 35px;
 	border-radius: 50%;
-	border: 2px solid #fff;
+	border: 2px solid v.$white;
 	line-height: 35px;
 	text-align: center;
-	color: #fff;
+	color: v.$white;
 	text-decoration: none;
 }
 .mo-img-wrapper .mo-overlay .mo-overlay-infos a:hover {
-	background: #fff;
-	color: #ffa801;
+	background: v.$white;
+	color: v.$orange;
 }
 .mo-img-wrapper:hover .mo-overlay,
 .mo-img-wrapper:active .mo-overlay {
@@ -75,11 +83,10 @@
 .mo-img-wrapper:active .mo-overlay .overlay-infos {
 	top: 50%;
 }
-
 #service {
-	background-color: #ffa801;
+	background-color: v.$orange;
 	h6 {
-		color: $white;
+		color: v.$white;
 	}
 }
 .mo-section-service {}
@@ -88,5 +95,5 @@
 .mo-section-projet{}
 
 @media (width <= 599px) {
-	
 }
+/* =========== FIN Section layout =================== */

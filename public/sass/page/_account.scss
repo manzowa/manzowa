@@ -1,0 +1,40 @@
+/*================================================================== 
+  :: _account.scss 
+  ===================================================================*/
+@use "../base/variables" as v;
+@use "../base/mixins" as m;
+
+.mo-acount-wrap {
+  margin-top: 10rem;
+}
+
+.sidebar {
+  @include m.flex-column;
+  @include m.align-items;
+  width: 20rem;
+  height: 100%;
+  background-color: v.$light;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  ul {
+    @include m.flex-column;
+    @include m.align-items;
+    width: 100%;
+    height: 100%;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      width: 100%;
+      height: 4rem;
+      text-align: left;
+      line-height: 4rem;
+      padding-left: 1.5rem;
+      color: v.$primary;
+      cursor: pointer;
+      &:hover {
+        color: v.$warning ;
+      }
+    }
+  }
+}

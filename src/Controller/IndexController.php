@@ -1,13 +1,14 @@
-<?php 
+<?php
 
 namespace App\Controller;
-use App\Controller\Controller;
-use App\Attribute\Route;
+
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class IndexController extends Controller
 {
-    #[Route(path:'/')]
-    public function index() {
-        return $this->render('home/index');
+    public function index(Request $request, Response $response): Response
+    {
+        return $this->render($response, 'home/index.html.twig', []);
     }
-}   
+}

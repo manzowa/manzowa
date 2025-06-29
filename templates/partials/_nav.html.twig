@@ -1,0 +1,50 @@
+<!-- Navigation  -->
+<nav class="mo-layout-nav mo-fixed-top mo-affix">
+    <div class="mo-container">
+        <div class="mo-nav-content">
+            <div class="mo-nav-brand">
+                <a class="mo-nav-logo" href="/">
+                    <img src="/images/logo/logo-144x144.png" alt="">
+                    <span class="mo-title-3">manzowa</span>
+                </a>
+                <button class="mo-nav-toggler" type="button" data-toggle="mo-menu-nav" data-target="#mo-menu-nav"> 
+                    <span class="mo-nav-toggler-icon">
+                        <i class="lni lni-menu-hamburger-1"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="mo-nav-menu" id="mo-menu-nav">
+                <ul class="mo-nav-nav">
+                    <li class="mo-nav-item">
+                        <a class="mo-nav-link" href="{{ url_for('index') }}">Accueil</a>
+                    </li>
+                    {% if  not user.isAccount %}
+                        <li class="mo-nav-item">
+                            <a class="mo-nav-link" href="#service">Service</a>
+                        </li>
+                        <li class="mo-nav-item">
+                            <a class="mo-nav-link" href="#portfolio">Portfolio</a>
+                        </li>
+                        <li class="mo-nav-item">
+                            <a class="mo-nav-link" href="#projet">Projets</a>
+                        </li>
+                    {% endif %}
+
+                    {% if  user.isLoggedIn or  user.isAccount %}
+                        <li class="mo-nav-item">
+                            <a class="mo-nav-link" href="{{ url_for('account.index') }}">
+                                <i class="lni lnis-user-1"></i>Mon compte
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="mo-nav-item">
+                            <a class="mo-nav-link" href="{{ url_for('auth.login') }}">
+                                <i class="lni lnis-user-1"></i>Se connecter
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

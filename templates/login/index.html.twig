@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block content %}
+<div class="mo-body">
+    <div class="mo-login-wrapper">
+        <div class="mo-box">
+            <div class="mo-box-logo">
+                <a href="/">
+                    <img src="/images/logo/logo-96x96.png" alt="Logo">
+                </a>
+            </div>
+            <div class="mo-box-form">
+                <h2>Se Connecter</h2>
+                <form method="post" action="{{ url_for('auth.post') }}">
+                    <input type="hidden" name="{{ csrf.nameKey }}" value="{{ csrf.name }}">
+                    <input type="hidden" name="{{ csrf.valueKey }}" value="{{ csrf.value }}">
+                    <div class="mo-form-control">
+                        <label for="username">Nom d'utilisateur</label>
+                        <input type="text" id="username" name="username" placeholder="nom utilisateur ou mail" value="manzowa" required>
+                    </div>
+                    <div class="mo-form-control">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" name="password" placeholder="Votre mot de passe" value="$%80N-@ma@-jour%$" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Se connecter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+<div>
+{% endblock %}
