@@ -41,7 +41,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASS }}
-          source: "public/"
+          source: "."
           target: "/var/www/manzowa"
 
       - name: Fixer les permissions sur le serveur
