@@ -2,55 +2,36 @@ name: Manzowa CI/CD
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     steps:
-      - name: Récupérer le code
-        uses: actions/checkout@v3
+    - name: Récupérer le code
+      uses: actions/checkout@v3
 
-      - name: Mettre en cache les dépendances Composer
-        uses: actions/cache@v3
-        with:
-          path: ~/.composer/cache
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+    - name: Installer PHP et Composer
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
 
-      - name: Installer PHP et Composer
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          tools: composer
+    - name: Installer les dépendances
+      run: composer install --prefer-dist --no-progress --no-suggest
 
-      - name: Installer les dépendances
-        run: composer install --prefer-dist --no-progress --no-suggest
-
-      - name: Lancer les tests PHPUnit
-        run: vendor/bin/phpunit tests
-
-      - name: Déployer sur le serveur
-        if: github.ref == 'refs/heads/main'
-        uses: appleboy/scp-action@v0.1.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASS }}
-          source: "."
-          target: "/var/www/manzowa"
-
-      - name: Fixer les permissions sur le serveur
-        if: github.ref == 'refs/heads/main'
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASS }}
-          script: |
-            sudo chown -R www-data:www-data /var/www/manzowa
-            sudo chmod -R 755 /var/www/manzowa
+    - name: Lancer les tests PHPUnit
+      run: vendor/bin/phpunit tests
+      
+    - name: Déployer sur le serveur
+      if: github.ref == 'refs/heads/main'
+      uses: appleboy/scp-action@v0.1.3
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        password: ${{ secrets.SERVER_PASS }}
+        source: "."
+        target: "/var/www/manzowa"
