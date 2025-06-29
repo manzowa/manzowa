@@ -1,6 +1,7 @@
 app/api-school
 public/docs
 public/images/ecoles/*
+public/uploads/*
 
 .env.*
 *.env
