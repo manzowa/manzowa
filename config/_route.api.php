@@ -51,6 +51,11 @@ $app->group('/api/v1', function ($group) {
             '/page/{page:[0-9]+}', 
             [\App\Controller\Api\V1\SchoolController::class, 'getSchoolsByPageAction']
         )->setName('ecoles.get.page');
+        //Action school by Page AND Limit
+        $group->get(
+            '/page/{page:[0-9]+}/{limit:[0-9]+}',
+            [\App\Controller\Api\V1\SchoolController::class, 'getSchoolsByPageAndLimitAction']
+        )->setName('ecoles.get.pageAndLimit');
         // Action school by ID
         $group->group('/{id:[0-9]+}', function($group) {
             $group->get(
@@ -175,6 +180,7 @@ $app->group('/api/v1', function ($group) {
             '/{nom:[a-zA-Z0-9_-]+}/{limit:[0-9]+}', 
             [App\Controller\Api\V1\SchoolController::class, 'getNameLimitAction']
         )->setName('ecole.nomAndLimit');
+
     });
 })->add(new App\Middleware\DatabaseConnectionMiddleware());
 
