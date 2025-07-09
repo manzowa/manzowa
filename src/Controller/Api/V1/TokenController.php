@@ -288,5 +288,15 @@ namespace App\Controller\Api\V1
             }
 
         }
+        /**
+         * Method optionsTokenAction [OPTIONS]
+         */
+        public function optionsTokenAction(Request $request, Response $response): Response
+        {
+            return $this->jsonResponse([
+                "success" => true,
+                "message" => 'Options request successful'
+            ], 204);
+        }
     }
 }

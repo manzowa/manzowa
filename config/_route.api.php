@@ -19,6 +19,9 @@ $app->group('/api/v1', function ($group) {
         ->add(new App\Middleware\JsonMiddleware())
         ->add(new App\Middleware\JsonBodyParserMiddleware())
         ->add(new App\Middleware\JsonUserBodyMiddleware());
+        $group->options(
+            '', [App\Controller\Api\V1\TokenController::class, 'optionsTokenAction']
+        )->setName('token.options');
         $group->delete(
             '/{id:[0-9]+}', 
             [App\Controller\Api\V1\TokenController::class, 'deleteTokenAction']

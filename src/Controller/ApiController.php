@@ -16,6 +16,9 @@ class ApiController
         $response = new \Slim\Psr7\Response();
         $response->getBody()->write(json_encode($data, JSON_PRETTY_PRINT));
         return $response->withStatus($status)
+          ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
             ->withHeader('Content-Type', 'application/json');
     }
 
