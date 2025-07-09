@@ -1,12 +1,27 @@
-# CORPS options
-#Header Set Access-Control-Allow-Origin "*"
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, PATCH, OPTIONS, PUT, DELETE"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+</IfModule>
 
-# Fixing for Apache AUTHORIZATION httpd Header as it is stripped by default
+# Autoriser les requêtes OPTIONS sans toucher à index.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Autoriser les fichiers statiques directement
+    RewriteCond %{REQUEST_FILENAME} \.(css|js|ico|png|jpg|jpeg|json|woff2?|ttf|svg|eot)$ [NC]
+    RewriteRule ^ - [L]
+
+    # Ignorer les fichiers et dossiers existants
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Ne pas rediriger les requêtes OPTIONS (preflight CORS)
+    RewriteCond %{REQUEST_METHOD} !=OPTIONS
+
+    # Rediriger tout le reste vers index.php
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Fix pour le header Authorization
 SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
-
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !\.(css|js|ico|png|jpg|jpge|json|fonts)$
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
-# RewriteRule ^(.*)$ index.php [QSA,L] 

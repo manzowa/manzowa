@@ -35,3 +35,5 @@ jobs:
         password: ${{ secrets.SERVER_PASS }}
         source: "."
         target: "/var/www/manzowa"
+    - name: Redémarrer le serveur web
+      run: sudo systemctl restart apache2
