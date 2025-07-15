@@ -14,7 +14,6 @@ jobs:
     steps:
     - name: Récupérer le code
       uses: actions/checkout@v3
-
     - name: Installer PHP et Composer
       uses: shivammathur/setup-php@v2
       with:
@@ -22,7 +21,6 @@ jobs:
 
     - name: Installer les dépendances
       run: composer install --prefer-dist --no-progress --no-suggest
-
     - name: Lancer les tests PHPUnit
       run: vendor/bin/phpunit tests
       
@@ -37,3 +35,4 @@ jobs:
         target: "/var/www/manzowa"
     - name: Redémarrer le serveur web
       run: sudo systemctl restart apache2
+    
