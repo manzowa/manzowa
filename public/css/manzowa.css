@@ -1280,7 +1280,7 @@ body {
   max-width: 400px;
 }
 .mo-login-wrapper .mo-box-logo {
-  margin-bottom: 20px;
+  margin: 20px;
 }
 .mo-login-wrapper .mo-box-logo img {
   width: 75px;
