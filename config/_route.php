@@ -14,3 +14,10 @@ $app->group('/authentification', function ($group) {
 $app->group('/compte', function ($group) {
     $group->get('/profil', [\App\Controller\Account\IndexController::class, 'indexAction'])->setName('account.index');
 });
+
+$app->group('/contact', function ($group) {
+    $group->get('', [\App\Controller\ContactController::class, 'indexAction'])
+    ->setName('contact.index');
+    $group->post('', [\App\Controller\ContactController::class, 'postAction'])
+    ->setName('contact.post');
+});

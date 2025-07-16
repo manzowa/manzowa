@@ -28,7 +28,7 @@
     .mo-box-logo {
         margin-bottom: 20px;
         img {
-            width: 100px;
+            width: 75px;
             height: auto;
             border-radius: 50%;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -56,7 +56,7 @@
             margin-bottom: 5px;
             display: block;
         }
-        input {
+        input, textarea{
             width: 100%;
             padding: 12px;
             font-size: 16px;

@@ -1283,7 +1283,7 @@ body {
   margin-bottom: 20px;
 }
 .mo-login-wrapper .mo-box-logo img {
-  width: 100px;
+  width: 75px;
   height: auto;
   border-radius: 50%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -1311,7 +1311,7 @@ body {
   margin-bottom: 5px;
   display: block;
 }
-.mo-login-wrapper .mo-form-control input {
+.mo-login-wrapper .mo-form-control input, .mo-login-wrapper .mo-form-control textarea {
   width: 100%;
   padding: 12px;
   font-size: 16px;
@@ -1321,7 +1321,7 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease-in-out;
 }
-.mo-login-wrapper .mo-form-control input:focus {
+.mo-login-wrapper .mo-form-control input:focus, .mo-login-wrapper .mo-form-control textarea:focus {
   border-color: #f5b041;
   box-shadow: 0 0 8px #f5b041;
   outline: none;
