@@ -32,7 +32,7 @@ class AuthController extends Controller
         $validator = $this->validator;
         // Récupérer les données POST sous forme de tableau associatif
         if ($validator->method()) {
-            $validator->validation([
+            $validator->validate([
                 "username" => function () use ($validator) {
                     $validator->isEmpty()->get();
                 },
@@ -43,7 +43,7 @@ class AuthController extends Controller
             if ($validator->failed()) {
                 die();
             } else {
-                $data = $validator->resultats();
+                $data = $validator->results();
                 if ($this->auth->attempt($data['username'], $data['password'])) {
                     return $this->redirectTo($request, $response, "account.index");
                     
