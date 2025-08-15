@@ -8,40 +8,56 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Récupérer le code
+    - name: ✅ Récupérer le code
       uses: actions/checkout@v3
-    - name: Installer PHP et Composer
+
+    - name: ⚙️ Installer PHP et Composer
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-    - name: Installer Node.js
+
+    - name: ⚙️ Installer Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '23' # Tu peux adapter à ta version de Node.js
-    - name: Installer les dépendances
+        node-version: '23'
+
+    - name: 📦 Installer les dépendances PHP
       run: composer install --prefer-dist --no-progress --no-suggest
-    - name: Installer les dépendances Node.js
+
+    - name: 📦 Installer les dépendances Node.js
       working-directory: ./frontend
       run: npm install
-    - name: Construire les assets front-end
+
+    - name: 🛠️ Construire les assets front-end
       working-directory: ./frontend
       run: npm run build
-    - name: Lancer les tests PHPUnit
+
+    - name: 🧪 Lancer les tests PHPUnit
       run: vendor/bin/phpunit tests
-      
-    - name: Déployer sur le serveur
+
+    - name: 🚀 Déployer sur le serveur
       if: github.ref == 'refs/heads/main'
       uses: appleboy/scp-action@v0.1.3
       with:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASS }}
-        source: "."
+        source: |
+          public/
+          vendor/
+          composer.json
+          index.php
         target: "/var/www/manzowa"
-    - name: Redémarrer le serveur web
-      run: sudo systemctl restart apache2
-    
+
+    - name: 🔁 Redémarrer Apache sur le serveur distant
+      if: github.ref == 'refs/heads/main'
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        password: ${{ secrets.SERVER_PASS }}
+        script: |
+          sudo systemctl restart apache2
