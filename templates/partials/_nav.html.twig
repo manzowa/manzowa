@@ -18,7 +18,7 @@
                     <li class="mo-nav-item">
                         <a class="mo-nav-link" href="{{ url_for('index') }}">Accueil</a>
                     </li>
-                    {% if  not user.isAccount %}
+                    {% if  not app.user.isAccount %}
                         <li class="mo-nav-item">
                             <a class="mo-nav-link" href="#service">Service</a>
                         </li>
@@ -30,7 +30,7 @@
                         </li>
                     {% endif %}
 
-                    {% if  user.isLoggedIn or  user.isAccount %}
+                    {% if  app.user.isLoggedIn or  app.user.isAccount %}
                         <li class="mo-nav-item">
                             <a class="mo-nav-link" href="{{ url_for('account.index') }}">
                                 <i class="lni lnis-user-1"></i>Mon compte

@@ -1,5 +1,5 @@
-@use "../base/variables" as v;
-@use "../base/mixins" as m;
+@use "../base/variable" as v;
+@use "../base/mixin" as m;
 
 // Layout styles
 html {
@@ -74,9 +74,22 @@ body {
       max-width: 600px;
     }
 }
-@media only screen and (min-width : 768px) and (max-width : 991px) and (orientation : portrait) {
+@media only screen 
+  and (min-width : 768px) 
+  and (max-width : 991px) 
+  and (orientation : portrait) 
+{
+
 }
-@media screen and (min-width: 320px) and (max-width:  767px) {
+@media screen 
+  and (min-width: 320px) 
+  and (max-width:  767px) 
+  {
 }
 @media screen and (min-width: 319px) {
+}
+@media (max-width: 768px) {
+  .mo-w-25, .mo-w-75 {
+    width: 100%;
+  }
 }

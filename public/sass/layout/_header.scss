@@ -1,5 +1,5 @@
-@use "../base/variables" as v;
-@use "../base/mixins" as m;
+@use "../base/variable" as v;
+@use "../base/mixin" as m;
 @use "sass:color";
 @use "sass:map";
 
@@ -16,47 +16,47 @@
 
   .mo-layout-header-content {
     position: relative;
-    width: 20em; 
+    width: 20em;
     top: 35vh;
-    left: 6vw;;
+    left: 6vw;
     background-color: v.$white;
     border: 2px dotted v.$primary;
     padding: 0.5rem;
   }
-  .mo-widget {
-    @include m.flex;
-    position: relative;
-    max-width: 650px;
-    width: 95%;
-    margin: 0 auto;
-    border-radius: 50px;
-    border: 1px solid #dee2e6; //mo-widget
-    padding: 20px 0;
-    margin-top:  66vh;
-    z-index: 999;
-    background: v.$white;
-    @include m.box-shadow;
-    .mo-widget-item {
-      flex-grow: 1;
-      flex-basis: 0;
-      text-align: center;
-      border-right: 1px solid #dee2e6;
-      &:last-child {
-        border-right: 0;
-      }
-      h2,
-      p {
-        margin: 0;
-      }
-      p {
-        opacity: 0.7;
-        font-size: 14px;
-      }
-      h2 {
-        font-size: 1.5rem;
-        font-weight: 600;
-      }
-    }
+}
+.mo-widget {
+  @include m.flex;
+  position: relative;
+  max-width: 650px;
+  width: 95%;
+  margin: 0 auto;
+  border-radius: 50px;
+  border: 1px solid #dee2e6; //mo-widget
+  padding: 20px 0;
+  margin-top: 66vh;
+  z-index: 999;
+  background: v.$white;
+  @include m.box-shadow;
+}
+.mo-widget-item {
+  flex-grow: 1;
+  flex-basis: 0;
+  text-align: center;
+  border-right: 1px solid #dee2e6;
+  &:last-child {
+    border-right: 0;
+  }
+  h2,
+  p {
+    margin: 0;
+  }
+  p {
+    opacity: 0.7;
+    font-size: 14px;
+  }
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
   }
 }
 .mo-subtitle {

@@ -18,14 +18,18 @@ class Auth
         $this->token = $token;
         $this->session = new Session();
         $this->repository = new UserRepository(Connexion::read());
-       
     }
     public function user(): User|bool
     {
-        if ($this->session->has('user')) {
-            return $this->session->get('user');
+        // Vérifie si la session a expiré avant de récupérer l'utilisateur
+        $this->session->checkExpiration();
+
+        // Si la session est expirée ou l'utilisateur n'est pas connecté, retourne false
+        if (!$this->session->has('user')) {
+            return false;
         }
-        return false;
+        // Retourne l'utilisateur stocké dans la session
+        return $this->session->get('user');
     }
     public function check(): bool 
     {
@@ -35,9 +39,13 @@ class Auth
     public function attempt($username, $password)
     {
         $user = $this->repository->findByUsernameOrEmail($username);
+
+        // Si l'utilisateur n'existe pas ou si son ID est nul, retourne false
         if ($user && is_null($user->getId())) {
             return false;
         }
+        
+        // Vérifie le mot de passe et crée la session si correct
         if (password_verify($password, $user->getPassword())) {
             $this->session->set('user', $user);
             $this->session->regenerate();

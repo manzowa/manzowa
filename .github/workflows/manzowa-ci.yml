@@ -18,9 +18,16 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-
+    - name: Installer Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '23' # Tu peux adapter à ta version de Node.js
     - name: Installer les dépendances
       run: composer install --prefer-dist --no-progress --no-suggest
+    - name: Installer les dépendances Node.js
+      run: npm install
+    - name: Construire les assets front-end
+      run: npm run build
     - name: Lancer les tests PHPUnit
       run: vendor/bin/phpunit tests
       

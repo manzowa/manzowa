@@ -4,24 +4,22 @@
     <div class="mo-login-wrapper">
         <div class="mo-box">
             <div class="mo-box-logo">
-                <a href="/">
+                <a href="{{ url_for('index') }}">
                     <img src="/images/logo/logo-96x96.png" alt="Logo">
                 </a>
             </div>
-            <div class="mo-box-form">
+            <div class="mo-form mo-shadow">
                 <h2>Se Connecter</h2>
-                <form method="post" action="{{ url_for('auth.post') }}">
+                {# Afficher les messages flash, s'il y en a #}
+                {% include "flash/_flash.html.twig" %}
+                {% import "macro/forms.html.twig" as forms %}
+                <form method="post" action="{{ url_for('auth.login') }}">
                     <input type="hidden" name="{{ csrf.nameKey }}" value="{{ csrf.name }}">
                     <input type="hidden" name="{{ csrf.valueKey }}" value="{{ csrf.value }}">
-                    <div class="mo-form-control">
-                        <label for="username">Nom d'utilisateur</label>
-                        <input type="text" id="username" name="username" placeholder="nom utilisateur ou mail" value="" required>
-                    </div>
-                    <div class="mo-form-control">
-                        <label for="password">Mot de passe</label>
-                        <input type="password" id="password" name="password" placeholder="Votre mot de passe" value="" required>
-                    </div>
-                    <button type="submit" class="submit-btn">Se connecter</button>
+                    {{ forms.form_input('username', 'Nom d\'utilisateur', errors) }}
+                    {{ forms.form_input('password', 'Mot de passe', errors, 'password') }}
+
+                    <button type="submit" class="mo-btn mo-warning mo-rounded mo-w-100">Se connecter</button>
                 </form>
             </div>
         </div>

@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+{% block title %} | Liste des écoles{% endblock %}
+{% block content %}
+    <div class="mo-container mo-mt-5">
+        <div class="mo-row mo-account">
+            <div class="mo-col-lg-4">
+                <div class="mo-content">
+                    {% include 'account/menu/_sidebar.html.twig' %}
+                </div>
+            </div>
+            {% import "macro/forms.html.twig" as forms %}
+            <div class="mo-col-lg-8">
+                <div id="react-root"></div> {# React va monter ici #}
+            </div>
+        </div>
+    </div>    
+{% endblock %}
+{% block foot %}
+    <script type="module" src="/js/bundle/liste.bundle.js"></script> 
+{% endblock %}

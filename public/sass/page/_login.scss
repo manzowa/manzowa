@@ -1,92 +1,46 @@
 /*================================================================== 
   :: _login.scss 
   ===================================================================*/
-@use "../base/variables" as v;
-@use "../base/mixins" as m;
+@use "../base/variable" as v;
+@use "../base/mixin" as m;
 
 .mo-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(
+    135deg,
+    v.$light,
+    v.$light
+  ); /* Gradient background */
+}
+.mo-login-wrapper {
+  @include m.flex;
+  @include m.justify-content(center);
+  @include m.align-items;
+  width: 100%;
+  height: 100%;
+  .mo-box {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background: linear-gradient(135deg, v.$light, v.$light); /* Gradient background */
-}
-.mo-login-wrapper {
-    @include m.flex;
-    @include m.justify-content(center);
-    @include m.align-items;
+    flex-direction: column;
     width: 100%;
-    height: 100%;
-    .mo-box {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        width: 100%;
-        max-width: 400px;
+    max-width: 400px;
+  }
+  .mo-box-logo {
+    margin: 20px;
+    img {
+      width: 75px;
+      height: auto;
+      border-radius: 50%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-    .mo-box-logo {
-        margin: 20px;
-        img {
-            width: 75px;
-            height: auto;
-            border-radius: 50%;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-    }
-    .mo-box-form {
-        background-color: v.$light;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 12px 24px v.$primary;
-        text-align: center;
-        width: 100%;
-    }
-    h2 {
-        font-size: 24px;
-        margin-bottom: 30px;
-        color: v.$primary;
-    }
-    .mo-form-control {
-        margin-bottom: 20px;
-        text-align: left;
-        label {
-            font-size: 14px;
-            color: v.$primary;
-            margin-bottom: 5px;
-            display: block;
-        }
-        input, textarea{
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease-in-out;
-            &:focus {
-                border-color: v.$warning;
-                box-shadow: 0 0 8px v.$warning;
-                outline: none;
-            }
-        }
-    }
-    .submit-btn {
-        width: 100%;
-        padding: 12px;
-        background-color: v.$warning;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        &:hover {
-            background-color: v.$warning;
-        }
-        &:active {
-            background-color: v.$warning;
-        }
-    }
+  }
+}
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: v.$primary;
 }

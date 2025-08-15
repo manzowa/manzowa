@@ -77,19 +77,6 @@ namespace App
             return $user;
         }
     }
-    if (!\function_exists('isPage')) {
-        /**
-         * Function redirectToRoute
-         *
-         * @param ?string $needle
-         * 
-         * @return string
-         */
-        function isPage(string $needle): bool
-        {
-            return str_contains($_SERVER['REQUEST_URI'], $needle);
-        }
-    }
     if (!\function_exists('App\session')) {
         /**
          * Function session
@@ -101,42 +88,6 @@ namespace App
             if (session_status() == PHP_SESSION_NONE) {
                 session_start();
             }
-        }
-    }
-    if (!\function_exists('App\setCsrfToken')) {
-        /**
-         * Function setCsrfToken
-         * 
-         * @return void
-         */
-        function setCsrfToken(): void
-        {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-        }
-    }
-    if (!\function_exists('getCsrfToken')) {
-        /**
-         * Function getCsrfToken
-         * 
-         * @return void
-         */
-        function getCsrfToken(): string
-        {
-            return $_SESSION['csrf_token'] ?? "";
-        }
-    }
-    if (!\function_exists('App\the_title')) {
-        /**
-         * Function the_title
-         *
-         * @return App
-         */
-        function the_title(?string $title): string
-        {
-            if (!is_null($title) || !empty($title)) {
-                return "| " . $title;
-            }
-            return "";
         }
     }
     if (!function_exists("App\logger")) {
@@ -172,19 +123,6 @@ namespace App
                 $e->getFile(), $e->getLine(), $e->getMessage()
             );
             logger($msg);
-        }
-    }
-    if (!function_exists("App\initRoutes")) {
-        /**
-         * Function initRoutes
-         * 
-         */
-        function initRoutes(mixed $app): void {
-            foreach (glob(join(DS, [APP_ROOT, 'config', 'routes', '*.php'])) as $filename)
-            {
-                include_once $filename;
-        
-            }
         }
     }
     if (!function_exists("App\generateToken")) {

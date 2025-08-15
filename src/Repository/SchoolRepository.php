@@ -105,16 +105,16 @@ class SchoolRepository extends Repository implements \Countable
         $this->setTempRowCounted((int) $this->rowCount())
             ->setStockId(stockId: $school_id);
        
-        $rows = $school->getAdresses();
-        if (count($rows) >0 && is_numeric($school_id)) {
-            for ($index=0; $index < count($rows); $index++) { 
-                $row = $rows[$index];
-                $voie = $row['voie'];
-                $quartier =  $row['quartier'];
-                $commune = $row['commune'];
-                $district = $row['district'];
-                $ville = $row['ville'];
-                $reference =$row['reference'];
+        $addressRows = $school->getAdresses();
+        if (count($addressRows) >0 && is_numeric($school_id)) {
+            for ($index=0; $index < count($addressRows); $index++) { 
+                $addressRow = $addressRows[$index];
+                $voie = $addressRow['voie'];
+                $quartier =  $addressRow['quartier'];
+                $commune = $addressRow['commune'];
+                $district = $addressRow['district'];
+                $ville = $addressRow['ville'];
+                $reference = $addressRow['reference'];
 
                 $command  = 'INSERT INTO adresses ';
                 $command .= '(voie, quartier, reference, commune, district, ville, ecoleid)';
@@ -131,6 +131,28 @@ class SchoolRepository extends Repository implements \Countable
                     ->bindParam(':ecoleid', $school_id, \PDO::PARAM_INT)
                     ->executInsert();
             }
+        }
+        $imageRows = $school->getImages();
+        if (count($imageRows) >0 && is_numeric($school_id)) {
+            for ($index=0; $index < count($imageRows); $index++) {
+                $imageRow = $imageRows[$index];
+                $title = $imageRow['title'];
+                $filename = $imageRow['filename'];
+                $mimetype = $imageRow['mimetype'];
+                $ecoleid =  $imageRow['ecoleid'];
+                  
+                $command  = 'INSERT INTO images (title, filename, mimetype, ecoleid)  ';
+                $command .= 'VALUES (:title, :filename, :mimetype, :ecoleid) ';
+
+                $this
+                    ->prepare($command)
+                    ->bindParam(':title', $title, \PDO::PARAM_STR|\PDO::PARAM_NULL)
+                    ->bindParam(':filename', $filename, \PDO::PARAM_STR|\PDO::PARAM_NULL)
+                    ->bindParam(':mimetype', $mimetype, \PDO::PARAM_STR|\PDO::PARAM_NULL)
+                    ->bindParam(':ecoleid', $ecoleid, \PDO::PARAM_INT)
+                    ->executInsert();
+            }
+
         }
         return $this;
     }
@@ -172,6 +194,54 @@ class SchoolRepository extends Repository implements \Countable
     public function schoolNotFound(int $id): bool {
         $this->retrieve(id: $id);
         return $this->getTempRowCounted() == 0;
+    }
+    public function addImage(Image $image): self 
+    {       
+        $title = $image->getTitle();
+        $filename = $image->getFilename();
+        $mimetype = $image->getMimetype();
+        $ecoleid= $image->getEcoleid();
+
+        $command  = 'INSERT INTO images (title, filename, mimetype, ecoleid)  ';
+        $command .= 'VALUES (:title, :filename, :mimetype, :ecoleid) ';
+
+         $this
+            ->prepare($command)
+            ->bindParam(':title', $title, \PDO::PARAM_STR|\PDO::PARAM_NULL)
+            ->bindParam(':filename', $filename, \PDO::PARAM_STR|\PDO::PARAM_NULL)
+            ->bindParam(':mimetype', $mimetype, \PDO::PARAM_STR|\PDO::PARAM_NULL)
+            ->bindParam(':ecoleid', $ecoleid, \PDO::PARAM_INT)
+            ->executInsert();
+        return $this;
+    }
+    
+    public function updateAddress(Address $address): self
+    {
+        $voie = $address->getVoie();
+        $quartier = $address->getQuartier();
+        $reference = $address->getReference();
+        $commune = $address->getCommune();
+        $district = $address->getDistrict();
+        $ville = $address->getVille();
+        $ecoleid = $address->getEcoleid();
+        $id = $address->getId();
+
+        $command  = 'UPDATE adresses SET voie= :voie, quartier = :quartier, ';
+        $command .= 'reference = :reference, commune = :commune, district = :district, ';
+        $command .= 'ville = :ville WHERE id = :id AND ecoleid = :ecoleid';
+          
+        $this->prepare($command)
+            ->bindParam(':voie', $voie, \PDO::PARAM_STR|\PDO::PARAM_NULL)
+            ->bindParam(':quartier', $quartier, \PDO::PARAM_STR|\PDO::PARAM_NULL)
+            ->bindParam(':reference', $reference, \PDO::PARAM_STR|\PDO::PARAM_NULL)
+            ->bindParam(':commune', $commune, \PDO::PARAM_STR)
+            ->bindParam(':district', $district, \PDO::PARAM_STR)
+            ->bindParam(':ville', $ville, \PDO::PARAM_STR)
+            ->bindParam(':id', $id, \PDO::PARAM_INT)
+            ->bindParam(':ecoleid', $ecoleid, \PDO::PARAM_INT)
+            ->executeUpdate();
+
+        return $this;
     }
 
     private function _retrieveAddresses(?int $school_id = null): array 

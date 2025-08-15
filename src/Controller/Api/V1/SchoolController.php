@@ -602,7 +602,7 @@ namespace App\Controller\Api\V1
                 $returnData['schools'] =  $schools;
 
                 return $this->jsonResponse([
-                    "success" => false,
+                    "success" => true,
                     "data" => $returnData
                 ], 200);
             } catch (SchoolException | AddressException $ex) {

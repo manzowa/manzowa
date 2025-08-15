@@ -1,3 +1,6 @@
+@use 'sass:map';
+@use "sass:math";
+@use './variable' as v;
 /* Mixin pour les boutons */
 @mixin button($bg-color, $text-color: #fff, $border-radius: 4px, $padding: 10px) {
   background-color: $bg-color;
@@ -114,5 +117,56 @@
   /* selected link */
   &:active {
     color: $active;
+  }
+}
+@mixin mo-alert($color) {
+  width: 100%;
+  margin: 1rem auto;
+  padding: 1.5rem;
+  border-radius: 2px;
+  font-weight: 500;
+  color: $color;
+}
+@mixin width-utility($prefix, $widths) {
+  @each $w in $widths {
+    .#{$prefix}-w-#{$w} {
+      width: #{$w}%;
+    }
+  }
+}
+// Mixin responsive (exemple pour mobile uniquement)
+@mixin responsive-width($breakpoint, $widths) {
+  @media (max-width: $breakpoint) {
+    @each $w in $widths {
+      .mo-wm-#{$w} {
+        width: #{$w}%;
+      }
+    }
+  }
+}
+// Mixin pour les styles communs
+@mixin mo-title($level, $weight: normal) {
+  .mo-title#{if($weight == bold, -bold, '')}-#{$level} {
+    display: block;
+    font-size: map.get(v.$title-sizes, $level); // ✅ Taille dynamique
+    font-weight: $weight;
+    line-height: 1.5;
+  }
+}
+@mixin responsive-col($prefix, $columns, $breakpoints) {
+  @each $breakpoint, $min-width in $breakpoints {
+    @for $i from 1 through $columns {
+      .#{$prefix}-col-#{$breakpoint}-#{$i} {
+        @if $min-width != 0 {
+          @media (min-width: $min-width) {
+            flex: 0 0 math.percentage(math.div($i, $columns));
+            max-width: math.percentage(math.div($i, $columns));
+          }
+        } @else {
+          flex: 0 0 math.percentage(math.div($i, $columns));
+          max-width: math.percentage(math.div($i, $columns));
+        }
+      }
+    }
   }
 }

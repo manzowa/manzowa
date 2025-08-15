@@ -14,14 +14,17 @@
   :: GLOBAL BASE 
   ===================================================================*/
 @use 'base/reset';
-@use 'base/utilities';
+@use 'base/utilitie';
 
 /*================================================================== 
   :: Composants
   ===================================================================*/
-@use 'components/cards';
+@use 'components/accordion';
+@use 'components/card';
 @use 'components/navigation';
-@use 'components/buttons';
+@use 'components/button';
+@use 'components/form';
+@use 'components/panel';
 
 /*================================================================== 
   :: Layout
@@ -36,4 +39,4 @@
   ===================================================================*/
 
 @use 'page/login';
-@use 'page/account';
+@use 'page/page';

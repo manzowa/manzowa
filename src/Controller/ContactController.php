@@ -17,12 +17,4 @@ class ContactController extends \App\Controller\Controller
 
         ]);
     }
-
-    public function postAction(Request $request, Response $response): Response
-    {
-        // Handle form submission logic here
-        // For example, validate input and send an email
-
-        return $this->redirectTo($request, $response, "contact.index");
-    }
 }

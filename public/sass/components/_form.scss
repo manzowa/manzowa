@@ -1,0 +1,94 @@
+@use "../base/variable" as v;
+@use "../base/mixin" as m;
+@use "sass:color";
+
+/* Form */
+.mo-form {
+  width: 100%;
+  background-color: v.$light;
+  padding: 40px;
+  border-radius: 8px;
+//   box-shadow: 0 4px 8px v.$primary;
+  &>form {
+    @include m.flex;
+    @include m.flex-wrap;
+    @include m.flex-column;
+  }
+}
+
+.mo-control {
+    @include m.flex;
+    @include m.flex-wrap;
+    @include m.flex-column;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    label {
+        flex: 1;
+        margin-bottom: 5px;
+        font-size: 16px;
+        color: v.$primary;
+    }
+    input, textarea{
+        flex: 1;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    input:focus,
+    textarea:focus {
+        border-color: v.$primary;
+        outline: none;
+    }
+    
+}
+.mo-control--error {
+  border: 2px solid #e74c3c; /* Bordure rouge pour indiquer une erreur */
+  background-color: #f9d6d6; /* Fond léger pour attirer l'attention */
+}
+.mo-control--error input {
+    border-color: #e74c3c;
+    background-color: #f9d6d6;
+    animation: shake 0.5s ease-out;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+textarea {
+    resize: vertical;
+    height: 150px;
+}
+fieldset {
+  border: 1px solid v.$pre-border-color;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #fafafa;
+}
+legend {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  padding: 0 10px;
+}
+.mo-control-inline {
+    @include m.flex;
+    @include m.flex-wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+    input, textarea{
+        flex: 1;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+}
+/* END */

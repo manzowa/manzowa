@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+{% block title %} | Ecole N°{{school_id}} {% endblock %}
+{% block content %}
+    <div class="mo-container mo-mt-5">
+        <div class="mo-row mo-account">
+            <div class="mo-col-lg-4">
+                {% include 'account/menu/_sidebar.html.twig' %}
+            </div>
+            <div class="mo-col-lg-8">
+                <div id="react-root" data-school-id="{{ school_id }}"></div> 
+            </div>
+        </div>
+    </div>    
+{% endblock %}
+{% block foot %}
+    <script type="module" src="/js/bundle/show.bundle.js"></script> 
+{% endblock %}

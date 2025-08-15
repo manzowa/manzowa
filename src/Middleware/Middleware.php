@@ -14,4 +14,13 @@ class Middleware
         return $response->withStatus($status)
             ->withHeader('Content-Type', 'application/json');
     }
+
+    protected function redirect(string $url, int $code = 302): Response 
+    {
+        $response = new \Slim\Psr7\Response();
+        return $response
+            ->withHeader('Location', $url)
+            ->withStatus($code);
+
+    }
 }

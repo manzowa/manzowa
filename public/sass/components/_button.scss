@@ -1,0 +1,36 @@
+/*================================================================== 
+  :: _buttons.scss 
+  ===================================================================*/
+@use "../base/variable" as v;
+@use "../base/mixin" as m;
+
+
+.mo-btn {
+  display: inline-block;
+  font-size: 14px;
+  margin: 0 2px;
+  padding: 1rem;
+  border: none;
+  color: v.$primary;
+
+  // Outline styles (.mo-o-*)
+  @each $name, $color in v.$variants {
+    &.mo-o-#{$name} {
+      background-color: v.$light;
+      border: 2px solid #{$color};
+    }
+  }
+
+  // Filled styles (.mo-*)
+  @each $name, $color in v.$variants {
+    &.mo-#{$name} {
+      background-color: #{$color};
+      color: v.$light;
+
+      // Exception pour info (qui a un border)
+      @if $name == info {
+        border: 2px solid v.$light;
+      }
+    }
+  }
+}

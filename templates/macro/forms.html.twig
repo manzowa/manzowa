@@ -1,0 +1,28 @@
+{# Utilisation d'un bloc réutilisable pour les champs de formulaire #}
+{# macro/forms.html.twig #}
+{% macro form_input(name, label, errors={}, type='text', value='') %}
+    {# Vérification des erreurs et création d'un ID unique pour l'erreur #}
+    {% set input_value = value is not null ? value : attribute(app.request, name) %}
+        {% set error_message = errors[name] is defined and errors[name].message is not empty ? errors[name].message : null %}
+        {% set error_class = error_message ? 'mo-text-' ~ errors[name].type : '' %}
+    <div class="mo-control">
+        <label for="{{ name }}">{{ label }} </label>
+
+        {# Champ de formulaire avec prise en compte de la valeur et du placeholder #}
+        <input 
+            type="{{ type }}" 
+            name="{{ name }}" 
+            id="{{ name }}" 
+            value="{{ input_value|escape }}" 
+            placeholder="{{ placeholder|escape }}" 
+            aria-describedby="{{ name }}-error"
+        >
+    
+        {# Affichage de l'erreur s'il y en a une #}
+        {% if error_message %}
+            <span id="{{ name }}-error" class="mo-text-{{ errors[name].type }}">
+                {{ error_message|escape }}
+            </span>
+        {% endif %}
+    </div>
+{% endmacro %}

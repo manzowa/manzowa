@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+{% block title %} | Edit ecole{% endblock %}
+{% block content %}
+    <div class="mo-container mo-mt-5">
+        <div class="mo-row mo-account">
+            <div class="mo-col-lg-4">
+                {% include 'account/menu/_sidebar.html.twig' %}
+            </div>
+            <div class="mo-col-lg-8">
+                <div class="mo-content">
+                    {# Afficher les messages flash, s'il y en a #}
+                    {% include "flash/_flash.html.twig" %}
+                    {% import "macro/forms.html.twig" as forms %}
+                    <h2> Editer  {{school.nom|ucwords}} </h2>
+                    <div class="mo-form-container">
+                        <form method="post" action="{{ url_for('account.edit_ecole', {id: school.id}) }}" enctype="multipart/form-data">
+                            <fieldset>
+                                <legend>Information école</legend>
+                                {# Champs de saisie pour les informations de l'école #}
+                                {{ forms.form_input('id', '', errors, 'hidden', school.id) }}
+                                {{ forms.form_input('nom', 'Nom d\'école', errors, 'text', school.nom) }}
+                                {{ forms.form_input('email', 'Adresse email', errors, 'email', school.email) }}
+                                {{ forms.form_input('telephone', 'Telephone', errors, 'text', school.telephone) }}
+                                {{ forms.form_input('type', 'Type d\'école', errors, 'text', school.type) }}
+                                {{ forms.form_input('site', 'Url du site école', errors, 'text', school.site) }}
+
+                            </fieldset>
+                            {# Champs boucle adresses #}
+                         
+                            <fieldset>
+                                <legend>Adresse n° {{ school.adresses[0].id }}</legend>
+                                {# Champs de saisie pour l'adresse de l'école #}
+                                {{ forms.form_input('adresse_id', '', errors, 'hidden', school.adresses[0].id) }}
+                                {{ forms.form_input('voie', 'Adresse', errors, 'text', school.adresses[0].voie) }}
+                                {{ forms.form_input('quartier', 'Quartier', errors, 'text', school.adresses[0].quartier) }}
+                                {{ forms.form_input('commune', 'Commune', errors, 'text', school.adresses[0].commune) }}
+                                {{ forms.form_input('district', 'District', errors, 'text', school.adresses[0].district) }}
+                                {{ forms.form_input('ville', 'Ville', errors, 'text', school.adresses[0].ville) }}
+                                {{ forms.form_input('reference', 'Reference', errors, 'text', school.adresses[0].reference) }}
+                            </fieldset>
+
+                            <button type="submit" class="mo-btn mo-success mo-rounded">sauvegarder</button>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+{% endblock %}

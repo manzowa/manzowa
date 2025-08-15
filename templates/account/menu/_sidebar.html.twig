@@ -1,6 +1,7 @@
-<div class="sidebar">
-    <ul>
-        <li><a href="">Mon Profile</a></li>
+<div class="sidebar mo-shadow">
+    <ul >
+        <li><a href="{{ url_for('account.index') }}">Mon Profile</a></li>
+        <li><a href="{{ url_for('account.liste_ecole') }}">Gestion des écoles</a></li>
         <li><a href="{{ url_for('auth.logout') }}">Deconnexion</a></li>
     </ul>
 </div>

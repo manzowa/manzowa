@@ -1,40 +1,47 @@
 /*================================================================== 
-  :: _account.scss 
+  :: _page.scss 
   ===================================================================*/
-@use "../base/variables" as v;
-@use "../base/mixins" as m;
+@use "../base/variable" as v;
+@use "../base/mixin" as m;
 
-.mo-acount-wrap {
+.mo-account {
   margin-top: 10rem;
 }
 
 .sidebar {
   @include m.flex-column;
   @include m.align-items;
-  width: 20rem;
-  height: 100%;
-  background-color: v.$light;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  @include m.justify-content;
+  width: 90%;
   ul {
     @include m.flex-column;
     @include m.align-items;
-    width: 100%;
-    height: 100%;
+    background-color: v.$light;
     list-style: none;
-    padding: 0;
-    margin: 0;
-
+    margin: 1rem 0;
     li {
       width: 100%;
-      height: 4rem;
-      text-align: left;
       line-height: 4rem;
-      padding-left: 1.5rem;
+      padding-left: 1.25rem;
       color: v.$primary;
       cursor: pointer;
       &:hover {
-        color: v.$warning ;
+        color: v.$light;
+        background-color: v.$primary;
+      }
+      a {
+        display: block;
       }
     }
+  }
+}
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+  }
+}
+@media (max-width: 599px) {
+  .sidebar {
+    width: 100%;
   }
 }

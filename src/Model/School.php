@@ -26,10 +26,9 @@ namespace App\Model
         protected ?string $site;
         protected ?int $maximage;
         protected array $adresses;
+        protected ?array $images;
 
         public const MAXIMA_IMAGE = 5;
-
-        protected ?array $images;
     
         public function __construct(
             ?int $id, ?string $nom, ?string $email = null, 
@@ -171,8 +170,8 @@ namespace App\Model
          * @return self
          */
         public function setEmail(?string $email): self {
-            if ((!is_null($email) && !filter_var($email, FILTER_VALIDATE_EMAIL))
-                || (!is_null($email) && (mb_strlen($email) < 0 || mb_strlen($email)>50))
+            if (!is_null($email) 
+                && (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 50)
             ) {
                 throw new SchoolException("School Email is not valid.");
             }
@@ -233,7 +232,7 @@ namespace App\Model
             if ((!is_null($maximage)) 
                 && (
                     !is_numeric($maximage) 
-                    || $maximage <= 0 || $maximage > 10
+                    || $maximage <= 0 || $maximage > 5
                 )
             ) {
                 throw new SchoolException("Maxime image error");
@@ -296,15 +295,19 @@ namespace App\Model
         {
             return new static (
                 id: $data['id']?? null,
-                nom:  $data['nom']?? null,
-                email:  $data['email']?? null,
-                telephone:  $data['telephone']?? null,
-                type: $data['type']?? null,
-                site: $data['site']?? null,
+                nom: static::checkValue($data['nom'] ?? null),
+                email: static::checkValue($data['email'] ?? null),
+                telephone: static::checkValue($data['telephone'] ?? null),
+                type: static::checkValue($data['type'] ?? null),
+                site: static::checkValue($data['site'] ?? null),
                 maximage: $data['maximage']?? null,
                 adresses: $data['adresses']?? [],
                 images: $data['images']?? [],
             );
+        }
+
+        private static function checkValue(?string $value): ?string {
+            return (!empty($value) || $value === '0' || $value === 0) ? $value : null;
         }
     }
 }

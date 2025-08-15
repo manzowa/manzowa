@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+{% block title %} | Ajouter ecole {% endblock %}
+{% block content %}
+    <div class="mo-container mo-mt-5">
+        <div class="mo-account mo-row">
+            <div class="mo-col-lg-4">
+                {% include 'account/menu/_sidebar.html.twig' %}
+            </div>
+            <div class="mo-col-lg-8">
+                <div class="mo-content">
+                    <h2> Ajouter une école </h2>
+                    {# Afficher les messages flash, s'il y en a #}
+                    {% include "flash/_flash.html.twig" %}
+                    {% import "macro/forms.html.twig" as forms %}
+                    <div class="mo-form-container">
+                        <form method="post"  enctype="multipart/form-data">
+                            <fieldset>
+                                <legend>Information école</legend>
+                                {# Champs de saisie pour les informations de l'école #}
+                                {{ forms.form_input('nom', 'Nom d\'école', errors) }}
+                                {{ forms.form_input('email', 'Adresse email', errors, 'email') }}
+                                {{ forms.form_input('telephone', 'Telephone', errors) }}
+                                {{ forms.form_input('type', 'Type d\'école', errors) }}
+                                {{ forms.form_input('site', 'Url du site école', errors) }}
+                        
+                            </fieldset>
+                            <fieldset>
+                                <legend>Adresse école</legend>
+                                {# Champs de saisie pour l'adresse de l'école #}
+                                {{ forms.form_input('voie', 'Adresse', errors) }}
+                                {{ forms.form_input('quartier', 'Quartier', errors) }}
+                                {{ forms.form_input('commune', 'Commune', errors) }}
+                                {{ forms.form_input('district', 'District', errors) }}
+                                {{ forms.form_input('ville', 'Ville', errors) }}
+                                {{ forms.form_input('reference', 'Reference', errors) }}
+
+                            </fieldset>
+                            <fieldset>
+                                <legend>Logo école </legend>
+                                {# Champs pour le titre et logo de l'école #}
+                                {{ forms.form_input('title', 'Titre', errors) }}
+                                <div class="mo-form-control">
+                                    <input type="hidden" name="filename" id="filename" value="logo">
+                                </div>
+                                <div class="mo-form-control">
+                                    <label for="logo">Logo : </label>
+                                    <input type="file" name="logo" id="logo" accept="image/*">
+                                    {% if errors.logo is defined and errors.logo.message is not empty %}
+                                        <span class="mo-text-{{ errors.logo.type }}">
+                                            {{ errors.logo.message }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </fieldset>
+                            <button type="submit" class="mo-btn mo-success mo-rounded">sauvegarder</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+{% endblock %}

@@ -207,7 +207,7 @@ namespace App\Controller\Api\V1
                 }
                 $imageRow = current($imageRows);
                 $newImage = Image::fromState($imageRow);
-                $newImage->saveImageFile( $tmpName);
+                $newImage->saveImageFile($tmpName);
 
                 $repository->commit();
 

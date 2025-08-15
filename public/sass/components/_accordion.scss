@@ -1,0 +1,60 @@
+/*================================================================== 
+  :: _buttons.scss 
+  ===================================================================*/
+@use "../base/variable" as v;
+@use "../base/mixin" as m;
+
+.mo-accordion {
+    position: relative;
+    input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        opacity:0;
+        visibility: 0;
+    }
+    h2 label{
+        background: v.$primary;
+        color: v.$light;
+        position: relative;
+        font-size: 1.5rem;
+    }
+    label::before{
+        content: "";
+        display: inline-block;
+        border: 15px solid transparent;
+        border-left:20px solid v.$light;
+    }
+    label{
+        cursor: pointer;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    h2 {
+        background: v.$primary;
+        color: v.$light;
+        padding: 0.3em;
+        position: relative;
+    }
+    .mo-accordion-content {
+        @include m.flex;
+        @include m.flex-column;
+        max-height:0px;
+        overflow: hidden;
+        transition:max-height 0.5s;
+        background-color: v.$light;
+        box-shadow:0 0 10px 0 rgba(0, 0, 0, 0.2);
+    }
+    input:checked ~ h2 label::before{
+        border-left:15px solid transparent;
+        border-top:20px solid v.$light;
+        margin-top:12px;
+        margin-right:10px;
+    }
+    input:checked ~ h2 ~ div.mo-accordion-content{
+        max-height: max-content;
+    }
+}

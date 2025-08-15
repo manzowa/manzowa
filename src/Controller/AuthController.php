@@ -10,13 +10,36 @@ class AuthController extends Controller
 {
     public function indexAction(
         Request $request, 
-        Response $response
+        Response $response,
+        array $args
     ): Response {
+       
         if ($this->check()) {
             return $this->redirectTo(
                 $request, $response, 
                 "account.index" 
             );
+        }
+        // Récupérer les données POST sous forme de tableau associatif
+        $v = $this->validator;
+        if ($v->method()) {
+            $v->validate([
+                "username" => function() use ($v) {$v->isEmpty()->get();},
+                "password" => function() use ($v) {$v->isEmpty()->get();}
+            ]);
+            if ($v->failed()) {
+                $this->addErrors($v->errors());
+                return $this->redirectTo($request, $response, "auth.login");
+            } else {
+                if ($this->auth->attempt($v->results()['username'], $v->results()['password'])) {
+                    return $this->redirectTo($request, $response, "account.index");
+                } else {
+                    $this->flash->addMessage(
+                        'danger', "vérifiez votre nom d'utilisateur ou mot de passe"
+                    );
+                    return $this->redirectTo($request, $response, "auth.login");
+                }
+            }
         }
         return $this->render(
             $response, 'login/index.html.twig', [
@@ -25,34 +48,7 @@ class AuthController extends Controller
             'hasFooter' => false, 
         ]);
     }
-    public function postAction(
-        Request $request, 
-        Response $response,array  $args
-    ) {
-        $validator = $this->validator;
-        // Récupérer les données POST sous forme de tableau associatif
-        if ($validator->method()) {
-            $validator->validate([
-                "username" => function () use ($validator) {
-                    $validator->isEmpty()->get();
-                },
-                "password" => function () use ($validator) {
-                    $validator->isEmpty()->get();
-                }
-            ]);
-            if ($validator->failed()) {
-                die();
-            } else {
-                $data = $validator->results();
-                if ($this->auth->attempt($data['username'], $data['password'])) {
-                    return $this->redirectTo($request, $response, "account.index");
-                    
-                } else {
-                    die('Problème entre username or password');
-                }
-            }
-        }
-    }
+
     public function logoutAction(
         Request $request, 
         Response $response

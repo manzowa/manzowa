@@ -1,7 +1,7 @@
 // _navigation.scss 
 
-@use "../base/variables" as v;
-@use "../base/mixins" as m;
+@use "../base/variable" as v;
+@use "../base/mixin" as m;
 
 .mo-layout-nav {
   background: v.$white;

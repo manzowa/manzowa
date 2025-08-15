@@ -1,5 +1,5 @@
-@use "../base/variables" as v;
-@use "../base/mixins" as m;
+@use "../base/variable" as v;
+@use "../base/mixin" as m;
 @use "sass:color";
 @use "sass:map";
 
@@ -14,12 +14,34 @@
   p {
     margin-bottom: 0;
   }
-  .mo-socials {
-    max-width: 210px;
-    margin-left: auto;
-    .mo-social-item {
-      margin-left: auto;
-    }
+}
+.mo-socials {
+  max-width: 210px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+.mo-socials .mo-social-item {
+  display: block;
+  margin: 0 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid v.$primary;
+  color: v.$primary;
+  text-align: center;
+  line-height: 40px;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  text-decoration: none;
+  i {
+    font-size: 35px;
   }
 }
+.mo-socials .mo-social-item:hover {
+  border-color: v.$orange !important;
+  color: v.$orange !important;
+}
+
 /* ========== FIN Footer layout =================== */

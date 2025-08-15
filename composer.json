@@ -28,7 +28,8 @@
         "slim/twig-view": "^3.4",
         "slim/csrf": "^1.5",
         "twig/twig": "^3.21",
-        "psr/http-server-middleware": "^1.0"
+        "psr/http-server-middleware": "^1.0",
+        "slim/flash": "^0.4.0"
     },
     "prefer-stable": true,
     "require-dev": {

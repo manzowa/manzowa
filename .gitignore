@@ -9,4 +9,6 @@ public/uploads/*
 .back
 vendor/*
 var/*
-*.phpunit.result.cache
+*.phpunit.result.cache 
+
+frontend/node_modules

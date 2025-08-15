@@ -1,0 +1,6 @@
+{# Afficher les messages flash, s'il y en a #}
+{% for message in messages %}
+  <div class="mo-alert mo-alert-{{ message.type }}">
+    <span>- {{ message.message }}</span><br/>
+  </div>
+{% endfor %}

@@ -117,7 +117,7 @@ namespace App\Model
                     || preg_match($regex, $filename) != 1
                 )
             ) {
-                $msg = 'Filename title error - must be between 1 and 255 characters ';
+                $msg = 'Filename error - must be between 1 and 255 characters ';
                 $msg .='and only .jpg|.png|.gif';
                 throw new ImageException($msg);
             }

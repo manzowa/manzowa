@@ -1,0 +1,108 @@
+@use "../base/variable" as v;
+@use "../base/mixin" as m;
+
+/* Card */
+.mo-card {
+  @include m.flex;
+  flex-direction: column;
+  background-color: v.$white;
+  border: 1px solid v.$pre-border-color;
+  margin: 0.8em;
+  border-radius: v.$border-radius;
+  box-shadow: v.$box-shadow;
+  padding: v.$spacer;
+  position: relative;
+  overflow: hidden;
+}
+.mo-card-header {
+}
+.mo-card-footer {
+}
+.mo-card-body {
+  @include m.flex;
+  flex-direction: column;
+  padding:0.5rem;
+  margin-bottom: 0.25rem;
+}
+.mo-card-title {
+	margin-bottom: 0.75rem;
+	margin-top: 0.75rem;
+	font-size: v.$font-size-lg;
+ 	font-weight: bold;
+  	color: v.$primary;
+}
+.mo-card-text {
+  font-size: v.$font-size;
+  text-align: justify;
+  font-weight: normal;
+  color: v.$primary;
+}
+.mo-card-img {
+  position: relative;
+  width: 100%;
+  height: auto;
+  margin-bottom: 0.25rem;
+}
+
+.mo-card-overlay {
+	background: v.$orange;
+	position: absolute;
+	left: 0;
+	bottom: 100%;
+	width: 100%;
+	height: 100%;
+	z-index: 9;
+	visibility: hidden;
+	opacity: 0;
+	-webkit-transition: all 0.4s;
+	transition: all 0.4s;
+}
+.mo-card-overlay-infos 
+{
+	position: absolute;
+	top: 0%;
+	left: 50%;
+	-webkit-transform: translate(-50%, -50%);
+		-ms-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+	-webkit-transition: all 0.3s;
+	transition: all 0.3s;
+	-webkit-transition-delay: .2s;
+			transition-delay: .2s;
+}
+.mo-card-overlay-infos  h5 {
+	margin-bottom: 15px;
+	color: v.$white;
+	font-weight: 900;
+}
+.mo-card-overlay-infos a {
+	display: inline-block;
+	width: 35px;
+	height: 35px;
+	border-radius: 50%;
+	border: 2px solid v.$white;
+	line-height: 35px;
+	text-align: center;
+	color: v.$white;
+	text-decoration: none;
+}
+
+.mo-card:hover .mo-card-overlay ,
+.mo-card:active .mo-card-overlay,
+.mo-card:focus .mo-card-overlay
+{
+  bottom: 0;
+	visibility: visible;
+	opacity: 0.8;
+}
+.mo-card-overlay-infos a:hover {
+	background: v.$white;
+	color: v.$orange;
+}
+.mo-card:hover .mo-card-overlay .mo-card-overlay-infos, 
+.mo-img-wrapper:active .mo-card-overlay .mo-card-overlay-infos {
+	top: 50%;
+}
+
+@media (max-width: 599px) {
+}
