@@ -25,8 +25,10 @@ jobs:
     - name: Installer les dépendances
       run: composer install --prefer-dist --no-progress --no-suggest
     - name: Installer les dépendances Node.js
+      working-directory: ./frontend
       run: npm install
     - name: Construire les assets front-end
+      working-directory: ./frontend
       run: npm run build
     - name: Lancer les tests PHPUnit
       run: vendor/bin/phpunit tests
