@@ -48,6 +48,18 @@ jobs:
         source: "."
         target: "/var/www/manzowa"
 
+    - name: 📁 Créer le dossier d'upload sur le serveur distant
+      if: github.ref == 'refs/heads/main'
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        password: ${{ secrets.SERVER_PASS }}
+        script: |
+          mkdir -p /var/www/manzowa
+          sudo chown -R www-data:www-data /var/www/manzowa
+          sudo chmod -R 755 /var/www/manzowa
+
     - name: 🔁 Redémarrer Apache sur le serveur distant
       if: github.ref == 'refs/heads/main'
       uses: appleboy/ssh-action@v0.1.7
