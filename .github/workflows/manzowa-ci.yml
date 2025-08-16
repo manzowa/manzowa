@@ -45,11 +45,7 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASS }}
-        source: |
-          public/
-          vendor/
-          composer.json
-          index.php
+        source: "."
         target: "/var/www/manzowa"
 
     - name: 🔁 Redémarrer Apache sur le serveur distant

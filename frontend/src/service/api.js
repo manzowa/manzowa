@@ -1,4 +1,5 @@
-const BASE_URL = "http://manzowa.local/api/v1";
+import { absoluteUrl } from "../components/utils/helpers";
+const BASE_URL = absoluteUrl("/api/v1");
 
 export async function fetchSchools(page, limit) {
   try {
