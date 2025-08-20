@@ -34,6 +34,10 @@ jobs:
     - name: 🛠️ Construire les assets front-end
       working-directory: ./frontend
       run: npm run build
+    - name: 🖼️ Rendre le script resize.sh exécutable
+      run: sudo chmod +x ./scripts/resize.sh
+    - name: 🖼️ Lancer le script de redimensionnement
+      run: ./scripts/resize.sh
 
     - name: 🧪 Lancer les tests PHPUnit
       run: vendor/bin/phpunit tests

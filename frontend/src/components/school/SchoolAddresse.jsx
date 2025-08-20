@@ -15,6 +15,7 @@ export const SchoolAddresse = (props) => {
               <span><b>Quartier:</b> {ucfirst(adresse.quartier)}</span>
               <span><b>Commune:</b> {ucfirst(adresse.commune)}</span>
               <span><b>District:</b> {ucfirst(adresse.district)}</span>
+              <span><b>Ville:</b> {ucfirst(adresse.ville)}</span>
             </div>
           </div>
         ))}

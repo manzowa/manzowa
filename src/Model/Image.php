@@ -15,6 +15,8 @@
  */
 namespace App\Model
 {
+    use Gumlet\ImageResize;
+    use Gumlet\ImageResizeException;
     use App\Exception\ImageException;
 
     final class Image
@@ -210,7 +212,7 @@ namespace App\Model
             return $this;
         }
 
-        public function saveImageFile($tempFileName) 
+        public function saveImageFile($tempFileName): self
         {
             $uploadedFilePath = $this->getUploadFolderLocation()
             .DS.$this->getEcoleid().DS.$this->getFilename();
@@ -219,9 +221,13 @@ namespace App\Model
             .DS.$this->getEcoleid();
 
             if (!is_dir($uploadedDir)) {
-                if (!mkdir($uploadedDir)) {
+                if (!mkdir($uploadedDir, 0755, true)) {
                     throw new ImageException("Failed to create image upload folder for task ");
                 }
+            }
+
+            if (!is_writable($uploadedDir)) {
+                throw new ImageException("Upload directory is not writable: " . $uploadedDir);
             }
 
             if (!file_exists($tempFileName)) {
@@ -231,7 +237,17 @@ namespace App\Model
             if (!move_uploaded_file($tempFileName, $uploadedFilePath)) {
                 throw new ImageException("Failed to upload image ");
             }
-    
+
+             // ✅ Redimensionnement de l'image avec Gumlet après le déplacement
+            try {
+                $image = new ImageResize($uploadedFilePath);
+                $image->crop(800, 600, true, ImageResize::CROPCENTER);
+                $image->save($uploadedFilePath); // Réécrit le même fichier avec l'image redimensionnée
+            } catch (ImageResizeException $e) {
+                throw new ImageException("Failed to resize image: " . $e->getMessage());
+            }
+
+            return $this;
         }
 
         public function deleteImageFile() {
