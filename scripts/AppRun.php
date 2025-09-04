@@ -26,15 +26,17 @@ class AppRun
     public static function setUp(): void
     {
         // Configuration ou initialisation si nécessaire
-        self::_processResizeImagesInDirectory(
-            join(DS, [__ROOT__, 'public','uploads']), 
-            800, 600, ['jpg', 'jpeg', 'png', 'gif', 'webp']
-        );
-        self::_processCreateTableSchedule();
-        sleep(2);
-        self::_processInsertAllScheduleBySchool();
-        self::_processUpdateMaximageOfSchool();
-        self::_processUpdateTypeOfSchool();
+        // self::_processResizeImagesInDirectory(
+        //     join(DS, [__ROOT__, 'public','uploads']), 
+        //     800, 600, ['jpg', 'jpeg', 'png', 'gif', 'webp']
+        // );
+        // self::_processCreateTableSchedule();
+        // sleep(2);
+        // self::_processInsertAllScheduleBySchool();
+        // self::_processUpdateMaximageOfSchool();
+        // self::_processUpdateTypeOfSchool();
+
+        self::_processNoAction();
     }
     /**
      * Méthode pour obtenir la connexion PDO
@@ -218,7 +220,7 @@ class AppRun
                             ImageResize::CROPCENTER
                         ); // dimensions exactes finales
                         $image->save($path); // on écrase l'image originale
-                        echo "✅ Redimensionnée : $path\n";
+                        C
                     } catch (Exception $e) {
                         echo "❌ Erreur avec $path : " . $e->getMessage() . "\n";
                     }
@@ -278,7 +280,7 @@ class AppRun
             }
             sleep(1); // Petite pause pour éviter de surcharger la base de données
         }
-        echo "✅ Fin insertion horaire";
+        echo "✅ Fin insertion horaire\n";
     }
 
     /**
@@ -308,6 +310,14 @@ class AppRun
         }
         echo "✅ Fin mise à jour : type \n";
 
+    }
+
+    /**
+     *  Méthode Pas d'action
+     */
+    private static function _processNoAction(): void 
+    {
+        echo "✅ Fin : Pas d'action \n";
     }
 
 }

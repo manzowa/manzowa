@@ -39,8 +39,8 @@ jobs:
     - name: 🖼️ Rendre le script run.sh exécutable
       run: chmod +x scripts/run.sh
 
-    # - name: 🖼️ Lancer le script de redimensionnement
-    #   run: ./scripts/run.sh
+    - name: 🖼️ Lancer le script de redimensionnement
+      run: ./scripts/run.sh
 
     - name: 🧪 Lancer les tests PHPUnit
       run: vendor/bin/phpunit tests
