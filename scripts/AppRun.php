@@ -220,7 +220,7 @@ class AppRun
                             ImageResize::CROPCENTER
                         ); // dimensions exactes finales
                         $image->save($path); // on écrase l'image originale
-                        C
+                        
                     } catch (Exception $e) {
                         echo "❌ Erreur avec $path : " . $e->getMessage() . "\n";
                     }
