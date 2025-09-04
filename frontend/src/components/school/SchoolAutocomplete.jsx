@@ -1,14 +1,34 @@
 import React, { useState } from "react";
 import { useSchoolsBy } from "../../hooks/useSchoolsBy";
+import { useSchoolsSearch } from "../../hooks/useSchoolsSearch";
 import { SchoolTable } from "./SchoolTable";
 
 export const SchoolAutocomplete = () => {
-  const [input, setInput] = useState("");
-  const { schools, loading, error, currentPage, totalPages, changePage } =
-    useSchoolsBy(input, 5, 1);
 
-  const handleChange = (e) => {
-    setInput(e.target.value);
+  const {
+    schools,
+    loading,
+    error,
+    pagination,
+    currentPage,
+    goToPage,
+    searchByName,
+    searchByType,
+  } = useSchoolsSearch();
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    searchByName(value);
+  };
+  const handleTypeChange = (e) => {
+    const value = e.target.value;
+    searchByType(value);
+  };
+  const handleNextPage = () => {
+    goToPage(currentPage + 1);
+  };
+  const handlePreviousPage = () => {
+    goToPage(currentPage - 1);
   };
 
   return (
@@ -17,11 +37,15 @@ export const SchoolAutocomplete = () => {
       
       <div className="mo-control-inline">
         <input
-          type="text"
-          value={input}
-          onChange={handleChange}
+          type="text" onChange={handleSearchChange}
           placeholder="Rechercher une école"
         />
+         {/* <select onChange={handleTypeChange} className="mo-btn mo-rounded"> */}
+        <select  className="mo-btn mo-rounded mo-hidden">
+          <option value="">Tous les types</option>
+          <option value="public">Public</option>
+          <option value="private">Privé</option>
+        </select>
         <button type="button" className="mo-btn mo-danger mo-rounded">
           vider
         </button>
@@ -39,19 +63,15 @@ export const SchoolAutocomplete = () => {
       <div className="pagination">
         <button
           className="mo-btn mo-primary"
-          onClick={() => changePage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Précédent
-        </button>
+          disabled={!pagination.hasPreviousPage} 
+          onClick={handlePreviousPage}
+        >Précédent</button>
         {/* <span>{currentPage} sur {totalPages}</span> */}
         <button
           className="mo-btn mo-primary"
-          onClick={() => changePage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Suivant
-        </button>
+          disabled={!pagination.hasNextPage} 
+          onClick={handleNextPage}
+        >Suivant</button>
       </div>
     </div>
   );

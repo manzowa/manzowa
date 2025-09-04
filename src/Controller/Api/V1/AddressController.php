@@ -277,11 +277,11 @@ namespace App\Controller\Api\V1
                 $addressRow = current($addressRows);
                 $address = Address::fromState(data: $addressRow);
                 $address
-                    ->setVoie(voie: $jsonObject->voie)
-                    ->setQuartier(quartier: $jsonObject->quartier)
-                    ->setDistrict(district: $jsonObject->district)
-                    ->setCommune(commune: $jsonObject->commune)
-                    ->setVille(ville: $jsonObject->ville);
+                    ->setVoie(voie: $jsonObject->voie ?? $address->getVoie())
+                    ->setQuartier(quartier: $jsonObject->quartier ?? $address->getQuartier())
+                    ->setDistrict(district: $jsonObject->district ?? $address->getDistrict())
+                    ->setCommune(commune: $jsonObject->commune ?? $address->getCommune())
+                    ->setVille(ville: $jsonObject->ville ?? $address->getVille());
                 $repository->update(address: $address);
 
                 if ($repository->rowCount() === 0) {

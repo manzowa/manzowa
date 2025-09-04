@@ -5,7 +5,7 @@ import { useLinkActive } from "../../hooks/useLinkActive";
 export const SchoolDetail = (props) => {
   const { school } = props;
   const { isActive } = useLinkActive(school?.site);
-  console.log("SchoolDetail", school.maximage);
+  //console.log("SchoolDetail", school.maximage);
   return (
     <div className="mo-accordion">
       <input type="checkbox" id="mo-accordion-detail" />

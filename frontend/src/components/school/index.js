@@ -4,3 +4,4 @@ export { SchoolLogo } from './SchoolLogo';
 export { SchoolAddresse } from './SchoolAddresse';
 export { SchoolSlider } from  './SchoolSlider';
 export { SchoolDetail } from './SchoolDetail';
+export { SchoolSchedule } from './SchoolSchedule';

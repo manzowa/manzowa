@@ -1,0 +1,246 @@
+<?php 
+
+/**
+ * File Event
+ * 
+ * User: Christian SHUNGU <christianshungu@gmail.com>
+ * Date: 11.08.2024
+ * php version 8.2
+ *
+ * @category App\Model
+ * @package  App\Model
+ * @author   Christian SHUNGU <christianshungu@gmail.com>
+ * @license  See LICENSE file
+ * @link     https://manzowa.com
+ */
+namespace App\Model
+{
+    use App\Exception\EventException;
+
+    final class Event
+    {
+        protected ?int $id;
+        protected ?string $titre;
+        protected ?string $description;
+        protected ?string $debut;
+        protected ?string $fin;
+        protected ?string $lieu;
+        protected ?int $imageid;
+        protected ?int $ecoleid;
+
+        public function __construct(
+            ?int $id, ?string $titre, 
+            ?string $description = null, 
+            ?string $debut = null, 
+            ?string $fin = null, 
+            ?string $lieu = null, 
+            ?int $ecoleid = null
+        ) {
+            $this
+                ->setId($id)
+                ->setTitre($titre)
+                ->setDescription($description)
+                ->setDebut($debut)
+                ->setFin($fin)
+                ->setLieu($lieu)
+                ->setEcoleid($ecoleid);
+        }
+
+        /**
+         * Get the value of id
+         * 
+         * @return ?int
+         */
+        public function getId(): ?int {
+            return $this->id;
+        }
+
+        /**
+         * Get the value of titre
+         * 
+         * @return ?string
+         */
+        public function getTitre(): ?string {
+            return $this->titre;
+        }
+
+        /**
+         * Get the value of description
+         * 
+         * @return ?string
+         */
+        public function getDescription(): ?string {
+            return $this->description;
+        }
+
+        /**
+         * Get the value of debut
+         * 
+         * @return ?string
+         */
+        public function getDebut(): ?string {
+            return $this->debut;
+        }
+        /**
+         * Get the value of fin
+         * 
+         * @return ?string
+         */
+        public function getFin(): ?string {
+            return $this->fin;
+        }
+
+        /**
+         * Get the value of lieu
+         * 
+         * @return ?string
+         */
+        public function getLieu(): ?string {
+            return $this->lieu;
+        }
+
+        /**
+         * Get the value of ecoleid
+         * 
+         * @return ?int
+         */
+        public function getEcoleid(): ?int {
+            return $this->ecoleid;
+        }
+
+        /**
+         * Set the value of id
+         *
+         * @param  ?int  $id
+         *
+         * @return self
+         */
+        private function setId(?int $id): self
+        {
+            if ($id !== null && !is_int($id)) {
+                throw new EventException("L'identifiant de l'event doit être un entier ou null.");
+            }
+            $this->id = $id;
+            return $this;
+        }
+        /**
+         * Set the value of titre
+         *
+         * @param  ?string  $titre
+         *
+         * @return self
+         */
+        public function setTitre(?string $titre): self
+        {
+            if ($titre !== null && (mb_strlen($titre) < 1 || mb_strlen($titre) > 100)) {
+                throw new EventException("Le titre de l'event doit contenir entre 1 et 100 caractères.");
+            }
+            $this->titre = $titre;
+            return $this;
+        }
+        /**
+         * Set the value of description
+         *
+         * @param  ?string  $description
+         *
+         * @return self
+         */
+        public function setDescription(?string $description): self
+        {
+            if ($description !== null && mb_strlen($description) > 1000) {
+                throw new EventException("La description de l'event ne doit pas dépasser 1000 caractères.");
+            }
+            $this->description = $description;
+            return $this;
+        }
+        /**
+         * Set the value of debut
+         * 
+         *
+         * @param  ?string  $debut
+         *
+         * @return self
+         */
+        public function setDebut(?string $debut): self
+        {
+            if ($debut !== null && !\DateTime::createFromFormat('Y-m-d', $debut)) {
+                throw new EventException("La date de début de l'event doit être au format YYYY-MM-DD.");
+            }
+            $this->debut = $debut;
+            return $this;
+        }
+         /**
+         * Set the value of fin
+         * 
+         *
+         * @param  ?string  $fin
+         *
+         * @return self
+         */
+        public function setFin(?string $fin): self
+        {
+            if ($fin !== null && !\DateTime::createFromFormat('Y-m-d', $fin)) {
+                throw new EventException("La date de fin de l'event doit être au format YYYY-MM-DD.");
+            }
+            $this->fin = $fin;
+            return $this;
+        }
+
+        /**
+         * Set the value of lieu
+         *
+         * @param  ?string  $lieu
+         *
+         * @return self
+         */
+        public function setLieu(?string $lieu): self
+        {
+            if ($lieu !== null && (mb_strlen($lieu) < 1 || mb_strlen($lieu) > 255)) {
+                throw new EventException("Le lieu de l'event doit contenir entre 1 et 255 caractères.");
+            }
+            $this->lieu = $lieu;
+            return $this;
+        }
+        /**
+         * Set the value of ecoleid
+         *
+         * @param  ?int  $ecoleid
+         *
+         * @return self
+         */
+        public function setEcoleid(?int $ecoleid): self
+        {
+            if ($ecoleid !== null && !is_int($ecoleid)) {
+                throw new EventException("L'identifiant de l'école doit être un entier ou null.");
+            }
+            $this->ecoleid = $ecoleid;
+            return $this;
+        }  
+
+        public function toArray(): array
+        {
+            return [
+                'id'          => $this->getId(),
+                'titre'      => $this->getTitre(),
+                'description' => $this->getDescription(),
+                'debut'      => $this->getDebut(),
+                'fin'        => $this->getFin(),
+                'lieu'        => $this->getLieu(),
+                'ecoleid'     => $this->getEcoleid()
+            ];
+        }
+
+        public static function fromState(array $data = []): Event
+        {
+            return new static(
+                id: $data['id'] ?? null,
+                titre: $data['titre'] ?? null,
+                description: $data['description'] ?? null,
+                debut: $data['debut'] ?? null,
+                fin: $data['fin'] ?? null,
+                lieu: $data['lieu'] ?? null,
+                ecoleid: $data['ecoleid'] ?? null
+            );
+        }
+    }
+}

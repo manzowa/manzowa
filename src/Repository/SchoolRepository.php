@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Model\School;
 use App\Model\Address;
 use App\Model\Image;
+use App\Model\Schedule;
 
 class SchoolRepository extends Repository implements \Countable 
 {
@@ -286,6 +287,27 @@ class SchoolRepository extends Repository implements \Countable
 
         return $images;
     }
+    private function _retrieveSchedule(?int $school_id = null): array
+    {
+        $horaires = [];
+        if (!is_null($school_id)) {
+            $command  = 'SELECT horaires.* FROM horaires ';
+            $command .= 'WHERE horaires.ecoleid = :ecoleid ';
+            $rows = $this->prepare($command)
+                ->bindParam(':ecoleid', $school_id, \PDO::PARAM_INT)
+                ->executeQuery()
+                ->getResults();
+
+            if (is_array($rows) && count($rows)> 0) {
+                foreach ($rows as $row) {
+                    $horaire = Schedule::fromState($row);
+                    $horaires[] = $horaire->toArray();
+                }
+            }
+        }
+
+        return $horaires;
+    }
     private function _getSchool(array $row) {
         return new School(
             id: $row['id'],
@@ -296,7 +318,8 @@ class SchoolRepository extends Repository implements \Countable
             site: $row['site'],
             maximage: $row['maximage'],
             images: $this->_retrieveImages(school_id: $row['id']),
-            adresses: $this->_retrieveAddresses(school_id: $row['id'])
+            adresses: $this->_retrieveAddresses(school_id: $row['id']),
+            horaires: $this->_retrieveSchedule(school_id: $row['id'])
         );
 
     }
@@ -326,6 +349,53 @@ class SchoolRepository extends Repository implements \Countable
                 $schools[] = $school->toArray();
             }
         }
+        return $schools;
+    }
+
+    public function retrieveBy(
+        int $limit, int $offset,
+        ?string $nom = null, ?string $type = null
+    ): array {
+        $schools = [];
+        $params = [];
+        $conditions = [];
+        $command = 'SELECT ecoles.* FROM ecoles ';
+
+        if (!empty($nom)) {
+            $conditions[] = 'MATCH(nom) AGAINST(:nom IN BOOLEAN MODE)';
+            $parseNom = sprintf('%s'.$nom."%s", "+", "*");
+            $params[':nom'] = [$parseNom, \PDO::PARAM_STR];
+        }
+
+        if (!empty($type)) {
+            $conditions[] = 'ecoles.type LIKE :type';
+            $params[':type'] = ['%' . $type . '%', \PDO::PARAM_STR];
+        }
+
+        if (!empty($conditions)) {
+            $command .= 'WHERE ' . implode(' AND ', $conditions) . ' ';
+        }
+
+        $command .= 'ORDER BY ecoles.id DESC LIMIT :limit OFFSET :offset';
+
+        $params[':limit'] = [$limit, \PDO::PARAM_INT];
+        $params[':offset'] = [$offset, \PDO::PARAM_INT];
+
+        $this->prepare($command);
+        foreach ($params as $key => [$value, $type]) {
+            $this->bindParam($key, $value, $type);
+        }
+
+        $rows = $this->executeQuery()->getResults();
+        $this->setTempRowCounted((int) $this->rowCount());
+
+        if (is_array($rows) && count($rows) > 0) {
+            foreach ($rows as $row) {
+                $school = $this->_getSchool(row: $row);
+                $schools[] = $school->toArray();
+            }
+        }
+
         return $schools;
     }
 }

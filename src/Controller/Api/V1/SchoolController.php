@@ -280,6 +280,84 @@ namespace App\Controller\Api\V1
                 ], 400);
             }
         }
+
+        /**
+         * Method getSchoolsByPageAndLimitAction [GET]
+         *
+         * @param Request $request
+         * @param Response $response
+         * @param Array $args
+         * 
+         * @return mixed
+         */
+        public function getSchoolsByAction(
+            Request $request, 
+            Response $response, 
+            array $args
+        ) : Response {
+
+            $page = (int) $args['page'];
+            $offsetParam = (int) ($args['offset']?? 5);
+            $nomParam = urldecode(htmlspecialchars($args['nom']?? '', ENT_QUOTES));
+            $typeParam = urldecode(htmlspecialchars($args['type']?? '', ENT_QUOTES));
+            $nom = isset($nomParam) ? trim($nomParam) : null;
+            $type = isset($typeParam) ? trim($typeParam) : null;
+
+            // Check Parameter Page
+            if (!$this->checkArguments($page)) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => "Page number cannot be blank or string. It's must be numeric"
+                ], 400);
+            }
+            try 
+            {
+                // Establish the connection Database
+                $connexionRead = Connexion::read();
+                $repository = new SchoolRepository($connexionRead);
+                $counter = $repository->count();
+                // Limit par page;
+                $limitPerPage = $offsetParam;
+                $ecolesCount  = intval($counter);
+                $numOfPages   = intval(ceil($ecolesCount / $limitPerPage));
+
+                
+                // First Page
+                if ($numOfPages == 0)  $numOfPages = 1;
+                if ($numOfPages < $page || 0 == $page) {
+                    return $this->jsonResponse([
+                        "success" => false,
+                        "message" => "Page not found."
+                    ], 400);
+                }
+                // Offset Page
+                $offset = (($page == 1) ? 0 : ($limitPerPage * ($page - 1)));
+                $schoolRows = $repository->retrieveBy(
+                    limit: $limitPerPage, offset: $offset,
+                    nom: $nom, type: $type
+                );
+                $rowCounted = $repository->getTemprowCounted();
+               
+                $returnData = [];
+                $returnData['rows_returned'] = $rowCounted;
+                $returnData['total_rows'] = $ecolesCount;
+                $returnData['total_pages'] = $numOfPages;
+                $returnData['has_next_page'] =  ($page < $numOfPages) ? true : false;
+                $returnData['has_privious_page'] =  ($page > 1) ? true : false;
+                $returnData['schools'] = $schoolRows;
+                return $this->jsonResponse([
+                    "success" => true,
+                    "data" => $returnData
+                ], 200);
+
+            } catch (SchoolException | AddressException $ex) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => $ex->getMessage()
+                ], 400);
+            }
+        }
+
         /**
          * Method getSchoolAction [GET]
          *

@@ -5,4 +5,4 @@ if errorlevel 1 (
     pause
     exit /b
 )
-php "%~dp0resize.php"
+php "%~dp0main.php"

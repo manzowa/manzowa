@@ -8,12 +8,12 @@ import { fetchSchools, fetchSchoolsByName } from "../service/api";
  * @param {number} offset - Page de pagination
  */
 export function useSchoolsBy(name, limit = 5, offset = 1) {
-  const [schools, setSchools] = useState([]);           // Liste des écoles
-  const [loading, setLoading] = useState(true);         // Indicateur de chargement
-  const [error, setError] = useState(null);             // Gestion d’erreur
+  const [schools, setSchools] = useState([]); // Liste des écoles
+  const [loading, setLoading] = useState(true); // Indicateur de chargement
+  const [error, setError] = useState(null); // Gestion d’erreur
   const [debouncedName, setDebouncedName] = useState(name);
   const [currentPage, setCurrentPage] = useState(offset); // Page courante
-  const [totalPages, setTotalPages] = useState(0);      // Nombre total de pages
+  const [totalPages, setTotalPages] = useState(0); // Nombre total de pages
 
   // Debounce le nom pour éviter trop d'appels API
   useEffect(() => {

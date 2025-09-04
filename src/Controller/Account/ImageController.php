@@ -70,7 +70,7 @@ class ImageController extends \App\Controller\Controller
                     }
                     // Ajout une image
                     $repository->addImage($image);
-                    $maxima = 1 + intval($school->getMaximage());
+                    $maxima= 1 + intval($school->getMaximage());
                     $school->setMaximage(maximage: $maxima);
                     $repository->update(school: $school);
                     $tmpName = $uploadedFile->getStream()->getMetadata('uri');

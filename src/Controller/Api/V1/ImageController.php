@@ -82,9 +82,9 @@ namespace App\Controller\Api\V1
         }
 
          /**
-         * Method getImagesAction [GET]
+         * Method postImagesAction [POST]
          * 
-         * Il permet de recupère les écoles
+         * Il permet d'ajouter des images
          * 
          * @param Request $request
          * @param Response $response

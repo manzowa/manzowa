@@ -50,15 +50,28 @@ $app->group('/api/v1', function ($group) {
         ->add(new App\Middleware\JsonSchoolBodyMiddleware())
         ->add(new App\Middleware\AuthMiddleware());;
         //Action school by Page
+        // With just page
         $group->get(
             '/page/{page:[0-9]+}', 
-            [\App\Controller\Api\V1\SchoolController::class, 'getSchoolsByPageAction']
-        )->setName('ecoles.get.page');
-        //Action school by Page AND Limit
+            [\App\Controller\Api\V1\SchoolController::class, 'getSchoolsByAction']
+        )->setName('ecoles.page.basic');
+
+        // With just page and limit
         $group->get(
-            '/page/{page:[0-9]+}/{limit:[0-9]+}',
-            [\App\Controller\Api\V1\SchoolController::class, 'getSchoolsByPageAndLimitAction']
-        )->setName('ecoles.get.pageAndLimit');
+            '/page/{page:[0-9]+}/{offset:[0-9]+}',
+            [\App\Controller\Api\V1\SchoolController::class, 'getSchoolsByAction']
+        )->setName('ecoles.page.limit');
+        //  With just 'nom'
+        $group->get(
+            '/page/{page:[0-9]+}/{offset:[0-9]+}/{nom}',
+            [\App\Controller\Api\V1\SchoolController::class, 'getSchoolsByAction']
+        )->setName('ecoles.page.nom');
+        // With all parameters
+        $group->get(
+            '/page/{page:[0-9]+}/{offset:[0-9]+}/{nom}/{type}',
+            [\App\Controller\Api\V1\SchoolController::class, 'getSchoolsByAction']
+        )->setName('ecoles.page.full');
+
         // Action school by ID
         $group->group('/{id:[0-9]+}', function($group) {
             $group->get(
@@ -172,6 +185,40 @@ $app->group('/api/v1', function ($group) {
                         ->add(new App\Middleware\JsonBodyParserMiddleware())
                         ->add(new App\Middleware\AuthMiddleware());
                     });
+                });
+            });
+            // Action Horaires
+            $group->group('/horaires', function($group) {
+                $group->get(
+                    '', 
+                    [App\Controller\Api\V1\ScheduleController::class, 'getSchedulesAction']
+                )->setName('schedules.index');
+                $group->post(
+                    '', 
+                    [App\Controller\Api\V1\ScheduleController::class, 'postSchedulesAction']
+                )->setName('schedules.post')
+                ->add(new App\Middleware\JsonMiddleware())
+                ->add(new App\Middleware\JsonScheduleBodyMiddleware())
+                ->add(new App\Middleware\AuthMiddleware());
+                $group->group('/{horaireid:[0-9]+}', function($group){
+                    $group->get(
+                        '', 
+                        [App\Controller\Api\V1\ScheduleController::class, 'getOneScheduleAction']
+                    )->setName('schedule.index');
+                    $group->delete(
+                        '', 
+                        [App\Controller\Api\V1\ScheduleController::class, 'deleteScheduleAction']
+                    )->setName('schedule.delete')
+                    ->add(new App\Middleware\JsonMiddleware())
+                    ->add(new App\Middleware\JsonScheduleBodyMiddleware())
+                    ->add(new App\Middleware\AuthMiddleware());
+                    $group->put(
+                        '', 
+                        [App\Controller\Api\V1\ScheduleController::class, 'putScheduleAction']
+                    )->setName('schedule.put')
+                    ->add(new App\Middleware\JsonMiddleware())
+                    ->add(new App\Middleware\JsonScheduleBodyMiddleware())
+                    ->add(new App\Middleware\AuthMiddleware());
                 });
             });
         });

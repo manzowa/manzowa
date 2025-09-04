@@ -13,7 +13,4 @@
  * @license  See LICENSE file
  * @link     https://manzowa.com
  */
-// use App\App;
 require_once join(DIRECTORY_SEPARATOR, [dirname(__DIR__), 'core', 'app.php']);
-// $app = new App($container);
-// \App\initRoutes($app);

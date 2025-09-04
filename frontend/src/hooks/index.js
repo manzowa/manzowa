@@ -1,4 +1,6 @@
-export { useSchools } from './hooks/useSchools';
-export { useSchool } from './hooks/useSchool';
-export { useImages } from './hooks/useImages';
-export { useLinkActive } from './hooks/useLinkActive';
+export { useSchools } from './useSchools';
+export { useSchool } from './useSchool';
+export { useImages } from './useImages';
+export { useLinkActive } from './useLinkActive';
+export { useSchoolsBy } from './useSchoolsBy';
+export { useSchoolsSearch } from './useSchoolsSearch';

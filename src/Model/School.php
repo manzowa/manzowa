@@ -27,6 +27,8 @@ namespace App\Model
         protected ?int $maximage;
         protected array $adresses;
         protected ?array $images;
+        protected ?array $horaires;
+
 
         public const MAXIMA_IMAGE = 5;
     
@@ -34,7 +36,8 @@ namespace App\Model
             ?int $id, ?string $nom, ?string $email = null, 
             ?string $telephone = null,  ?string $type = null, 
             ?string $site = null, ?int $maximage = null, 
-            array $adresses = [], array $images = []
+            array $adresses = [], array $images = [], 
+            array $horaires = []
         ) {
            $this
                 ->setId($id)
@@ -45,7 +48,8 @@ namespace App\Model
                 ->setSite($site)
                 ->setMaximage($maximage)
                 ->setAdresses($adresses)
-                ->setImages($images);
+                ->setImages($images)
+                ->setHoraires($horaires);
         }
 
         /**
@@ -120,6 +124,15 @@ namespace App\Model
          */
         public function getImages(): ?array {
             return $this->images;
+        }
+        
+        /**
+         * Get the value of schedules
+         *
+         * @return ?array
+         */
+        public function getHoraires(): ?array {
+            return $this->horaires;
         }
         /**
          * Set the value of id
@@ -253,6 +266,18 @@ namespace App\Model
             return $this;
         }
         /**
+         * Set the value of schedules
+         *
+         * @param ?array $schedules
+         *
+         * @return self
+         */
+        public function setHoraires(?array $horaires): self {
+            $this->horaires = $horaires;
+            return $this;
+        }
+
+        /**
          * Method toArray
          *
          * @return array
@@ -268,7 +293,8 @@ namespace App\Model
                 'site'      => $this->getSite(),
                 'maximage'  => $this->getMaximage(),
                 'adresses'  => $this->getAdresses(),
-                'images'    => $this->getImages()
+                'images'    => $this->getImages(),
+                'horaires'  => $this->getHoraires(),
             ];
         }
 
@@ -303,6 +329,7 @@ namespace App\Model
                 maximage: $data['maximage']?? null,
                 adresses: $data['adresses']?? [],
                 images: $data['images']?? [],
+                horaires: $data['horaires']?? []
             );
         }
 

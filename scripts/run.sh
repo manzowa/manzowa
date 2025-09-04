@@ -5,4 +5,4 @@ if ! command -v php &> /dev/null; then
     exit 1
 fi
 
-php "$(dirname "$0")/resize.php"
+php "$(dirname "$0")/main.php"
