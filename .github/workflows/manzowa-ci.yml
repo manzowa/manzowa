@@ -18,6 +18,8 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo, curl
+        coverage: none
 
     - name: ⚙️ Installer Node.js
       uses: actions/setup-node@v3
@@ -52,6 +54,7 @@ jobs:
         password: ${{ secrets.SERVER_PASS }}
         source: "."
         target: "/var/www/manzowa"
+        strip_components: 1  # Enlève le dossier racine si nécessaire
 
     - name: 📁 Créer le dossier d'upload sur le serveur distant
       if: github.ref == 'refs/heads/main'
