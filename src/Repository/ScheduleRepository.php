@@ -12,15 +12,16 @@ class ScheduleRepository extends Repository
     ): array {
         // Implementation for retrieving schedules
         $schedules = [];
-        $command = 'SELECT * FROM `horaires` h ';
+        $command = 'SELECT h.*  FROM `horaires` h ';
         $command .= 'INNER JOIN ecoles e on h.ecoleid = e.id ';
 
         if (!is_null($id) && !is_null($schoolid)) {
             $command .= 'WHERE h.ecoleid = :ecoleid ';
             $command .= 'AND h.id = :id ';
             $this->prepare($command)
-                ->bindParam(':id', $id, \PDO::PARAM_INT)
-                ->bindParam(':ecoleid', $schoolid, \PDO::PARAM_INT);
+             ->bindParam(':ecoleid', $schoolid, \PDO::PARAM_INT)
+             ->bindParam(':id', $id, \PDO::PARAM_INT);
+               
 
         }
         if (!is_null($id) && is_null($schoolid)) {
@@ -33,7 +34,7 @@ class ScheduleRepository extends Repository
             $command .= 'WHERE h.ecoleid = :schoolid ';
             $this->prepare($command)
                 ->bindParam(':schoolid', $schoolid, \PDO::PARAM_INT);
-        }
+        } 
 
         $scheduleRows = $this->executeQuery()
             ->getResults();

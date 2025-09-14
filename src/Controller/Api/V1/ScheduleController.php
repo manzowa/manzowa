@@ -178,6 +178,7 @@ namespace App\Controller\Api\V1
                     id: $schedule_id, 
                     schoolid: $school_id
                 );
+
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {

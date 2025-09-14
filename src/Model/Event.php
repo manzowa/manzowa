@@ -22,8 +22,7 @@ namespace App\Model
         protected ?int $id;
         protected ?string $titre;
         protected ?string $description;
-        protected ?string $debut;
-        protected ?string $fin;
+        protected ?string $date;
         protected ?string $lieu;
         protected ?int $imageid;
         protected ?int $ecoleid;
@@ -31,7 +30,7 @@ namespace App\Model
         public function __construct(
             ?int $id, ?string $titre, 
             ?string $description = null, 
-            ?string $debut = null, 
+            ?string $date = null, 
             ?string $fin = null, 
             ?string $lieu = null, 
             ?int $ecoleid = null
@@ -40,8 +39,7 @@ namespace App\Model
                 ->setId($id)
                 ->setTitre($titre)
                 ->setDescription($description)
-                ->setDebut($debut)
-                ->setFin($fin)
+                ->setDate($date)
                 ->setLieu($lieu)
                 ->setEcoleid($ecoleid);
         }
@@ -74,22 +72,13 @@ namespace App\Model
         }
 
         /**
-         * Get the value of debut
+         * Get the value of date
          * 
          * @return ?string
          */
-        public function getDebut(): ?string {
-            return $this->debut;
+        public function getDate(): ?string {
+            return $this->date;
         }
-        /**
-         * Get the value of fin
-         * 
-         * @return ?string
-         */
-        public function getFin(): ?string {
-            return $this->fin;
-        }
-
         /**
          * Get the value of lieu
          * 
@@ -154,38 +143,20 @@ namespace App\Model
             return $this;
         }
         /**
-         * Set the value of debut
+         * Set the value of date
          * 
-         *
-         * @param  ?string  $debut
+         * @param  ?string  $date
          *
          * @return self
          */
-        public function setDebut(?string $debut): self
+        public function setDate(?string $date): self
         {
-            if ($debut !== null && !\DateTime::createFromFormat('Y-m-d', $debut)) {
-                throw new EventException("La date de début de l'event doit être au format YYYY-MM-DD.");
+            if ($date !== null && !\DateTime::createFromFormat('Y-m-d', $date)) {
+                throw new EventException("La date de l'event doit être au format YYYY-MM-DD.");
             }
-            $this->debut = $debut;
+            $this->date = $date;
             return $this;
         }
-         /**
-         * Set the value of fin
-         * 
-         *
-         * @param  ?string  $fin
-         *
-         * @return self
-         */
-        public function setFin(?string $fin): self
-        {
-            if ($fin !== null && !\DateTime::createFromFormat('Y-m-d', $fin)) {
-                throw new EventException("La date de fin de l'event doit être au format YYYY-MM-DD.");
-            }
-            $this->fin = $fin;
-            return $this;
-        }
-
         /**
          * Set the value of lieu
          *
@@ -223,8 +194,7 @@ namespace App\Model
                 'id'          => $this->getId(),
                 'titre'      => $this->getTitre(),
                 'description' => $this->getDescription(),
-                'debut'      => $this->getDebut(),
-                'fin'        => $this->getFin(),
+                'date'      => $this->getDate(),
                 'lieu'        => $this->getLieu(),
                 'ecoleid'     => $this->getEcoleid()
             ];
@@ -236,8 +206,7 @@ namespace App\Model
                 id: $data['id'] ?? null,
                 titre: $data['titre'] ?? null,
                 description: $data['description'] ?? null,
-                debut: $data['debut'] ?? null,
-                fin: $data['fin'] ?? null,
+                date: $data['date'] ?? null,
                 lieu: $data['lieu'] ?? null,
                 ecoleid: $data['ecoleid'] ?? null
             );
