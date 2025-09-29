@@ -35,11 +35,11 @@ class AppRun
         // self::_processUpdateMaximageOfSchool();
         // self::_processUpdateTypeOfSchool();
 
-        sleep(2);
-        self::_processCreateTableEvenements();
-        self::_processAlterTableImages();
+        //sleep(2);
+        // self::_processCreateTableEvenements();
+        // self::_processAlterTableImages();
 
-        self::_processUpdateTypeOfImage();
+        // self::_processUpdateTypeOfImage();
         self::_processNoAction();
     }
     /**
