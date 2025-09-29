@@ -57,7 +57,8 @@ class ImageController extends \App\Controller\Controller
                         title: html_entity_decode($title),
                         filename: $newFilename,
                         mimetype: $uploadedFile->getMimeTypeFromFile(),
-                        ecoleid: $id
+                        ecoleid: $id,
+                        eventid: null
                     );
                     if (!is_null($school->getMaximage()) && $school->isMaximunImage()) {
                         $msg = "Vous ne pouvez pas ajouter cette image, ";

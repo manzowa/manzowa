@@ -24,16 +24,34 @@ namespace App\Model
         protected ?string $description;
         protected ?string $date;
         protected ?string $lieu;
-        protected ?int $imageid;
         protected ?int $ecoleid;
+        protected ?int $maximage;
+        protected array $images;
 
+        public const MAXIMA_IMAGE = 1;
+
+
+        /**
+         * Constructor
+         * 
+         * @param ?int    $id
+         * @param ?string $titre
+         * @param ?string $description
+         * @param ?string $date
+         * @param ?string $lieu
+         * @param ?int $ecoleid
+         * @param ?int $maximage
+         * @param array $images
+         */
         public function __construct(
-            ?int $id, ?string $titre, 
+            ?int $id, 
+            ?string $titre, 
             ?string $description = null, 
             ?string $date = null, 
-            ?string $fin = null, 
             ?string $lieu = null, 
-            ?int $ecoleid = null
+            ?int $ecoleid = null,
+            ?int $maximage = null,
+            array $images = []
         ) {
             $this
                 ->setId($id)
@@ -41,7 +59,9 @@ namespace App\Model
                 ->setDescription($description)
                 ->setDate($date)
                 ->setLieu($lieu)
-                ->setEcoleid($ecoleid);
+                ->setEcoleid($ecoleid)
+                ->setMaximage($maximage)
+                ->setImages($images);
         }
 
         /**
@@ -87,7 +107,6 @@ namespace App\Model
         public function getLieu(): ?string {
             return $this->lieu;
         }
-
         /**
          * Get the value of ecoleid
          * 
@@ -96,6 +115,24 @@ namespace App\Model
         public function getEcoleid(): ?int {
             return $this->ecoleid;
         }
+        /**
+         * Get the value of maximage
+         *
+         * @return ?int
+         */
+        public function getMaximage(): ?int {
+            return $this->maximage;
+        }
+
+        /**
+         * Get the value of images
+         *
+         * @return ?array
+         */
+        public function getImages():?array {
+            return $this->images;
+        }
+
 
         /**
          * Set the value of id
@@ -151,8 +188,10 @@ namespace App\Model
          */
         public function setDate(?string $date): self
         {
-            if ($date !== null && !\DateTime::createFromFormat('Y-m-d', $date)) {
-                throw new EventException("La date de l'event doit être au format YYYY-MM-DD.");
+            if ($date !== null && !\DateTime::createFromFormat('Y-m-d H:i:s', $date)) {
+                throw new EventException(
+                    "La date de l'event doit être au format YYYY-MM-DD H:i:s."
+                );
             }
             $this->date = $date;
             return $this;
@@ -167,11 +206,14 @@ namespace App\Model
         public function setLieu(?string $lieu): self
         {
             if ($lieu !== null && (mb_strlen($lieu) < 1 || mb_strlen($lieu) > 255)) {
-                throw new EventException("Le lieu de l'event doit contenir entre 1 et 255 caractères.");
+                throw new EventException(
+                    "Le lieu de l'event doit contenir entre 1 et 255 caractères."
+                );
             }
             $this->lieu = $lieu;
             return $this;
         }
+       
         /**
          * Set the value of ecoleid
          *
@@ -182,11 +224,52 @@ namespace App\Model
         public function setEcoleid(?int $ecoleid): self
         {
             if ($ecoleid !== null && !is_int($ecoleid)) {
-                throw new EventException("L'identifiant de l'école doit être un entier ou null.");
+                throw new EventException(
+                    "L'identifiant de l'école doit être un entier ou null."
+                );
             }
             $this->ecoleid = $ecoleid;
             return $this;
-        }  
+        }
+        /**
+         * Set the value of maximage
+         *
+         * @param  ?int  $maximage
+         *
+         * @return self
+         */
+        public function setMaximage(?int $maximage): self
+        {
+            if ((!is_null($maximage)) 
+                && (
+                    !is_numeric($maximage) 
+                    || $maximage <= 0 || $maximage > static::MAXIMA_IMAGE
+                )
+            ) {
+                throw new EventException("Maxime image error");
+            }
+            $this->maximage = $maximage;
+            return $this;
+        }
+
+        public function setImages(?array $images): self
+        {
+            if ($images !== null && !is_array($images)) {
+                throw new EventException(
+                    "Les images de l'event doivent être un tableau ou null."
+                );
+            }
+            $this->images = $images;
+            return $this;
+        }
+
+        public function isMaximunImage(): bool 
+        {
+            $isBool = (
+                !is_null($this->getMaximage()
+            ) && self::MAXIMA_IMAGE <= $this->getMaximage())? true : false;
+            return $isBool;
+        }
 
         public function toArray(): array
         {
@@ -196,7 +279,9 @@ namespace App\Model
                 'description' => $this->getDescription(),
                 'date'      => $this->getDate(),
                 'lieu'        => $this->getLieu(),
-                'ecoleid'     => $this->getEcoleid()
+                'ecoleid'     => $this->getEcoleid(),
+                'maximage'   => $this->getMaximage(),
+                'images'     => $this->getImages() ?? []
             ];
         }
 
@@ -208,7 +293,9 @@ namespace App\Model
                 description: $data['description'] ?? null,
                 date: $data['date'] ?? null,
                 lieu: $data['lieu'] ?? null,
-                ecoleid: $data['ecoleid'] ?? null
+                ecoleid: $data['ecoleid'] ?? null,
+                maximage: $data['maximage'] ?? null,
+                images: $data['images'] ?? []
             );
         }
     }

@@ -69,7 +69,7 @@ class AddressRepository extends Repository implements \Countable
             ->bindParam(':district', $district, \PDO::PARAM_STR)
             ->bindParam(':ville', $ville, \PDO::PARAM_STR)
             ->bindParam(':ecoleid', $ecoleid, \PDO::PARAM_INT)
-            ->executInsert();
+            ->executeInsert();
         return $this;
     }
     public function update(Address $address): self

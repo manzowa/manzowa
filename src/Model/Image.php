@@ -25,25 +25,37 @@ namespace App\Model
         protected ?string $title;
         protected ?string $filename;
         protected ?string $mimetype;
+        protected ?string $type; // e.g., 'S' = ecole, 'E' = event, etc.
         protected ?int $ecoleid;
+        protected ?int $evenementid;
         protected ?string $url;
+        protected ?string $location;
 
         protected ?string $uploadFolderLocation;
+       
      
 
         public function __construct
         (
-            ?int $id, ?string $title, ?string $filename,
-            ?string $mimetype,?int $ecoleid = null, ?string $url = null
+            ?int $id, 
+            ?string $title, 
+            ?string $filename,
+            ?string $mimetype,
+            ?string $type = "S",
+            ?int $ecoleid = null,
+            ?int $evenementid = null,
+            ?string $location = "ecoles"
         ) {
             $this
                 ->setId($id)
                 ->setTitle($title)
                 ->setFilename($filename)
                 ->setMimetype($mimetype)
+                ->setType($type)
                 ->setEcoleid($ecoleid)
+                ->setEvenementid($evenementid)
                 ->setUploadFolderLocation(
-                    \App\path('public', 'uploads', 'ecoles')
+                    \App\path('public', 'uploads', $location)
                 );
         }
                 
@@ -152,6 +164,57 @@ namespace App\Model
         }
 
         /**
+         * Get the value of type
+         *
+         * @return ?string
+         */
+        public function getType(): ?string {
+            return $this->type;
+        }
+        /**
+         * Set the value of type
+         *
+         * @param ?string $type
+         *
+         * @return self
+         */
+        public function setType(?string $type = "S"): self {
+            $type = strtoupper($type);
+            $allowedTypes = ['S', 'E']; // S = ecole, E = event
+            if (!is_null($type) && !in_array($type, $allowedTypes)) {
+                throw new ImageException('Image Type error');
+            }
+            $this->type = $type;
+            return $this;   
+        }
+        /**
+         * Get the value of evenementid
+         *
+         * @return ?int
+         */
+        public function getEvenementid(): ?int {
+            return $this->evenementid;
+        }
+        /**
+         * Set the value of eventid
+         *
+         * @param ?int $evenementid
+         *
+         * @return self
+         */ 
+        public function setEvenementid(?int $evenementid): self {
+            if (($evenementid!== null) 
+            && (
+                !is_numeric($evenementid) || $evenementid<= 0 
+                || $evenementid > 9223372036854775807 
+            )) {
+                throw new ImageException('Image Event ID error');
+            }
+            $this->evenementid = $evenementid;
+            return $this;
+        }
+
+        /**
          * Get the value of ecoleid
          *
          * @return ?int
@@ -186,7 +249,9 @@ namespace App\Model
                 'title'     => $this->getTitle(),
                 'filename'  => $this->getFilename(),
                 'mimetype'  => $this->getMimetype(),
+                'type'      => $this->getType(),
                 'ecoleid'   => $this->getEcoleid(),
+                'evenementid'   => $this->getEvenementid(),
                 'url' => $this->url()
             ];
         }
@@ -197,7 +262,7 @@ namespace App\Model
          * @return ?string
          */
         public function getUploadFolderLocation(): ?string {
-                return $this->uploadFolderLocation;
+            return $this->uploadFolderLocation;
         }
 
         /**
@@ -222,12 +287,16 @@ namespace App\Model
 
             if (!is_dir($uploadedDir)) {
                 if (!mkdir($uploadedDir, 0755, true)) {
-                    throw new ImageException("Failed to create image upload folder for task ");
+                    throw new ImageException(
+                        "Failed to create image upload folder for task "
+                    );
                 }
             }
 
             if (!is_writable($uploadedDir)) {
-                throw new ImageException("Upload directory is not writable: " . $uploadedDir);
+                throw new ImageException(
+                    "Upload directory is not writable: " . $uploadedDir
+                );
             }
 
             if (!file_exists($tempFileName)) {
@@ -238,13 +307,15 @@ namespace App\Model
                 throw new ImageException("Failed to upload image ");
             }
 
-             // ✅ Redimensionnement de l'image avec Gumlet après le déplacement
+            // ✅ Redimensionnement de l'image avec Gumlet après le déplacement
             try {
                 $image = new ImageResize($uploadedFilePath);
                 $image->crop(800, 600, true, ImageResize::CROPCENTER);
                 $image->save($uploadedFilePath); // Réécrit le même fichier avec l'image redimensionnée
             } catch (ImageResizeException $e) {
-                throw new ImageException("Failed to resize image: " . $e->getMessage());
+                throw new ImageException(
+                    "Failed to resize image: " . $e->getMessage()
+                );
             }
 
             return $this;
@@ -300,20 +371,28 @@ namespace App\Model
                 title:  $data['title']?? null,
                 filename:  $data['filename']?? null,
                 mimetype:  $data['mimetype']?? null,
-                ecoleid: $data['ecoleid']?? null
+                type:  $data['type']?? "S",
+                ecoleid: $data['ecoleid']?? null,
+                evenementid: $data['evenementid']?? null,
+                location: $data['location']?? "ecoles"
             );
         }
 
         public function url():string
         {
-            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
-            $host = $_SERVER['HTTP_HOST'];
-            if (!$this->getId()) {
-                return "";
+            if (!$id = $this->getId()) {
+                return '';
             }
-           $uri = sprintf("/api/v1/ecoles/%s/images/%s", $this->getEcoleid(), $this->getId());
-           $url = $protocol . "://" . $host . $uri;
-            return $url;
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost'; // Sécurité minimale si HTTP_HOST est absent
+            $ecoleId = $this->getEcoleid();
+            $eventId= $this->getEvenementId();
+
+            $uri = $this->getType() === 'E'
+            ? sprintf('/api/v1/ecoles/%s/evenements/%s/images/%s', $ecoleId, $eventId, $id)
+            : sprintf('/api/v1/ecoles/%s/images/%s', $ecoleId, $id);
+
+            return sprintf('%s://%s%s', $protocol, $host, $uri);
         }
 
         public function abspath():string {

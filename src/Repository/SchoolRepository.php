@@ -6,82 +6,98 @@ use App\Model\School;
 use App\Model\Address;
 use App\Model\Image;
 use App\Model\Schedule;
+use App\Model\Event;
 
 class SchoolRepository extends Repository implements \Countable 
 {
-    public function retrieve(?int $id = null, int $limit=0): array
+    public function retrieve(?int $id = null, int $limit = 0): array
     {
         $schools = [];
         $limit = ($limit > 0 && $limit <= 100) ? $limit : 20;
-        $command = 'SELECT * FROM `ecoles` e ';
+
+        // Base SQL
+        $sql = 'SELECT * FROM `ecoles` e';
+        $params = [];
+
+        // Add condition if ID is provided
         if (!is_null($id)) {
-            $command .="WHERE e.id = :id ORDER BY id desc LIMIT $limit";
-            $rows = $this->prepare($command)
-                ->bindParam(':id', $id, \PDO::PARAM_INT)
-                ->executeQuery()
-                ->getResults();
-            $this->setTempRowCounted((int) $this->rowCount());
-            if (is_array($rows) & count($rows) > 0) {
-                $row = current($rows);
-                $school = $this->_getSchool(row: $row);
-                $schools[] = $school->toArray();
-            }
-        } else {
-            $command .="ORDER BY id desc LIMIT $limit";
-            $rows = $this->prepare($command)
-                ->executeQuery()
-                ->getResults();
-            $this->setTempRowCounted((int) $this->rowCount());
-            if (is_array($rows) & count($rows) > 0) {
-                foreach ($rows as $row) {
-                    $school = $this->_getSchool(row: $row);
-                    $schools[] = $school->toArray();
-                }
-            }
+            $sql .= ' WHERE e.id = :id';
+            $params[':id'] = [$id, \PDO::PARAM_INT];
         }
+
+        // Finalize query
+        $sql .= ' ORDER BY e.id DESC LIMIT :limit';
+        $params[':limit'] = [$limit, \PDO::PARAM_INT];
+
+        // Prepare and bind
+        $this->prepare($sql);
+        foreach ($params as $key => [$value, $type]) {
+            $this->bindParam($key, $value, $type);
+        }
+        // Execute query and fetch rows
+        $rows = $this->executeQuery()->getResults();
+        $this->setTempRowCounted((int) $this->rowCount());
+
+        // Process results
+        foreach ((array) $rows as $row) {
+            $school = $this->_getSchool(row: $row);
+            $schools[] = $school->toArray();
+        }
+
         return $schools;
     }
-    public function searchByName(?string $nom = null, int $limit=0): array 
+    public function searchByName(?string $nom = null, int $limit = 0): array
     {
         $schools = [];
         $limit = ($limit > 0 && $limit <= 100) ? $limit : 20;
-        $command  = 'SELECT * FROM `ecoles` WHERE MATCH(nom) AGAINST(:nom IN BOOLEAN MODE) ';
-        $command .= 'ORDER BY nom desc LIMIT :limit';
-        if (!is_null($nom)) {
-            $parseNom = sprintf('%s'.$nom."%s", "+", "*");
-            $rows = $this->prepare($command)
-                ->bindParam(':nom', $parseNom, \PDO::PARAM_STR)
-                ->bindParam(':limit', $limit, \PDO::PARAM_INT)
-                ->executeQuery()
-                ->getResults();
-            $this->setTempRowCounted((int) $this->rowCount());
-            if (is_array($rows) & count($rows) > 0) {
-                foreach ($rows as $row) {
-                    $school = $this->_getSchool(row: $row);
-                    $schools[] = $school->toArray();
-                }
-            }
+
+        if (is_null($nom)) {
+            return $schools; // Early return if no name provided
         }
+
+        $sql = 'SELECT * FROM `ecoles` 
+                WHERE MATCH(nom) AGAINST(:nom IN BOOLEAN MODE) 
+                ORDER BY nom DESC 
+                LIMIT :limit';
+
+        // Prepare full-text search term
+        $searchTerm = '+' . $nom . '*';
+
+        $this->prepare($sql);
+        $this->bindParam(':nom', $searchTerm, \PDO::PARAM_STR);
+        $this->bindParam(':limit', $limit, \PDO::PARAM_INT);
+
+        $rows = $this->executeQuery()->getResults();
+        $this->setTempRowCounted((int) $this->rowCount());
+
+        foreach ((array) $rows as $row) {
+            $school = $this->_getSchool(row: $row);
+            $schools[] = $school->toArray();
+        }
+
         return $schools;
     }
-    public function retrieveByName(?string $nom = null): array 
+    public function retrieveByName(?string $nom = null): array
     {
-        $schools = [];
-        $command  = 'SELECT * FROM `ecoles` WHERE nom = :nom LIMIT 1';
-        if (!is_null($nom)) {
-            $rows = $this->prepare($command)
-                ->bindParam(':nom', $nom, \PDO::PARAM_STR)
-                ->executeQuery()
-                ->getResults();
-            $this->setTempRowCounted((int) $this->rowCount());
-            if (is_array($rows) & count($rows) > 0) {
-                foreach ($rows as $row) {
-                    $school = $this->_getSchool(row: $row);
-                    $schools[] = $school->toArray();
-                }
-            }
+        if (is_null($nom)) {
+            return [];
         }
-        return $schools;
+
+        $sql = 'SELECT * FROM `ecoles` WHERE nom = :nom LIMIT 1';
+
+        $this->prepare($sql)
+            ->bindParam(':nom', $nom, \PDO::PARAM_STR);
+
+        $rows = $this->executeQuery()->getResults();
+        $this->setTempRowCounted((int) $this->rowCount());
+
+        if (!empty($rows)) {
+            $row = $rows[0]; // Only one result expected
+            $school = $this->_getSchool(row: $row);
+            return [$school->toArray()];
+        }
+
+        return [];
     }
     public function add(School $school): self 
     {
@@ -101,7 +117,7 @@ class SchoolRepository extends Repository implements \Countable
             ->bindParam(':type', $type, \PDO::PARAM_STR|\PDO::PARAM_NULL)
             ->bindParam(':site', $site, \PDO::PARAM_STR|\PDO::PARAM_NULL)
             ->bindParam(':maximage', $maximage, \PDO::PARAM_INT|\PDO::PARAM_NULL)
-            ->executInsert();
+            ->executeInsert();
         $school_id = (int) $this->lastInsertId();
         $this->setTempRowCounted((int) $this->rowCount())
             ->setStockId(stockId: $school_id);
@@ -130,7 +146,7 @@ class SchoolRepository extends Repository implements \Countable
                     ->bindParam(':district', $district, \PDO::PARAM_STR)
                     ->bindParam(':ville', $ville, \PDO::PARAM_STR)
                     ->bindParam(':ecoleid', $school_id, \PDO::PARAM_INT)
-                    ->executInsert();
+                    ->executeInsert();
             }
         }
         $imageRows = $school->getImages();
@@ -151,7 +167,7 @@ class SchoolRepository extends Repository implements \Countable
                     ->bindParam(':filename', $filename, \PDO::PARAM_STR|\PDO::PARAM_NULL)
                     ->bindParam(':mimetype', $mimetype, \PDO::PARAM_STR|\PDO::PARAM_NULL)
                     ->bindParam(':ecoleid', $ecoleid, \PDO::PARAM_INT)
-                    ->executInsert();
+                    ->executeInsert();
             }
 
         }
@@ -212,7 +228,7 @@ class SchoolRepository extends Repository implements \Countable
             ->bindParam(':filename', $filename, \PDO::PARAM_STR|\PDO::PARAM_NULL)
             ->bindParam(':mimetype', $mimetype, \PDO::PARAM_STR|\PDO::PARAM_NULL)
             ->bindParam(':ecoleid', $ecoleid, \PDO::PARAM_INT)
-            ->executInsert();
+            ->executeInsert();
         return $this;
     }
     
@@ -308,6 +324,26 @@ class SchoolRepository extends Repository implements \Countable
 
         return $horaires;
     }
+    private function _retrieveEvents(?int $school_id = null): array
+    {
+        $events = [];
+        if (!is_null($school_id)) {
+            $command  = 'SELECT evenements.* FROM evenements ';
+            $command .= 'WHERE evenements.ecoleid = :ecoleid ';
+            $rows = $this->prepare($command)
+                ->bindParam(':ecoleid', $school_id, \PDO::PARAM_INT)
+                ->executeQuery()
+                ->getResults();
+
+            if (is_array($rows) && count($rows)> 0) {
+                foreach ($rows as $row) {
+                    $event = Event::fromState($row);
+                    $events[] = $event->toArray();
+                }
+            }
+        }
+        return $events;
+    }
     private function _getSchool(array $row) {
         return new School(
             id: $row['id'],
@@ -319,7 +355,8 @@ class SchoolRepository extends Repository implements \Countable
             maximage: $row['maximage'],
             images: $this->_retrieveImages(school_id: $row['id']),
             adresses: $this->_retrieveAddresses(school_id: $row['id']),
-            horaires: $this->_retrieveSchedule(school_id: $row['id'])
+            horaires: $this->_retrieveSchedule(school_id: $row['id']),
+            evenements: $this->_retrieveEvents(school_id: $row['id'])
         );
 
     }

@@ -103,7 +103,7 @@ class TokenRepository extends Repository implements \Countable
             ->bindParam(':accessTokenExpiry', $accessTokenExpiry, \PDO::PARAM_STR)
             ->bindParam(':refreshToken', $refreshToken, \PDO::PARAM_STR)
             ->bindParam(':refreshTokenExpiry', $refreshTokenExpiry, \PDO::PARAM_STR)
-            ->executInsert();
+            ->executeInsert();
 
         return $this;
     }

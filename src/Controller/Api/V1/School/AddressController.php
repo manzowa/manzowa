@@ -7,13 +7,13 @@
  * Date: 11.08.2024
  * php version 8.2
  *
- * @category App\Controller\Api\V1
- * @package  App\Controller\Api\V1
+ * @category App\Controller\Api\V1\School
+ * @package  App\Controller\Api\V1\School
  * @author   Christian SHUNGU <christianshungu@gmail.com>
  * @license  See LICENSE file
  * @link     https://manzowa.com
  */
-namespace App\Controller\Api\V1
+namespace App\Controller\Api\V1\School
 {
     use App\Database\Connexion;
     use App\Repository\SchoolRepository;

@@ -17,8 +17,7 @@ use Gumlet\ImageResize;
 
 class AppRun
 {
-    private static ?\PDO $pdo = null;
-    /**
+     /**
      * Méthode pour initialiser et exécuter les processus
      *
      * @return void
@@ -36,154 +35,12 @@ class AppRun
         // self::_processUpdateMaximageOfSchool();
         // self::_processUpdateTypeOfSchool();
 
+        sleep(2);
+        self::_processCreateTableEvenements();
+        self::_processAlterTableImages();
+
+        self::_processUpdateTypeOfImage();
         self::_processNoAction();
-    }
-    /**
-     * Méthode pour obtenir la connexion PDO
-     *
-     * @return \PDO|null
-     */
-    public static function getConnection(): ?\PDO
-    {
-        if (self::$pdo === null) {
-            try {
-                self::$pdo = new \PDO(
-                    getenv('DATABASE_SECURITY_DNS') ?? '',
-                    getenv('DATABASE_SECURITY_USER') ?? '',
-                    getenv('DATABASE_SECURITY_PASSWORD') ?? ''
-                );
-                self::$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            } catch (\PDOException $e) {
-                echo "❌  Error:  " . $e->getMessage();
-            }
-        }
-        return self::$pdo;
-    }
-
-    /**
-     * Méthode pour fermer la connexion PDO
-     *
-     * @return void
-     */
-    public static function closeConnection(): void{
-        self::$pdo = null;
-    }
-    /**
-     * Méthode pour récupérer toutes les écoles
-     *
-     * @return array
-     */
-    public static function getSchools(): array
-    {
-        try {
-            $pdo = static::getConnection();
-            $stmt = $pdo->prepare("SELECT * FROM ecoles ORDER BY id ASC");
-            $stmt->execute();
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\PDOException $e) {
-            // Handle or log the error
-            echo "❌Database error: " . $e->getMessage();
-            return [];
-        }
-    }
-    /**
-     *  Méthode pour récupérer toutes les écoles par type
-     *
-     * @return array
-     */
-    public static function getSchoolsByType(string $type): array 
-    {
-        try {
-            $pdo = static::getConnection();
-            $stmt = $pdo->prepare(
-                "SELECT id, type FROM ecoles WHERE type = :type ORDER BY id ASC"
-            );
-            $stmt->bindParam(':type', $type);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            // Handle or log the error
-            echo "❌Database error: " . $e->getMessage();
-            return [];
-        }
-
-    }
-
-    /**
-     * Methode 
-     *
-     * @return array
-     */
-    public static function getMaxImagesBySchools(): array
-    {
-        try {
-            $pdo = static::getConnection();
-            $stmt = $pdo->prepare("
-                SELECT ecoleid, COUNT(*) AS maximage
-                FROM images
-                GROUP BY ecoleid
-                ORDER BY maximage DESC
-            ");
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            // Handle or log the error
-            echo "❌ Database error: " . $e->getMessage();
-            return [];
-        }
-    }
-    /**
-     * Méthode pour insérer des horaires
-     */
-    public static function insertSchedule($jour, $debut, $fin, $ecoleid): void {
-       
-        try {
-            $pdo = static::getConnection();
-            $stmt = $pdo->prepare(
-                "INSERT INTO horaires (jour, debut, fin, ecoleid) 
-                VALUES (:jour, :debut, :fin, :ecoleid)"
-            );
-            $stmt->bindParam(':jour', $jour);
-            $stmt->bindParam(':debut', $debut);
-            $stmt->bindParam(':fin', $fin);
-            $stmt->bindParam(':ecoleid', $ecoleid);
-            $stmt->execute();
-            echo "✅ Horaire ajouté : $jour de $debut à $fin\n";
-        } catch (PDOException $e) {
-            echo "❌ Erreur lors de l'insertion des horaires : " . $e->getMessage() . "\n";
-        } finally {
-            self::closeConnection();
-        }
-    }
-     /**
-     * Méthode pour mise à jour le champs maximage school 
-     * @param int $id
-     * @param int $maximage
-     */
-    public static function updateSchool(int $id, int $maximage): void {
-        try {
-            $pdo = static::getConnection();
-            $stmt = $pdo->prepare(" UPDATE ecoles SET maximage = :maximage WHERE id = :id");
-            $stmt->bindParam(':maximage', $maximage);
-            $stmt->bindParam(':id', $id);
-            $stmt->execute();
-            echo "✅ École mise à jour : $id\n";
-        } catch (PDOException $e) {
-            echo "❌ Erreur lors de la mise à jour de l'école : " . $e->getMessage() . "\n";
-        }
-    }
-    public static function updateSchoolType(int $id, string $type): void 
-    {
-        try {
-            $pdo = self::getConnection();
-            $stmt = $pdo->prepare(" UPDATE ecoles SET type = :type WHERE id = :id");
-            $stmt->bindParam(':type', $type);
-            $stmt->bindParam(':id', $id);
-            $stmt->execute();
-            echo "✅ École mise à jour : $id\n";
-        } catch (PDOException $e) {
-            echo "❌ Erreur lors de la mise à jour de l'école : " . $e->getMessage() . "\n";
-        }
     }
     /**
      * Méthode pour rédimensionner une image
@@ -234,7 +91,7 @@ class AppRun
      * @return void
      */
     private static function _processCreateTableSchedule(): void {
-        $pdo = self::getConnection();
+        $pdo = App::getConnection();
 
         try {
             // Supprimer la table si elle existe
@@ -260,13 +117,52 @@ class AppRun
         } catch (PDOException $e) {
             echo "❌ Erreur lors de la création de la table 'horaires' : " . $e->getMessage() . "\n";
         }
-        self::closeConnection();
+        App::closeConnection();
+    }
+    /**
+     * Méthode pour insérer la table events
+     * 
+     * @return void
+     */
+    private static function _processCreateTableEvenements(): void {
+        $pdo = App::getConnection();
+
+        try {
+            $pdo->exec("DROP TABLE IF EXISTS `evenements`;");
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS `evenements` (
+                    `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID Event',
+                    `titre` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Titre Event',
+                    `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Description Event',
+                    `date` datetime DEFAULT NULL COMMENT 'Datetime Event',
+                    `lieu` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Lieu Event',
+                    `ecoleid` bigint UNSIGNED NOT NULL COMMENT 'ID school',
+                    PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Events Table';
+            ");
+            // Ajouter la contrainte de clé étrangère
+            $pdo->exec("ALTER TABLE `evenements`
+                ADD CONSTRAINT `evenements_to_ecoles_fk` 
+                FOREIGN KEY (`ecoleid`) 
+                REFERENCES `ecoles` (`id`) ON DELETE CASCADE;
+            ");
+            $pdo->exec("ALTER TABLE `evenements` 
+                ADD `maximage` TINYINT NULL COMMENT 'Image Max' AFTER `ecoleid`;"
+            );
+            
+            echo "✅ Table 'evenements' créée avec succès.\n";
+
+        } catch (PDOException $e) {
+            echo "❌ Erreur lors de la création de la table 'evenements' : " . $e->getMessage() . "\n";
+        }
+        App::closeConnection();
+
     }
     /**
      * Méthode pour insérer la table horaire
      */
     private static function _processInsertAllScheduleBySchool(): void {
-        $schools = self::getSchools();
+        $schools = App::getSchools();
         $semaines = [
             'Lundi', 'Mardi', 'Mercredi', 'Jeudi',
             'Vendredi', 'Samedi', 'Dimanche'
@@ -276,7 +172,7 @@ class AppRun
             $scholid = (int) $school['id'];
             foreach ($semaines as $jour) {
                 // Insérer des horaires par défaut pour chaque école
-                self::insertSchedule($jour, '00:00:00', '00:00:00', $scholid);
+                App::insertSchedule($jour, '00:00:00', '00:00:00', $scholid);
             }
             sleep(1); // Petite pause pour éviter de surcharger la base de données
         }
@@ -284,15 +180,43 @@ class AppRun
     }
 
     /**
+     * Méthode pour alter la table events
+     */
+    private static function _processAlterTableImages(): void {
+        $pdo = App::getConnection();
+        try {
+            $pdo->exec(
+                "ALTER TABLE `images` ADD `type` 
+                CHAR(3) NULL COMMENT 'Type Image' AFTER `mimetype`;"
+            );
+            $pdo->exec(
+                "ALTER TABLE `images` ADD `evenementid` 
+                BIGINT UNSIGNED NULL COMMENT 'Event ID' AFTER `ecoleid`;"
+            );
+            $pdo->exec("
+                ALTER TABLE `images`
+                ADD CONSTRAINT `images_to_evenements_fk` 
+                FOREIGN KEY (`evenementid`) 
+                REFERENCES `evenements` (`id`) 
+                ON DELETE CASCADE;
+            ");
+            echo "✅ Table 'images' modifiée avec succès.\n";
+        } catch (PDOException $e) {
+            echo "❌ Erreur lors de la modification de la table 'images' : " . $e->getMessage() . "\n";
+        }
+        App::closeConnection();
+    }
+
+    /**
      *  Méthode mise à jour du champ maximage
      */
     private static function _processUpdateMaximageOfSchool(): void 
     {
-        $images = self::getMaxImagesBySchools();
+        $images = App::getMaxImagesBySchools();
         foreach ($images as $image) {
             $ecoleid = (int) $image['ecoleid'];
             $maximage = (int) $image['maximage'];
-            self::updateSchool($ecoleid, $maximage);
+            App::updateSchool($ecoleid, $maximage);
         }
         echo "✅ Fin mise à jour maximage images\n";
     }
@@ -302,14 +226,27 @@ class AppRun
      */
     private static function _processUpdateTypeOfSchool(): void 
     {
-        $schools = self::getSchoolsByType('prive');
+        $schools = App::getSchoolsByType('prive');
 
         foreach ($schools as $school) {
             $ecoleid = (int) $school['id'];
-            self::updateSchoolType($ecoleid, 'privée');
+            App::updateSchoolType($ecoleid, 'privée');
         }
         echo "✅ Fin mise à jour : type \n";
 
+    }
+
+    /**
+     * Méthode mise à jour du champ type
+     */
+    private static function _processUpdateTypeOfImage(): void
+    {
+        $images = App::getImages();
+        foreach ($images as $image) {
+            $imageid = (int) $image['id'];
+            App::updateImageType($imageid, 'S');
+        }
+        echo "✅ Fin mise à jour : type \n";
     }
 
     /**
@@ -317,7 +254,6 @@ class AppRun
      */
     private static function _processNoAction(): void 
     {
-        echo "✅ Fin : Pas d'action \n";
+        echo "✅ Fin d'action \n";
     }
-
 }

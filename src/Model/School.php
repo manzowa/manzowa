@@ -28,6 +28,7 @@ namespace App\Model
         protected array $adresses;
         protected ?array $images;
         protected ?array $horaires;
+        protected ?array $evenements;
 
 
         public const MAXIMA_IMAGE = 5;
@@ -37,7 +38,7 @@ namespace App\Model
             ?string $telephone = null,  ?string $type = null, 
             ?string $site = null, ?int $maximage = null, 
             array $adresses = [], array $images = [], 
-            array $horaires = []
+            array $horaires = [], array $evenements = []
         ) {
            $this
                 ->setId($id)
@@ -49,7 +50,9 @@ namespace App\Model
                 ->setMaximage($maximage)
                 ->setAdresses($adresses)
                 ->setImages($images)
-                ->setHoraires($horaires);
+                ->setHoraires($horaires)
+                ->setEvenements($evenements);
+
         }
 
         /**
@@ -134,6 +137,15 @@ namespace App\Model
         public function getHoraires(): ?array {
             return $this->horaires;
         }
+        /**
+         * Get the value of evenements
+         *
+         * @return ?array
+         */
+        public function getEvenements(): ?array {
+            return $this->evenements;
+        }
+
         /**
          * Set the value of id
          */
@@ -245,7 +257,7 @@ namespace App\Model
             if ((!is_null($maximage)) 
                 && (
                     !is_numeric($maximage) 
-                    || $maximage <= 0 || $maximage > 5
+                    || $maximage <= 0 || $maximage > static::MAXIMA_IMAGE
                 )
             ) {
                 throw new SchoolException("Maxime image error");
@@ -276,6 +288,17 @@ namespace App\Model
             $this->horaires = $horaires;
             return $this;
         }
+        /**
+         * Set the value of evenements
+         *
+         * @param ?array $evenements
+         *
+         * @return self
+         */        
+        public function setEvenements(?array $evenements): self {
+            $this->evenements = $evenements;
+            return $this;   
+        }
 
         /**
          * Method toArray
@@ -295,6 +318,7 @@ namespace App\Model
                 'adresses'  => $this->getAdresses(),
                 'images'    => $this->getImages(),
                 'horaires'  => $this->getHoraires(),
+                'evenements'=> $this->getEvenements()
             ];
         }
 

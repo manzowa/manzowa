@@ -256,7 +256,7 @@ abstract class Repository
         }
         return $this;
     }
-    public function executInsert(?array $params = null): self
+    public function executeInsert(?array $params = null): self
     {
         try {
             $this->execute($params)

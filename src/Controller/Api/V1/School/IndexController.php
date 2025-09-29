@@ -1,20 +1,20 @@
 <?php
 
 /**
- * File SchoolController
+ * File IndexController
  * 
  * User: Christian SHUNGU <christianshungu@gmail.com>
  * Date: 11.08.2024
  * php version 8.2
  *
- * @category App\Controller\Api\V1
- * @package  App\Controller\Api\V1
+ * @category App\Controller\Api\V1\School
+ * @package  App\Controller\Api\V1\School
  * @author   Christian SHUNGU <christianshungu@gmail.com>
  * @license  See LICENSE file
  * @link     https://manzowa.com
  */
 
-namespace App\Controller\Api\V1 
+namespace App\Controller\Api\V1\School
 {
 
     use App\Database\Connexion;
@@ -25,7 +25,7 @@ namespace App\Controller\Api\V1
     use Psr\Http\Message\ServerRequestInterface as Request;
     use App\Model\School;
 
-    class SchoolController extends \App\Controller\ApiController
+    class IndexController extends \App\Controller\ApiController
     {
         /**
          * Method getSchoolsAction [GET]
@@ -266,7 +266,7 @@ namespace App\Controller\Api\V1
                 $returnData['total_rows'] = $ecolesCount;
                 $returnData['total_pages'] = $numOfPages;
                 $returnData['has_next_page'] =  ($page < $numOfPages) ? true : false;
-                $returnData['has_privious_page'] =  ($page > 1) ? true : false;
+                $returnData['has_previous_page'] =  ($page > 1) ? true : false;
                 $returnData['schools'] = $schoolRows;
                 return $this->jsonResponse([
                     "success" => true,
@@ -280,7 +280,6 @@ namespace App\Controller\Api\V1
                 ], 400);
             }
         }
-
         /**
          * Method getSchoolsByPageAndLimitAction [GET]
          *

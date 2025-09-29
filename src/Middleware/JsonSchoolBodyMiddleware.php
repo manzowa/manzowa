@@ -28,7 +28,7 @@ class JsonSchoolBodyMiddleware extends Middleware implements MiddlewareInterface
                 $propExisted = false;
 
                 foreach ($propSchools as $propSchool) {
-                    $arrFields = ['id', 'images', 'maximage'];
+                    $arrFields = ['id', 'images', 'maximage', 'horaires', 'evenements'];
                     if (!in_array($propSchool->getName(), $arrFields)) {
                         if (!property_exists($jsonObject, $propSchool->getName())) {
                             $propExisted = true;

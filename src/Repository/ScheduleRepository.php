@@ -61,7 +61,7 @@ class ScheduleRepository extends Repository
             ->bindParam(':debut', $debut, \PDO::PARAM_STR)
             ->bindParam(':fin', $fin, \PDO::PARAM_STR)
             ->bindParam(':ecoleid', $ecoleid, \PDO::PARAM_INT)
-            ->execute();
+            ->executeInsert();
     }
 
     public function update(Schedule $schedule): self
@@ -81,12 +81,10 @@ class ScheduleRepository extends Repository
             ->bindParam(':fin', $fin, \PDO::PARAM_STR)
             ->bindParam(':ecoleid', $ecoleid, \PDO::PARAM_INT)
             ->bindParam(':id', $id, \PDO::PARAM_INT)
-            ->execute();
+            ->executeUpdate();
 
         return $this; // Placeholder return
     }
-
-
     public function updateByDay(Schedule $schedule): self
     {
         // Implementation for updating a schedule
@@ -104,7 +102,7 @@ class ScheduleRepository extends Repository
             ->bindParam(':jour', $jour, \PDO::PARAM_STR)
             ->bindParam(':ecoleid', $ecoleid, \PDO::PARAM_INT)
             ->bindParam(':id', $id, \PDO::PARAM_INT)
-            ->execute();
+            ->executeUpdate();
 
         return $this;
     }

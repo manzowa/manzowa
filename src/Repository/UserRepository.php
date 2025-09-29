@@ -52,7 +52,7 @@ class UserRepository extends Repository implements \Countable
             ->bindParam(':password', $password, \PDO::PARAM_STR)
             ->bindParam(':active', $active, \PDO::PARAM_STR)
             ->bindParam(':attempts', $attempts, \PDO::PARAM_INT)
-            ->executInsert();
+            ->executeInsert();
         return $this;
     }
     public function update(User $user): self{

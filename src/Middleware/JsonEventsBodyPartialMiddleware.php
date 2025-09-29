@@ -6,10 +6,10 @@ use \Psr\Http\Server\MiddlewareInterface;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Server\RequestHandlerInterface as Handler;
 use \Psr\Http\Message\ResponseInterface as Response;
-use App\Model\School;
+use App\Model\Event;
 
 
-class JsonSchoolBodyPartialMiddleware extends Middleware implements MiddlewareInterface
+class JsonEventsBodyPartialMiddleware extends Middleware implements MiddlewareInterface
 {
     public function process(Request $request, Handler $handler): Response
     {
@@ -25,13 +25,13 @@ class JsonSchoolBodyPartialMiddleware extends Middleware implements MiddlewareIn
                     "message" => "Too many fields, only one required for this verbe."
                 ], 400);
             }
-            $refClass = new \ReflectionClass(School::class);
-            $propSchools = $refClass->getProperties();
+            $refClass = new \ReflectionClass(Event::class);
+            $propEvents = $refClass->getProperties();
             $propExisted = true;
             $field = null;
-            foreach ($propSchools as $propSchool) {
-                $named = $propSchool->getName();
-                $fields = ['id', 'images', 'maximage', 'horaires', 'evenements'];
+            foreach ($propEvents as $propEvent) {
+                $named = $propEvent->getName();
+                $fields = ['id', 'ecoleid', 'maximage', 'images'];
                 if (!in_array($named, $fields)) {
                     if (property_exists($jsonObject, $named)) {
                         $propExisted = false;
@@ -49,7 +49,7 @@ class JsonSchoolBodyPartialMiddleware extends Middleware implements MiddlewareIn
                 if (is_object($jsonObject) && empty($jsonObject->$field)) {
                     return $this->jsonResponse([
                         "success" => false,
-                        "message" => "School ".ucfirst($field)." cannot be blank."
+                        "message" => "Event ".ucfirst($field)." cannot be blank."
                     ], 400);
                 }
             }

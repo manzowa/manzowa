@@ -7,18 +7,18 @@
  * Date: 11.08.2024
  * php version 8.2
  *
- * @category App\Controller\Api\V1
- * @package  App\Controller\Api\V1
+ * @category App\Controller\Api\V1\School
+ * @package  App\Controller\Api\V1\School
  * @author   Christian SHUNGU <christianshungu@gmail.com>
  * @license  See LICENSE file
  * @link     https://manzowa.com
  */
 
-namespace App\Controller\Api\V1 
+namespace App\Controller\Api\V1\School
 {
     use App\Database\Connexion;
-    use App\Model\ScheduleModel;
     use App\Exception\ScheduleException;
+    use App\Exception\SchoolException;
     use App\Model\Schedule;
     use App\Repository\ScheduleRepository;
     use App\Repository\SchoolRepository;
@@ -111,7 +111,7 @@ namespace App\Controller\Api\V1
                         "message" => "School Not Found."
                     ], 500);
                 }
-            } catch (ScheduleException $ex) {
+            } catch (SchoolException $ex) {
                 return $this->jsonResponse([
                     "success" => false,
                     'message' => $ex->getMessage(),
@@ -126,9 +126,9 @@ namespace App\Controller\Api\V1
                 $dt = new \DateTime('00:00:00');
                 $schedule  = new Schedule(
                     id: null,
-                    jour: $jsonObject['jour'] ?? null,
-                    debut: $jsonObject['debut'] ?? $dt->format('H:i:s'),
-                    fin: $jsonObject['fin'] ?? $dt->format('H:i:s'),
+                    jour: $jsonObject->jour ?? null,
+                    debut: $jsonObject->debut ?? $dt->format('H:i:s'),
+                    fin: $jsonObject->fin ?? $dt->format('H:i:s'),
                     ecoleid: $school_id
                 );
                 $connexionWrite = Connexion::Write();
@@ -201,6 +201,80 @@ namespace App\Controller\Api\V1
         }
             
         /**
+         *  Method putScheduleAction [PUT]
+         * 
+         *  Il permet de mettre à jour un horaire d'école
+         *
+         * @param Request $request
+         * @param Response $response
+         * @param array $args
+         *
+         * @return Response
+         */
+        public function putScheduleAction(
+            Request $request, 
+            Response $response, 
+            array $args
+        ): Response {
+
+            $school_id = (int) $args['id'];
+            $schedule_id = (int) $args['horaireid'];
+
+            // Check Parameter Schedule Id
+            if (!$this->checkArguments($schedule_id, $school_id)) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => "Schedule ID or School ID number cannot be blank or string. It's must be numeric"
+                ], 400);
+            }
+
+            // Retrieve  Body
+            $jsonObject = $request->getParsedBody();
+        
+            // Mise à jour dans la base de données
+            try {
+                $connexionWrite = Connexion::Write();
+                $repository = new ScheduleRepository($connexionWrite);
+                $scheduleRows =$repository->retrieve(id: $schedule_id, schoolid: $school_id);
+                $rowCounted = $repository->rowCount();
+
+                if ($rowCounted == 0) {
+                    return $this->jsonResponse([
+                        "success" => false,
+                        "message" => "Schedule Not Found."
+                    ], 500);
+                }
+
+                
+                $scheduleRow = current($scheduleRows);
+                $schedule = Schedule::fromState($scheduleRow);
+                $schedule->setJour(jour: $jsonObject->jour ?? $schedule->getJour());
+                $schedule->setDebut(debut: $jsonObject->debut ?? $schedule->getDebut());
+                $schedule->setFin(fin: $jsonObject->fin ?? $schedule->getFin());
+
+                // Mise à jour
+                $repository->update($schedule);
+                if ($repository->rowCount() == 0) {
+                    return $this->jsonResponse([
+                        "success" => false,
+                        "message" => "No changes made to the schedule."
+                    ], 200);
+                }
+            
+                return $this->jsonResponse([
+                    "success" => true,
+                    "message" => "Schedule updated successfully."
+                ], 200);
+
+            } catch (ScheduleException $ex) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    'message' => $ex->getMessage(),
+                ], 400);
+            }
+        }
+
+        /**
          *  Method deleteScheduleAction [DELETE]
          * 
          * Il permet de supprimer un horaire d'école
@@ -245,68 +319,6 @@ namespace App\Controller\Api\V1
                 return $this->jsonResponse([
                     "success" => true,
                     "message" => "Schedule deleted successfully."
-                ], 200);
-
-            } catch (ScheduleException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
-            }
-        }
-
-        /**
-         *  Method putScheduleAction [PUT]
-         * 
-         *  Il permet de mettre à jour un horaire d'école
-         *
-         * @param Request $request
-         * @param Response $response
-         * @param array $args
-         *
-         * @return Response
-         */
-        public function putScheduleAction(
-            Request $request, 
-            Response $response, 
-            array $args
-        ): Response {
-
-            $school_id = (int) $args['id'];
-            $schedule_id = (int) $args['horaireid'];
-
-            // Check Parameter Schedule Id
-            if (!$this->checkArguments($schedule_id, $school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Schedule ID or School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
-
-            // Retrieve  Body
-            $jsonObject = $request->getParsedBody();
-            // Mise à jour dans la base de données
-            try {
-                $connexionWrite = Connexion::Write();
-                $repository = new ScheduleRepository($connexionWrite);
-                $scheduleRows =$repository->retrieve(id: $schedule_id, schoolid: $school_id);
-                $rowCounted = $repository->rowCount();
-
-                if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Schedule Not Found."
-                    ], 500);
-                }
-                $scheduleRow = current($scheduleRows);
-                $schedule = Schedule::fromState($scheduleRow);
-                $schedule->setJour(jour: $jsonObject->jour ?? $schedule->getJour());
-                $schedule->setDebut(debut: $jsonObject->debut ?? $schedule->getDebut());
-                $schedule->setFin(fin: $jsonObject->fin ?? $schedule->getFin());
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "message" => "Schedule updated successfully."
                 ], 200);
 
             } catch (ScheduleException $ex) {
