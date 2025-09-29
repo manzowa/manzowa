@@ -76,6 +76,327 @@ namespace App\Controller\Api\V1\Event
         }
 
         /**
+         * Method getAllEventByIdAction [GET]
+         * 
+         * Il permet de recupère les événements
+         * 
+         * @param Request $request
+         * @param Response $response
+         * @param array $args
+         *
+         * @return mixed
+         */
+        public function getAllEventByIdAction(
+            Request $request, 
+            Response $response, 
+            array $args
+        ): Response {
+            $event_id = (int) $args['id'] ?? null;
+            $limitParam = (int) ($args['limit']?? 20);
+            
+            try 
+            {
+                $connexionRead = Connexion::read();
+                $repository = new EventRepository($connexionRead);
+                $events = $repository->retrieveAll(
+                    id: $event_id,
+                    limit: $limitParam
+                );
+                $rowCounted = $repository->rowCount();
+
+                if ($rowCounted == 0) {
+                    return $this->jsonResponse([
+                        "success" => false,
+                        "message" => 'Events not found'
+                    ], 400);
+                }
+
+                return $this->jsonResponse([
+                    "success" => true,
+                    "data" => [
+                        "rows_returned" => $rowCounted,
+                        "events" => $events,
+                    ]
+                ], 200);
+            } catch (EventException $ex) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => $ex->getMessage()
+                ], 400);
+            }
+        }
+        /**
+         * Method getAllEventTwoAction [GET]
+         * 
+         * Il permet de recupère les événements
+         * 
+         * @param Request $request
+         * @param Response $response
+         * @param array $args
+         *
+         * @return mixed
+         */
+        public function getAllEventTwoAction(
+            Request $request, 
+            Response $response, 
+            array $args
+        ): Response {
+            $event_id = (int) $args['id'] ?? null;
+            $school_id = (int) $args['ecole_id'] ?? null;
+            $limitParam = (int) ($args['limit']?? 20);
+            
+            try 
+            {
+                $connexionRead = Connexion::read();
+                $repository = new EventRepository($connexionRead);
+                $events = $repository->retrieveAll(
+                    id: $event_id,
+                    ecoleid: $school_id,
+                    limit: $limitParam
+                );
+                $rowCounted = $repository->rowCount();
+
+                if ($rowCounted == 0) {
+                    return $this->jsonResponse([
+                        "success" => false,
+                        "message" => 'Events not found'
+                    ], 400);
+                }
+
+                return $this->jsonResponse([
+                    "success" => true,
+                    "data" => [
+                        "rows_returned" => $rowCounted,
+                        "events" => $events,
+                    ]
+                ], 200);
+            } catch (EventException $ex) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => $ex->getMessage()
+                ], 400);
+            }
+        }
+        /**
+         * Method getAllEventThreeAction [GET]
+         * 
+         * Il permet de recupère les événements
+         * 
+         * @param Request $request
+         * @param Response $response
+         * @param array $args
+         *
+         * @return mixed
+         */
+        public function getAllEventThreeAction(
+            Request $request, 
+            Response $response, 
+            array $args
+        ): Response {
+            $event_id = (int) $args['id'] ?? null;
+            $school_id = (int) $args['ecole_id'] ?? null;
+            $strNom = (string) $args['nom'] ?? null;
+            $limitParam = (int) ($args['limit']?? 20);
+            
+            try 
+            {
+                $connexionRead = Connexion::read();
+                $repository = new EventRepository($connexionRead);
+                $events = $repository->retrieveAll(
+                    id: $event_id,
+                    ecoleid: $school_id,
+                    nomEcole: $strNom,
+                    limit: $limitParam
+                );
+                $rowCounted = $repository->rowCount();
+
+                if ($rowCounted == 0) {
+                    return $this->jsonResponse([
+                        "success" => false,
+                        "message" => 'Events not found'
+                    ], 400);
+                }
+
+                return $this->jsonResponse([
+                    "success" => true,
+                    "data" => [
+                        "rows_returned" => $rowCounted,
+                        "events" => $events,
+                    ]
+                ], 200);
+            } catch (EventException $ex) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => $ex->getMessage()
+                ], 400);
+            }
+        }
+        /**
+         * Method getAllEventFourAction [GET]
+         * 
+         * Il permet de recupère les événements
+         * 
+         * @param Request $request
+         * @param Response $response
+         * @param array $args
+         *
+         * @return mixed
+         */
+        public function getAllEventFourAction(
+            Request $request, 
+            Response $response, 
+            array $args
+        ): Response {
+            $event_id = (int) $args['id'] ?? null;
+            $school_id = (int) $args['ecole_id'] ?? null;
+            $strNom = (string) $args['nom'] ?? null;
+            $strTitre = (string) $args['titre'] ?? null;
+            $limitParam = (int) ($args['limit']?? 20);
+            
+            try 
+            {
+                $connexionRead = Connexion::read();
+                $repository = new EventRepository($connexionRead);
+                $events = $repository->retrieveAll(
+                    id: $event_id,
+                    ecoleid: $school_id,
+                    nomEcole: $strNom,
+                    titre: $strTitre,
+                    limit: $limitParam
+                );
+                $rowCounted = $repository->rowCount();
+
+                if ($rowCounted == 0) {
+                    return $this->jsonResponse([
+                        "success" => false,
+                        "message" => 'Events not found'
+                    ], 400);
+                }
+
+                return $this->jsonResponse([
+                    "success" => true,
+                    "data" => [
+                        "rows_returned" => $rowCounted,
+                        "events" => $events,
+                    ]
+                ], 200);
+            } catch (EventException $ex) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => $ex->getMessage()
+                ], 400);
+            }
+        }
+        /**
+         * Method getAllEventFiveAction [GET]
+         * 
+         * Il permet de recupère les événements
+         * 
+         * @param Request $request
+         * @param Response $response
+         * @param array $args
+         *
+         * @return mixed
+         */
+        public function getAllEventFiveAction(
+            Request $request, 
+            Response $response, 
+            array $args
+        ): Response {
+            $event_id = (int) $args['id'] ?? null;
+            $school_id = (int) $args['ecole_id'] ?? null;
+            $strNom = (string) $args['nom'] ?? null;
+            $strTitre = (string) $args['titre'] ?? null;
+            $strLieu  = (string) $args['lieu'] ?? null;
+            $limitParam = (int) ($args['limit']?? 20);
+            
+            try 
+            {
+                $connexionRead = Connexion::read();
+                $repository = new EventRepository($connexionRead);
+                $events = $repository->retrieveAll(
+                    id: $event_id,
+                    ecoleid: $school_id,
+                    nomEcole: $strNom,
+                    titre: $strTitre,
+                    lieu: $strLieu,
+                    limit: $limitParam
+                );
+                $rowCounted = $repository->rowCount();
+
+                if ($rowCounted == 0) {
+                    return $this->jsonResponse([
+                        "success" => false,
+                        "message" => 'Events not found'
+                    ], 400);
+                }
+
+                return $this->jsonResponse([
+                    "success" => true,
+                    "data" => [
+                        "rows_returned" => $rowCounted,
+                        "events" => $events,
+                    ]
+                ], 200);
+            } catch (EventException $ex) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => $ex->getMessage()
+                ], 400);
+            }
+        }
+        /**
+         * Method getAllEventByNomAction [GET]
+         * 
+         * Il permet de recupère les événements
+         * 
+         * @param Request $request
+         * @param Response $response
+         * @param array $args
+         *
+         * @return mixed
+         */
+        public function getAllEventByNomAction(
+            Request $request, 
+            Response $response, 
+            array $args
+        ): Response {
+            $strNom = (string) $args['nom'] ?? null;
+            $limitParam = (int) ($args['limit']?? 20);
+            
+            try 
+            {
+                $connexionRead = Connexion::read();
+                $repository = new EventRepository($connexionRead);
+                $events = $repository->retrieveAll(
+                    nomEcole: $strNom,
+                    limit: $limitParam
+                );
+                $rowCounted = $repository->rowCount();
+
+                if ($rowCounted == 0) {
+                    return $this->jsonResponse([
+                        "success" => false,
+                        "message" => 'Events not found'
+                    ], 400);
+                }
+
+                return $this->jsonResponse([
+                    "success" => true,
+                    "data" => [
+                        "rows_returned" => $rowCounted,
+                        "events" => $events,
+                    ]
+                ], 200);
+            } catch (EventException $ex) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => $ex->getMessage()
+                ], 400);
+            }
+        }
+
+        /**
          * Method getEventsAction [GET]
          * 
          * Il permet de recupère les événements

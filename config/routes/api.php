@@ -320,80 +320,40 @@ $app->group('/api/v1', function ($group) {
         $group->get('', [
             App\Controller\Api\V1\Event\IndexController::class,
             'getAllEventsAction'
-        ])->setName('events.main.index');
-        // $group->post('', [
-        //     App\Controller\Api\V1\Event\IndexController::class,
-        //     'postAllEventsAction'
-        // ])->setName('events.main.post')
-        //     ->add(new App\Middleware\JsonMiddleware())
-        //     ->add(new App\Middleware\JsonBodyParserMiddleware())
-        //     ->add(new App\Middleware\JsonEventsBodyMiddleware())
-        //     ->add(new App\Middleware\AuthMiddleware());
-
-        // $group->group('/{evenementid:[0-9]+}', function ($group) {
-        //     $group->get('', [
-        //         App\Controller\Api\V1\Event\IndexController::class,
-        //         'getEventAction'
-        //     ])->setName('event.index');
-        //     // $group->put('', [
-        //     //     App\Controller\Api\V1\Event\IndexController::class,
-        //     //     'putEventAction'
-        //     // ])->setName('event.put')
-        //     //     ->add(new App\Middleware\JsonMiddleware())
-        //     //     ->add(new App\Middleware\JsonBodyParserMiddleware())
-        //     //     ->add(new App\Middleware\JsonEventsBodyMiddleware())
-        //     //     ->add(new App\Middleware\AuthMiddleware());
-        //     // $group->patch('', [
-        //     //     App\Controller\Api\V1\Event\IndexController::class,
-        //     //     'patchEventAction'
-        //     // ])->setName('event.patch')
-        //     //     ->add(new App\Middleware\JsonMiddleware())
-        //     //     ->add(new App\Middleware\JsonBodyParserMiddleware())
-        //     //     ->add(new App\Middleware\JsonEventsBodyPartialMiddleware())
-        //     //     ->add(new App\Middleware\AuthMiddleware());
-        //     // $group->delete('', [
-        //     //     App\Controller\Api\V1\Event\IndexController::class,
-        //     //     'deleteEventAction'
-        //     // ])->setName('event.delete')
-        //     //     ->add(new App\Middleware\AuthMiddleware());
-        //     // // Action Images (sous-groupe d’évenements)
-        //     // $group->group('/images', function ($group) {
-        //     //     $group->get('', [
-        //     //         App\Controller\Api\V1\Event\ImageController::class,
-        //     //         'getEventImagesAction'
-        //     //     ])->setName('event.images.index');
-        //     //     $group->post('', [
-        //     //         App\Controller\Api\V1\Event\ImageController::class,
-        //     //         'postEventImagesAction'
-        //     //     ])->setName('event.images.post')
-        //     //         ->add(new App\Middleware\FormImageBodyMiddleware())
-        //     //         ->add(new App\Middleware\AuthMiddleware());
-        //     //     $group->group('/{imageid:[0-9]+}', function ($group) {
-        //     //         $group->get('', [
-        //     //             App\Controller\Api\V1\Event\ImageController::class,
-        //     //             'getEventImageAction'
-        //     //         ])->setName('event.image.index');
-        //     //         $group->delete('', [
-        //     //             App\Controller\Api\V1\Event\ImageController::class,
-        //     //             'deleteEventImageAction'
-        //     //         ])->setName('event.image.delete')
-        //     //             ->add(new App\Middleware\AuthMiddleware());
-        //     //         // Action Images (sous-groupe d’attributes)
-        //     //         $group->group('/attributes', function ($group) {
-        //     //             $group->get('', [
-        //     //                 App\Controller\Api\V1\Event\ImageController::class,
-        //     //                 ' getEventImageAttributesAction'
-        //     //             ])->setName('image.attributes.index');
-        //     //             $group->patch('', [
-        //     //                 App\Controller\Api\V1\Event\ImageController::class,
-        //     //                 'patchImageAttributesAction'
-        //     //             ])->setName('image.attributes.patch')
-        //     //                 ->add(new App\Middleware\JsonMiddleware())
-        //     //                 ->add(new App\Middleware\JsonBodyParserMiddleware())
-        //     //                 ->add(new App\Middleware\AuthMiddleware());
-        //     //         });
-        //     //     });
-        //     // });
-        // });
+        ])->setName('events.all.index');
+        $group->group('/{id:[0-9]+}', function ($group) {
+            $group->get('', [
+                App\Controller\Api\V1\Event\IndexController::class,
+                'getAllEventByIdAction'
+            ])->setName('event.allby.id');
+            $group->group('/{ecole_id:[0-9]+}', function ($group) {
+                $group->get('', [
+                    App\Controller\Api\V1\Event\IndexController::class,
+                    'getAllEventTwoAction'
+                ])->setName('event.allby.two');
+                $group->group('/{nom:[a-zA-Z0-9_-]+}', function ($group) {
+                    $group->get('', [
+                        App\Controller\Api\V1\Event\IndexController::class,
+                        'getAllEventThreeAction'
+                    ])->setName('event.allby.three');
+                    $group->group('/{titre:[a-zA-Z0-9_-]+}', function ($group) {
+                        $group->get('', [
+                            App\Controller\Api\V1\Event\IndexController::class,
+                            'getAllEventFourAction'
+                        ])->setName('event.allby.four');
+                        $group->group('/{lieu:[a-zA-Z0-9_-]+}', function ($group) {
+                            $group->get('', [
+                                App\Controller\Api\V1\Event\IndexController::class,
+                                'getAllEventFiveAction'
+                            ])->setName('event.allby.five');
+                        });
+                    });
+                });
+            });
+        });
+        $group->get('/{nom:[a-zA-Z0-9_-]+}', [
+            App\Controller\Api\V1\Event\IndexController::class,
+            'getAllEventByNomAction'
+        ])->setName('event.allby.nom');
     });
 })->add(new App\Middleware\DatabaseConnectionMiddleware());
