@@ -33,8 +33,6 @@ namespace App\Model
 
         protected ?string $uploadFolderLocation;
        
-     
-
         public function __construct
         (
             ?int $id, 
@@ -99,7 +97,7 @@ namespace App\Model
          * @return self
          */
         public function setTitle(?string $title): self {
-            if (strlen($title) < 1 || strlen($title) > 255) {
+            if (!is_null($title) && (strlen($title) < 1 || strlen($title) > 255)) {
                 throw new ImageException('Image title error');
             }
             $this->title = $title;
@@ -179,7 +177,7 @@ namespace App\Model
          * @return self
          */
         public function setType(?string $type = "S"): self {
-            $type = strtoupper($type);
+            $type = !is_null($type)? strtoupper($type): $type;
             $allowedTypes = ['S', 'E']; // S = ecole, E = event
             if (!is_null($type) && !in_array($type, $allowedTypes)) {
                 throw new ImageException('Image Type error');
