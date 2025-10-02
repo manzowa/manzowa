@@ -321,39 +321,26 @@ $app->group('/api/v1', function ($group) {
             App\Controller\Api\V1\Event\IndexController::class,
             'getAllEventsAction'
         ])->setName('events.all.index');
+        // GET /evenements/filtre/{datetime}
+        $group->group('/filtre', function ($group) {
+            $group->group('/{datetime}', function ($group) {
+                $group->get('', [
+                    App\Controller\Api\V1\Event\IndexController::class,
+                    'getAllEventFilterByDatetimeAction'
+                ])->setName('event.filter.nom');
+
+               $group->get('/{ville:[a-zA-Z0-9_-]+}', [
+                    App\Controller\Api\V1\Event\IndexController::class,
+                    'getAllEventFilterByDatetimeAndTownAction'
+                ])->setName('event.filter.ville');
+            });
+        });
+        // GET /evenements/{id}
         $group->group('/{id:[0-9]+}', function ($group) {
             $group->get('', [
                 App\Controller\Api\V1\Event\IndexController::class,
                 'getAllEventByIdAction'
             ])->setName('event.allby.id');
-            $group->group('/{ecole_id:[0-9]+}', function ($group) {
-                $group->get('', [
-                    App\Controller\Api\V1\Event\IndexController::class,
-                    'getAllEventTwoAction'
-                ])->setName('event.allby.two');
-                $group->group('/{nom:[a-zA-Z0-9_-]+}', function ($group) {
-                    $group->get('', [
-                        App\Controller\Api\V1\Event\IndexController::class,
-                        'getAllEventThreeAction'
-                    ])->setName('event.allby.three');
-                    $group->group('/{titre:[a-zA-Z0-9_-]+}', function ($group) {
-                        $group->get('', [
-                            App\Controller\Api\V1\Event\IndexController::class,
-                            'getAllEventFourAction'
-                        ])->setName('event.allby.four');
-                        $group->group('/{lieu:[a-zA-Z0-9_-]+}', function ($group) {
-                            $group->get('', [
-                                App\Controller\Api\V1\Event\IndexController::class,
-                                'getAllEventFiveAction'
-                            ])->setName('event.allby.five');
-                        });
-                    });
-                });
-            });
         });
-        $group->get('/{nom:[a-zA-Z0-9_-]+}', [
-            App\Controller\Api\V1\Event\IndexController::class,
-            'getAllEventByNomAction'
-        ])->setName('event.allby.nom');
     });
 })->add(new App\Middleware\DatabaseConnectionMiddleware());

@@ -134,6 +134,8 @@ class EventRepository extends Repository implements \Countable
         ?string $nomEcole = null,
         ?string $titre = null,
         ?string $lieu = null,
+        ?string $dateTime = null,
+        ?string $ville = null,
         ?int $limit = null,
         ?int $offset = null
     ): array {
@@ -184,9 +186,20 @@ class EventRepository extends Repository implements \Countable
             $conditions[] = 'ev.lieu LIKE :lieu';
             $params[':lieu'] = ['%' . $lieu . '%', \PDO::PARAM_STR];
         }
+
+        if (!is_null($dateTime)) {
+            $conditions[] = 'ev.date LIKE :date';
+            $params[':date'] = [$dateTime . '%', \PDO::PARAM_STR];
+        }
+
         if (!is_null($nomEcole)) {
             $conditions[] = 'e.nom LIKE :nomEcole';
             $params[':nomEcole'] = ['%' . $nomEcole . '%', \PDO::PARAM_STR];
+        }
+
+        if (!is_null($ville)) {
+            $conditions[] = 'a.ville LIKE :ville';
+            $params[':ville'] = ['%' . $ville . '%', \PDO::PARAM_STR];
         }
 
         // Ajout de la clause WHERE si nécessaire

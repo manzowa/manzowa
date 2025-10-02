@@ -346,7 +346,7 @@ namespace App\Controller\Api\V1\Event
             }
         }
         /**
-         * Method getAllEventByNomAction [GET]
+         * Method getAllEventFilterByDateAction [GET]
          * 
          * Il permet de recupère les événements
          * 
@@ -356,20 +356,88 @@ namespace App\Controller\Api\V1\Event
          *
          * @return mixed
          */
-        public function getAllEventByNomAction(
+        public function getAllEventFilterByDatetimeAction(
             Request $request, 
             Response $response, 
             array $args
         ): Response {
-            $strNom = (string) $args['nom'] ?? null;
+            $datetimeString = urldecode($args['datetime']);
             $limitParam = (int) ($args['limit']?? 20);
-            
+
+            if (!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $datetimeString)) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => 'Invalid format'
+                ], 400);
+            }
+
             try 
             {
                 $connexionRead = Connexion::read();
                 $repository = new EventRepository($connexionRead);
                 $events = $repository->retrieveAll(
-                    nomEcole: $strNom,
+                    dateTime: $datetimeString,
+                    limit: $limitParam
+                );
+                $rowCounted = $repository->rowCount();
+
+                if ($rowCounted == 0) {
+                    return $this->jsonResponse([
+                        "success" => false,
+                        "message" => 'Events not found'
+                    ], 400);
+                }
+
+                return $this->jsonResponse([
+                    "success" => true,
+                    "data" => [
+                        "rows_returned" => $rowCounted,
+                        "events" => $events,
+                    ]
+                ], 200);
+            } catch (EventException $ex) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => $ex->getMessage()
+                ], 400);
+            }
+        }
+        /**
+         * Method getAllEventFilterByDatetimeAndTownAction [GET]
+         * 
+         * Il permet de recupère les événements
+         * 
+         * @param Request $request
+         * @param Response $response
+         * @param array $args
+         *
+         * @return mixed
+         */
+        public function getAllEventFilterByDatetimeAndTownAction(
+            Request $request, 
+            Response $response, 
+            array $args
+        ): Response {
+            $strDatetime = urldecode($args['datetime']) ?? null;
+            $strVille = urldecode($args['ville']) ?? null;
+            $limitParam = (int) ($args['limit']?? 20);
+
+            if (!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $strDatetime)) {
+                return $this->jsonResponse([
+                    "success" => false,
+                    "message" => 'Invalid format'
+                ], 400);
+            }
+            if (in_array($strVille, ["all", "*", "any"])) {
+                $strVille = null;
+            }
+            try 
+            {
+                $connexionRead = Connexion::read();
+                $repository = new EventRepository($connexionRead);
+                $events = $repository->retrieveAll(
+                    dateTime: $strDatetime,
+                    ville: $strVille,
                     limit: $limitParam
                 );
                 $rowCounted = $repository->rowCount();
