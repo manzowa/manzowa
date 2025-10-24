@@ -64,7 +64,7 @@ namespace App\Controller\Api\V1\Event
                     "success" => true,
                     "data" => [
                         "rows_returned" => $rowCounted,
-                        "events" => $events,
+                        "evenements" => $events,
                     ]
                 ], 200);
             } catch (EventException $ex) {
@@ -107,7 +107,7 @@ namespace App\Controller\Api\V1\Event
                 if ($rowCounted == 0) {
                     return $this->jsonResponse([
                         "success" => false,
-                        "message" => 'Events not found'
+                        "message" => 'Event not found'
                     ], 400);
                 }
 
@@ -115,7 +115,7 @@ namespace App\Controller\Api\V1\Event
                     "success" => true,
                     "data" => [
                         "rows_returned" => $rowCounted,
-                        "events" => $events,
+                        "evenements" => $events,
                     ]
                 ], 200);
             } catch (EventException $ex) {
@@ -167,7 +167,7 @@ namespace App\Controller\Api\V1\Event
                     "success" => true,
                     "data" => [
                         "rows_returned" => $rowCounted,
-                        "events" => $events,
+                        "evenements" => $events,
                     ]
                 ], 200);
             } catch (EventException $ex) {
@@ -221,7 +221,7 @@ namespace App\Controller\Api\V1\Event
                     "success" => true,
                     "data" => [
                         "rows_returned" => $rowCounted,
-                        "events" => $events,
+                        "evenements" => $events,
                     ]
                 ], 200);
             } catch (EventException $ex) {
@@ -277,7 +277,7 @@ namespace App\Controller\Api\V1\Event
                     "success" => true,
                     "data" => [
                         "rows_returned" => $rowCounted,
-                        "events" => $events,
+                        "evenements" => $events,
                     ]
                 ], 200);
             } catch (EventException $ex) {
@@ -392,7 +392,7 @@ namespace App\Controller\Api\V1\Event
                     "success" => true,
                     "data" => [
                         "rows_returned" => $rowCounted,
-                        "events" => $events,
+                        "evenements" => $events,
                     ]
                 ], 200);
             } catch (EventException $ex) {
@@ -453,7 +453,7 @@ namespace App\Controller\Api\V1\Event
                     "success" => true,
                     "data" => [
                         "rows_returned" => $rowCounted,
-                        "events" => $events,
+                        "evenements" => $events,
                     ]
                 ], 200);
             } catch (EventException $ex) {
@@ -504,7 +504,7 @@ namespace App\Controller\Api\V1\Event
                 }
 
                 $returnData['rows_returned'] = $rowCounted;
-                $returnData['events'] = $eventsRows;
+                $returnData['evenements'] = $eventsRows;
                 return $this->jsonResponse([
                     "success" => true,
                     "data" => $returnData
@@ -603,7 +603,7 @@ namespace App\Controller\Api\V1\Event
 
                 $returnData = [];
                 $returnData['rows_inserted'] =  $rowCounted;
-                $returnData['event'] = current($events);
+                $returnData['evenement'] = current($events);
 
                 return $this->jsonResponse([
                     "success" => true,
@@ -661,7 +661,7 @@ namespace App\Controller\Api\V1\Event
                     "success" => true,
                     "data" =>[
                         "rows_returned" => $rowCounted,
-                        "event" => $eventRow,
+                        "evenement" => $eventRow,
                     ]
                 ], 200);
 
@@ -740,7 +740,7 @@ namespace App\Controller\Api\V1\Event
                 $eventRow = current($eventRows);
                 $returnData = [];
                 $returnData['rows_counted'] =  $rowCounted;
-                $returnData['event'] = $eventRow;
+                $returnData['evenement'] = $eventRow;
 
                 return $this->jsonResponse([
                     "success" => true,
@@ -828,7 +828,7 @@ namespace App\Controller\Api\V1\Event
 
                 $returnData = [];
                 $returnData['rows_counted'] = $rowCounted;
-                $returnData['event'] =  $eventRow;
+                $returnData['evenement'] =  $eventRow;
                 return $this->jsonResponse([
                     "success" => true,
                     "data"=> $returnData

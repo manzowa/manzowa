@@ -316,6 +316,7 @@ $app->group('/api/v1', function ($group) {
         ])->setName('ecole.nomAndLimit');
     });
     // Action Evenements (global)
+    // GET /evenements
     $group->group('/evenements', function ($group) {
         $group->get('', [
             App\Controller\Api\V1\Event\IndexController::class,

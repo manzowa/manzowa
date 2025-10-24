@@ -287,7 +287,7 @@ class SchoolRepository extends Repository implements \Countable
         $images = [];
         if (!is_null($school_id)) {
             $command  = 'SELECT images.* FROM images ';
-            $command .= 'WHERE images.ecoleid = :ecoleid ';
+            $command .= 'WHERE type = "S" and images.ecoleid = :ecoleid ';
             $rows = $this->prepare($command)
                 ->bindParam(':ecoleid', $school_id, \PDO::PARAM_INT)
                 ->executeQuery()
@@ -328,8 +328,12 @@ class SchoolRepository extends Repository implements \Countable
     {
         $events = [];
         if (!is_null($school_id)) {
-            $command  = 'SELECT evenements.* FROM evenements ';
-            $command .= 'WHERE evenements.ecoleid = :ecoleid ';
+            $command = "SELECT ev.id, ev.titre, ev.description, ev.date, ev.lieu, ev.ecoleid, "; 
+            $command .="ev.maximage, i.id as imageid, i.title, i.filename, i.mimetype, i.type "; 
+            $command .=" FROM evenements ev " ;
+            $command .=" LEFT JOIN images i ON i.evenementid = ev.id ";
+            $command .="WHERE ev.ecoleid = :ecoleid ";
+
             $rows = $this->prepare($command)
                 ->bindParam(':ecoleid', $school_id, \PDO::PARAM_INT)
                 ->executeQuery()
@@ -337,7 +341,27 @@ class SchoolRepository extends Repository implements \Countable
 
             if (is_array($rows) && count($rows)> 0) {
                 foreach ($rows as $row) {
-                    $event = Event::fromState($row);
+                    $image = Image::fromState(
+                        [
+                            'id'        => $row['imageid']?? null,
+                            'title'     => $row['title']?? null,
+                            'filename'  => $row['filename']?? null,
+                            'mimetype'  => $row['mimetype']?? null,
+                            'type'      => $row['type']?? null,
+                            'ecoleid'   => $row['ecoleid']?? null,
+                            'evenementid' => $row['id']?? null,
+                        ]
+                    );
+                    $event = Event::fromState([
+                        'id'          => $row['id']?? null,
+                        'titre'      => $row['titre']?? null,
+                        'description' => $row['description']?? null,
+                        'date'      => $row['date']?? null,
+                        'lieu'        => $row['lieu']?? null,
+                        'ecoleid'     => $row['ecoleid']?? null,
+                        'maximage'   => $row['maximage']?? null,
+                        'images'     => [$image->toArray()]
+                    ]);
                     $events[] = $event->toArray();
                 }
             }
