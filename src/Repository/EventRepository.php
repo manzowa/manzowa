@@ -41,6 +41,7 @@ class EventRepository extends Repository implements \Countable
         foreach ($params as $param => [$value, $type]) {
             $this->bindParam($param, $value, $type);
         }
+        
         $eventRows = $this->executeQuery()->getResults();
         $this->setTempRowCounted((int) $this->rowCount());
 
@@ -49,7 +50,7 @@ class EventRepository extends Repository implements \Countable
                 $event = $this->_getEvent(row: $eventRow);
                 $events[] = $event->toArray();
             }
-        }
+        } 
         return $events;
     }
     public function add(Event $event): self

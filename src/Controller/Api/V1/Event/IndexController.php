@@ -576,7 +576,7 @@ namespace App\Controller\Api\V1\Event
                     description: $jsonObject->description?? null,
                     date: $jsonObject->date?? null,
                     lieu: $jsonObject->lieu?? null,
-                    ecoleid: $school_id,
+                    ecoleid: $school_id
                 );
 
                 // Add new Event
@@ -591,8 +591,9 @@ namespace App\Controller\Api\V1\Event
                     
                 }
                 $event_id = (int) $repository->lastInsertId();
-                $events = $repository->retrieve($event_id);
-                $rowCounted = $repository->rowCount();
+
+                $events = $repository->retrieve(id: $event_id);
+                $rowCounted = $repository->getTempRowCounted();
 
                 if ($rowCounted === 0) {
                     return $this->jsonResponse([
