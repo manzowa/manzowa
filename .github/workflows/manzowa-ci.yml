@@ -36,7 +36,7 @@ jobs:
       working-directory: ./frontend
       run: npm run build
     - name: 🖼️ Rendre le script run.sh exécutable
-      run: chmod +x scripts/run.sh
+      run: chmod +x migrations/run.sh
 
     - name: 🖼️ Lancer le script de redimensionnement
       run: ./migrations/run.sh
