@@ -201,11 +201,11 @@ namespace App\Model
         }
 
 
-        public function isAccesstokenexpiry(): bool {
+        public function isAccessTokenExpiry(): bool {
             return (strtotime($this->getAccessTokenExpiry()) < time());
         }
 
-        public function isRefreshtokenexpiry(): bool {
+        public function isRefreshTokenExpiry(): bool {
             return (strtotime($this->getRefreshTokenExpiry()) < time());
         }
         public function accessTokenExpired() : bool {

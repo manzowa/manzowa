@@ -13,6 +13,17 @@ $app->group('/api/v1', function ($group) {
         '/docs',
         [App\Controller\Api\V1\DocumentController::class, 'getDocAction']
     )->setName('doc.index');
+    // action Users
+    $group->group('/users', function ($group) {
+        $group->post(
+            '',
+            [App\Controller\Api\V1\UserController::class, 'postUserAction']
+        )->setName('users.post')
+            ->add(new App\Middleware\JsonMiddleware())
+            ->add(new App\Middleware\JsonBodyParserMiddleware())
+            ->add(new App\Middleware\JsonUserBodyMiddleware());
+
+    });
     // Action Sessions
     $group->group('/token', function ($group) {
         $group->post(
@@ -344,8 +355,8 @@ $app->group('/api/v1', function ($group) {
             ])->setName('event.allby.id');
         });
     });
-    // Action coments
-    $group->group('/commentaires', function ($group) {
+    // Action comments
+    $group->group('/comments', function ($group) {
         $group->get('', [
             App\Controller\Api\V1\CommentController::class,
             'getCommentsAction'
@@ -355,7 +366,8 @@ $app->group('/api/v1', function ($group) {
             'postCommentsAction'
         ])->setName('comments.post')
             ->add(new App\Middleware\JsonMiddleware())
-            ->add(new App\Middleware\JsonBodyParserMiddleware());
+            ->add(new App\Middleware\JsonBodyParserMiddleware())
+            ->add(new App\Middleware\AuthMiddleware());
         
         $group->group('/{id:[0-9]+}', function ($group) {
             $group->get('', [
@@ -367,12 +379,13 @@ $app->group('/api/v1', function ($group) {
                 'putCommentByIdAction'
             ])->setName('comments.put')
                 ->add(new App\Middleware\JsonMiddleware())
-                ->add(new App\Middleware\JsonBodyParserMiddleware());
+                ->add(new App\Middleware\JsonBodyParserMiddleware())
+                ->add(new App\Middleware\AuthMiddleware());
         });
     });
 
     // Action ratings
-    $group->group('/notations', function ($group) {
+    $group->group('/ratings', function ($group) {
         $group->get('', [
             App\Controller\Api\V1\RatingController::class,
             'getRatingsAction'
@@ -382,7 +395,8 @@ $app->group('/api/v1', function ($group) {
             'postRatingAction'
         ])->setName('ratings.post')
             ->add(new App\Middleware\JsonMiddleware())
-            ->add(new App\Middleware\JsonBodyParserMiddleware());
+            ->add(new App\Middleware\JsonBodyParserMiddleware())
+            ->add(new App\Middleware\AuthMiddleware());
     
         $group->group('/{id:[0-9]+}', function ($group) {
             $group->get('', [
@@ -394,7 +408,8 @@ $app->group('/api/v1', function ($group) {
                 'putRatingByIdAction'
             ])->setName('ratings.put')
                 ->add(new App\Middleware\JsonMiddleware())
-                ->add(new App\Middleware\JsonBodyParserMiddleware());
+                ->add(new App\Middleware\JsonBodyParserMiddleware())
+                ->add(new App\Middleware\AuthMiddleware());
         });
     });
 })->add(new App\Middleware\DatabaseConnectionMiddleware());

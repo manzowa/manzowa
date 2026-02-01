@@ -16,7 +16,7 @@ enum UserRole: int
     public static function all(): array
     {
         return array_map(fn($r) => $r->value, self::cases());
-    }   
+    } 
     
      /**
      * Return a string representation of the role.

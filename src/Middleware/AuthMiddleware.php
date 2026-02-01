@@ -30,14 +30,14 @@ class AuthMiddleware  extends Middleware implements MiddlewareInterface
             ], 401);
         }
         // Check if user has exceeded maximum login attempts
-        if ($auth->getUserByToken()->isLocked()) {
+        if ($auth->hasLocked()) {
             return $this->jsonResponse([
                 "success" => false,
                 "message" => "User account is currently locked out"
             ], 401);
         }
          // Check refresh token expiration
-        if ($auth->getToken()->accessTokenExpired()) {
+        if ($auth->hasExpired()) {
             return $this->jsonResponse([
                 "success" => false,
                 "message" => "Access token expired"

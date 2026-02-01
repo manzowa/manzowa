@@ -13,17 +13,7 @@ class IndexController extends Controller
 {
     public function index(Request $request, Response $response): Response
     {
-        // // $user = new User(
-        // //     id: 1,
-        // //     fullname: "John Doe",
-        // //     username: "johndoe",
-        // //     email: "john.doe@example.com",
-        // //     password: "password123",
-        // //     status: UserStatus::ACTIVE,
-        // //     attempts: 0,
-        // //     role: UserRole::PREMIUM,
-        // //     metadata: []
-        // // );
+
 
         // $dataUser = [
         //     'id' => 1,

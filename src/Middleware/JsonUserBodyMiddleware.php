@@ -30,7 +30,10 @@ class JsonUserBodyMiddleware extends Middleware implements MiddlewareInterface
                 $propUsers = $refClass->getProperties();
                 $propExisted = false;
                 foreach ($propUsers as $propUser) {
-                    $arrFields = ['id', 'fullname', 'email', 'active', 'attempts'];
+                    $arrFields = [
+                        'id', 'status','attempts', 'role', 'role_id', 'metadata', 
+                        'createdAt', 'updatedAt', 'created_at', 'updated_at'
+                    ];
                     $nameProp = $propUser->getName();
                     if (!in_array($nameProp, $arrFields)) {
                         if (!property_exists($jsonObject, $nameProp)) {

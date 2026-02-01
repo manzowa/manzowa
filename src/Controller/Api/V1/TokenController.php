@@ -98,9 +98,9 @@ namespace App\Controller\Api\V1
                 }
                 
                 return $this->response(true, 'Token created successfully', [
-                    'session_id' => intval($lastSessionId),
-                    'access_token' => $accessToken,
-                    'access_token_expires_in' => $access_token_expiry_seconds,
+                        'session_id' => intval($lastSessionId),
+                        'access_token' => $accessToken,
+                        'access_token_expires_in' => $access_token_expiry_seconds,
                         'refresh_token' => $refreshToken,
                         'refresh_token_expires_in' => $refresh_token_expiry_seconds
                     ], 201
@@ -209,7 +209,7 @@ namespace App\Controller\Api\V1
                     return $this->response(false, 'User account is currently locked out', null, 401);
                 }
                  // Check refresh token expiration
-                if ($token->isRefreshtokenexpiry()) {
+                if ($token->isRefreshTokenExpiry()) {
                     return $this->response(false, 'Refresh token has expired - please log in again', null, 401);
                 }
                 $accessToken=\App\generateToken();

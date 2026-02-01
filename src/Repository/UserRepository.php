@@ -55,9 +55,9 @@ class UserRepository extends Repository implements \Countable
         $attempts = $user->getAttempts();
         $status = $user->getStatus()?->value;
         $role_id = $user->getRole()?->value;
-        $createdAt = $user->getCreatedAt();
-        $updatedAt = $user->getUpdatedAt();
-        $metadata = $user->getMetadata();
+        $createdAt = $user->getCreatedAt()->format('Y-m-d H:i:s');
+        $updatedAt = $user->getUpdatedAt()->format('Y-m-d H:i:s');
+        $metadata = $user->getMetadataToJson();
 
         $command  = 'INSERT INTO users (fullname, username, email, password, attempts, status, role_id, created_at, updated_at, metadata) ';
         $command .= 'VALUES (:fullname, :username, :email, :password, :attempts, :status, :role_id, :created_at, :updated_at, :metadata)';
@@ -86,9 +86,9 @@ class UserRepository extends Repository implements \Countable
         $attempts = $user->getAttempts();
         $status = $user->getStatus()?->value;
         $role_id = $user->getRole()?->value;
-        $createdAt = $user->getCreatedAt();
-        $updatedAt = $user->getUpdatedAt();
-        $metadata = $user->getMetadata();
+        $createdAt = $user->getCreatedAt()->format('Y-m-d H:i:s');
+        $updatedAt = $user->getUpdatedAt()->format('Y-m-d H:i:s');
+        $metadata = $user->getMetadataToJson();
 
         $command  = 'UPDATE users SET fullname= :fullname, username= :username, email= :email, ';
         $command .= 'password= :password, attempts= :attempts, status= :status, role_id= :role_id, ';
@@ -200,4 +200,37 @@ class UserRepository extends Repository implements \Countable
         $this->setTempRowCounted((int) $repository->rowCount());
         return $this;
     }
+    public function checkUserExist(?string $username = null, ?string $email = null): bool
+    {
+        $conditions = [];
+        $params = [];
+        $command = "SELECT * FROM users ";
+
+        if (!is_null($username)) {
+            $conditions[] = "username = :username";
+            $params[':username'] = [$username, \PDO::PARAM_STR];
+        }
+        if (!is_null($email)) {
+            $conditions[] = "email = :email";
+            $params[':email'] =  [$email, \PDO::PARAM_STR];
+        }
+
+        if (count($conditions) > 0) {   
+            $command .= " WHERE " . implode(' OR ', $conditions);
+        }
+        $this->prepare($command);
+        
+         foreach ($params as $param => [$value, $type]) {
+            $this->bindParam($param, $value, $type);
+        }
+
+        $userRows = $this->executeQuery()
+            ->getResults();
+
+        if (count($userRows) > 0) {
+            return true;
+        }
+        return false;
+    }
+        
 }

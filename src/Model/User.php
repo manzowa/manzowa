@@ -130,13 +130,17 @@ namespace  App\Model
         {
             return $this->metadata;
         }
-        public function getCreatedAt(): ?\DateTime
+        public function getCreatedAt(): ?\DateTimeImmutable
         {
             return $this->createdAt;
         }
-        public function getUpdatedAt(): ?\DateTime
+        public function getUpdatedAt(): ?\DateTimeImmutable
         {
             return $this->updatedAt;
+        }
+        public function getMetadataToJson(): string
+        {
+            return json_encode($this->getMetadata());
         }
         /**
          * Set the value of id
@@ -290,7 +294,6 @@ namespace  App\Model
                 'fullname'  => $this->getFullname(),
                 'username'  => $this->getUsername(),
                 'email'     => $this->getEmail(),
-                'password'  => $this->getPassword(),
                 'status'    => $this->getStatus()?->value,
                 'attempts'  => $this->getAttempts(),
                 'role'      => $this->getRole()?->value,
@@ -309,10 +312,10 @@ namespace  App\Model
                 password: $data['password'] ?? null,
                 status: UserStatus::tryFrom($data['status'] ?? UserStatus::INACTIVE->value) ?? UserStatus::INACTIVE,
                 attempts: $data['attempts'] ?? 0,
-                role: UserRole::tryFrom($data['role'] ?? UserRole::STANDARD->value) ?? UserRole::STANDARD,
+                role: UserRole::tryFrom($data['role_id'] ?? UserRole::STANDARD->value) ?? UserRole::STANDARD,
                 metadata: $data['metadata'] ?? [],
-                createdAt: $data['createdAt'] ?? null,
-                updatedAt: $data['updatedAt'] ?? null
+                createdAt: $data['created_at'] ?? null,
+                updatedAt: $data['updated_at'] ?? null
             );
         }
         public static function fromObject(object $data): User
@@ -325,10 +328,10 @@ namespace  App\Model
                 password: $data->password ?? null,
                 status: UserStatus::tryFrom($data->status ?? UserStatus::INACTIVE->value) ?? UserStatus::INACTIVE,
                 attempts: $data->attempts ?? 0,
-                role: UserRole::tryFrom($data->role ?? UserRole::STANDARD->value) ?? UserRole::STANDARD,
+                role: UserRole::tryFrom($data->role_id ?? UserRole::STANDARD->value) ?? UserRole::STANDARD,
                 metadata: $data->metadata ?? [],
-                createdAt: $data->createdAt ?? null,
-                updatedAt: $data->updatedAt ?? null
+                createdAt: $data->created_At ?? null,
+                updatedAt: $data->updated_At ?? null
             );
         }
         public static function fromJson(string $json): User
@@ -359,13 +362,16 @@ namespace  App\Model
         {
             return str_contains($_SERVER['REQUEST_URI'], 'compte');
         }
+        public function addMetadata(Metadata $metadata): void
+        {
+            $this->metadata[] = $metadata;
+        }
         public function isPassword(string $password): bool 
         {
             return password_verify($password, $this->getPassword());
         }
-        public function addMetadata(Metadata $metadata): void
-        {
-            $this->metadata[] = $metadata;
+        public function hashPassword(): string{
+            return password_hash($this->getPassword(), PASSWORD_BCRYPT);
         }
     }
 }

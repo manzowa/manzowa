@@ -81,4 +81,12 @@ class Auth
         }
         return null;
     }
+
+    public function hasExpired():bool {
+        return $this->getToken()->isAccessTokenExpiry();
+    }
+
+    public function hasLocked():bool {
+        return $this->getUserByToken()->isLocked();
+    }
 }
