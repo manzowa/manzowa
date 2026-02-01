@@ -41,11 +41,7 @@ namespace App\Controller\Api\V1
         public function test(Request $request,  Response $response): Response 
         {
             $data = ['name' => 'New Item', 'price' => 19.99];
-           
-            return $this->jsonResponse([
-                "success" => false,
-                "data" => $data
-            ], 200);
+            return $this->response(true, 'Test successful', $data, 200);
         }
         /**
          * Method getDocAction [GET]

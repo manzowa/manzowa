@@ -2,6 +2,11 @@
 namespace  App\Model 
 {
 
+    use App\Exception\UserException;
+    use App\Helper\UserRole; 
+    use App\Helper\UserStatus; 
+    use App\Helper\Metadata; 
+
     final class User
     {
         protected readonly ?int $id;
@@ -9,8 +14,13 @@ namespace  App\Model
         protected ?string $username;
         protected ?string $email;
         protected ?string $password;
-        protected ?string $active;
+        protected UserStatus $status;
         protected ?int $attempts;
+        protected UserRole $role;
+        protected ?array $metadata = [];
+        protected ?\DateTimeInterface $createdAt;
+        protected ?\DateTimeInterface $updatedAt;
+
 
         public function __construct(
             ?int $id,
@@ -18,8 +28,12 @@ namespace  App\Model
             ?string $username,
             ?string $email,
             ?string $password,
-            ?string $active = 'Y',
-            ?int $attempts = 0
+            UserStatus $status = UserStatus::INACTIVE,
+            ?int $attempts = 0,
+            UserRole $role = UserRole::STANDARD,
+            array $metadata = [],
+            string|\DateTimeInterface|null $createdAt = null,
+            string|\DateTimeInterface|null $updatedAt = null
         ) {
             $this
                 ->setId($id)
@@ -27,8 +41,12 @@ namespace  App\Model
                 ->setUsername($username)
                 ->setEmail($email)
                 ->setPassword($password)
-                ->setActive($active)
-                ->setAttempts($attempts);
+                ->setStatus($status)
+                ->setAttempts($attempts)
+                ->setRole($role)
+                ->setMetadata($metadata)
+                ->setCreatedAt($createdAt)
+                ->setUpdatedAt($updatedAt);
         }
         /**
          * Get the value of id
@@ -78,10 +96,11 @@ namespace  App\Model
          *
          * @return ?string
          */
-        public function getActive(): ?string
+        public function getStatus(): UserStatus
         {
-            return $this->active;
+            return $this->status;
         }
+
         /**
          * Get the value of attempts
          *
@@ -90,6 +109,34 @@ namespace  App\Model
         public function getAttempts(): ?int
         {
             return $this->attempts;
+        }
+
+        /**
+         * Get the value of role
+         *
+         * @param string|null $role
+         * @return self
+         */
+        public function getRole(): UserRole
+        {
+            return $this->role;
+        }
+        /**
+         * Get the value of metadata
+         *
+         * @return array|null
+         */
+        public function getMetadata(): ?array
+        {
+            return $this->metadata;
+        }
+        public function getCreatedAt(): ?\DateTime
+        {
+            return $this->createdAt;
+        }
+        public function getUpdatedAt(): ?\DateTime
+        {
+            return $this->updatedAt;
         }
         /**
          * Set the value of id
@@ -154,10 +201,9 @@ namespace  App\Model
          *
          * @return self
          */
-        public function setActive(?string $active): self
+        public function setStatus(UserStatus $status): self
         {
-            $active = empty($active)? $active : mb_strtoupper($active, 'UTF-8');
-            $this->active = $active;
+            $this->status = $status;
             return $this;
         }
         /**
@@ -171,6 +217,71 @@ namespace  App\Model
         {
             $this->attempts = $attempts;
             return $this;
+        } 
+
+        /**
+         * Set the value of role 
+         * 
+         * @param UserRole $role
+         * 
+         * @return self
+         */
+        public function setRole(UserRole $role): self
+        {
+            $this->role = $role;
+            return $this;
+        }
+
+        /** Set the value of metadata
+         *
+         * @param array|null $metadata
+         *
+         * @return self
+         */
+        public function setMetadata(?array $metadata): self
+        {
+            foreach ($metadata as $m) {
+                if ($m instanceof Metadata) {
+                    $this->metadata[] = $m;
+                } elseif (is_array($m)) {
+                    $this->metadata[] = Metadata::fromArray($m);
+                }
+            }
+            return $this;
+        }
+        public function setCreatedAt(string|\DateTimeInterface|null $createdAt = null): self
+        {
+            if ($createdAt === null) {
+                $this->createdAt = new \DateTimeImmutable();
+                return $this;
+            }
+
+            if (is_string($createdAt)) {
+                try {
+                    $createdAt = new \DateTimeImmutable($createdAt);
+                } catch (\Exception) {
+                    throw new UserException('Invalid createdAt format');
+                }
+            }
+            $this->createdAt = $createdAt;
+            return $this;
+        }
+        public function setUpdatedAt(string|\DateTimeInterface|null $updatedAt = null): self
+        {
+            if ($updatedAt === null) {
+                $this->updatedAt = new \DateTimeImmutable();
+                return $this;
+            }
+
+            if (is_string($updatedAt)) {
+                try {
+                    $updatedAt = new \DateTimeImmutable($updatedAt);
+                } catch (\Exception) {
+                    throw new UserException('Invalid updatedAt format');
+                }
+            }
+            $this->updatedAt = $updatedAt;
+            return $this;
         }
         public function toArray(): array
         {
@@ -180,8 +291,12 @@ namespace  App\Model
                 'username'  => $this->getUsername(),
                 'email'     => $this->getEmail(),
                 'password'  => $this->getPassword(),
-                'active'    => $this->getActive(),
-                'attempts'  => $this->getAttempts()
+                'status'    => $this->getStatus()?->value,
+                'attempts'  => $this->getAttempts(),
+                'role'      => $this->getRole()?->value,
+                'metadata'  => $this->getMetadata(),
+                'createdAt' => $this->createdAt?->format('Y-m-d H:i:s'),
+                'updatedAt' => $this->updatedAt?->format('Y-m-d H:i:s'),
             ];
         }
         public static function fromState(array $data = [])
@@ -192,12 +307,38 @@ namespace  App\Model
                 username: $data['username'] ?? null,
                 email: $data['email']?? null,
                 password: $data['password'] ?? null,
-                active: $data['active'] ?? null,
-                attempts: $data['attempts'] ?? null
+                status: UserStatus::tryFrom($data['status'] ?? UserStatus::INACTIVE->value) ?? UserStatus::INACTIVE,
+                attempts: $data['attempts'] ?? 0,
+                role: UserRole::tryFrom($data['role'] ?? UserRole::STANDARD->value) ?? UserRole::STANDARD,
+                metadata: $data['metadata'] ?? [],
+                createdAt: $data['createdAt'] ?? null,
+                updatedAt: $data['updatedAt'] ?? null
             );
         }
+        public static function fromObject(object $data): User
+        {   
+            return new static(
+                id: $data->id ?? null,
+                fullname: $data->fullname ?? null,
+                username: $data->username ?? null,
+                email: $data->email ?? null,
+                password: $data->password ?? null,
+                status: UserStatus::tryFrom($data->status ?? UserStatus::INACTIVE->value) ?? UserStatus::INACTIVE,
+                attempts: $data->attempts ?? 0,
+                role: UserRole::tryFrom($data->role ?? UserRole::STANDARD->value) ?? UserRole::STANDARD,
+                metadata: $data->metadata ?? [],
+                createdAt: $data->createdAt ?? null,
+                updatedAt: $data->updatedAt ?? null
+            );
+        }
+        public static function fromJson(string $json): User
+        {
+            $data = json_decode($json, true);
+            return self::fromState($data);
+        }
+
         public function isActive(): bool {
-            return $this->getActive() === 'Y';
+            return $this->getStatus() === UserStatus::ACTIVE;
         }
         public function resetAttempts(): self {
             return $this->setAttempts(0);
@@ -211,18 +352,20 @@ namespace  App\Model
         public static function nullUser() {
             return new static(null, null, null, null, null);
         }   
-
         public function isLoggedIn (): bool {
             return isset($_SESSION['user']);
         }
-        function isAccount(): bool
+        public function isAccount(): bool
         {
             return str_contains($_SERVER['REQUEST_URI'], 'compte');
         }
-        
         public function isPassword(string $password): bool 
         {
             return password_verify($password, $this->getPassword());
+        }
+        public function addMetadata(Metadata $metadata): void
+        {
+            $this->metadata[] = $metadata;
         }
     }
 }

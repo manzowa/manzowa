@@ -298,5 +298,25 @@ namespace App\Model
                 images: $data['images'] ?? []
             );
         }
+
+        public static function fromObject(object $data): Event
+        {
+            return new static(
+                id: $data->id ?? null,
+                titre: $data->titre ?? null,
+                description: $data->description ?? null,
+                date: $data->date ?? null,
+                lieu: $data->lieu ?? null,
+                ecoleid: $data->ecoleid ?? null,
+                maximage: $data->maximage ?? null,
+                images: $data->images ?? []
+            );
+        }
+
+        public static function fromJson(string $json): Event
+        {
+            $data = json_decode($json, true);
+            return self::fromState($data);
+        }
     }
 }

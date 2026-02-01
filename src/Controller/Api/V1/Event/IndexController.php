@@ -54,24 +54,14 @@ namespace App\Controller\Api\V1\Event
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Events not found'
-                    ], 400);
+                    return $this->response(false, 'Events not found', null, 400);
                 }
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => [
-                        "rows_returned" => $rowCounted,
-                        "evenements" => $events,
-                    ]
+                return $this->response(true, 'Events retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "evenements" => $events,
                 ], 200);
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
 
@@ -96,8 +86,7 @@ namespace App\Controller\Api\V1\Event
             
             try 
             {
-                $connexionRead = Connexion::read();
-                $repository = new EventRepository($connexionRead);
+                $repository = new EventRepository(Connexion::read());
                 $events = $repository->retrieveAll(
                     id: $event_id,
                     limit: $limitParam
@@ -105,24 +94,15 @@ namespace App\Controller\Api\V1\Event
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Event not found'
-                    ], 400);
+                    return $this->response(false, 'Event not found', null, 400);
                 }
 
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => [
-                        "rows_returned" => $rowCounted,
-                        "evenements" => $events,
-                    ]
+                return $this->response(true, 'Events retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "evenements" => $events,
                 ], 200);
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -144,11 +124,10 @@ namespace App\Controller\Api\V1\Event
             $event_id = (int) $args['id'] ?? null;
             $school_id = (int) $args['ecole_id'] ?? null;
             $limitParam = (int) ($args['limit']?? 20);
+            $repository = new EventRepository(Connexion::read());
             
             try 
             {
-                $connexionRead = Connexion::read();
-                $repository = new EventRepository($connexionRead);
                 $events = $repository->retrieveAll(
                     id: $event_id,
                     ecoleid: $school_id,
@@ -157,24 +136,15 @@ namespace App\Controller\Api\V1\Event
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Events not found'
-                    ], 400);
+                    return $this->response(false, 'Events not found', null, 400);
                 }
 
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => [
-                        "rows_returned" => $rowCounted,
-                        "evenements" => $events,
-                    ]
+                return $this->response(true, 'Events retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "evenements" => $events,
                 ], 200);
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -197,11 +167,12 @@ namespace App\Controller\Api\V1\Event
             $school_id = (int) $args['ecole_id'] ?? null;
             $strNom = (string) $args['nom'] ?? null;
             $limitParam = (int) ($args['limit']?? 20);
+
+            $repository = new EventRepository(Connexion::read());
             
             try 
             {
-                $connexionRead = Connexion::read();
-                $repository = new EventRepository($connexionRead);
+               
                 $events = $repository->retrieveAll(
                     id: $event_id,
                     ecoleid: $school_id,
@@ -211,24 +182,16 @@ namespace App\Controller\Api\V1\Event
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Events not found'
-                    ], 400);
+                    return $this->response(false, 'Events not found', null, 400);
                 }
 
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => [
-                        "rows_returned" => $rowCounted,
-                        "evenements" => $events,
-                    ]
+                return $this->response(true, 'Events retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "evenements" => $events,
                 ], 200);
+                
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -255,8 +218,7 @@ namespace App\Controller\Api\V1\Event
             
             try 
             {
-                $connexionRead = Connexion::read();
-                $repository = new EventRepository($connexionRead);
+                $repository = new EventRepository(Connexion::read());
                 $events = $repository->retrieveAll(
                     id: $event_id,
                     ecoleid: $school_id,
@@ -267,24 +229,14 @@ namespace App\Controller\Api\V1\Event
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Events not found'
-                    ], 400);
+                    return $this->response(false, 'Events not found', null, 400);
                 }
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => [
-                        "rows_returned" => $rowCounted,
-                        "evenements" => $events,
-                    ]
+                return $this->response(true, 'Events retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "evenements" => $events,
                 ], 200);
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -312,8 +264,7 @@ namespace App\Controller\Api\V1\Event
             
             try 
             {
-                $connexionRead = Connexion::read();
-                $repository = new EventRepository($connexionRead);
+                $repository = new EventRepository(Connexion::read());
                 $events = $repository->retrieveAll(
                     id: $event_id,
                     ecoleid: $school_id,
@@ -325,24 +276,15 @@ namespace App\Controller\Api\V1\Event
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Events not found'
-                    ], 400);
+                    return $this->response(false, 'Events not found', null, 400);
                 }
 
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => [
-                        "rows_returned" => $rowCounted,
-                        "events" => $events,
-                    ]
+                return $this->response(true, "Events retrieved successfully", [
+                    "rows_returned" => $rowCounted,
+                    "evenements" => $events,
                 ], 200);
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -365,16 +307,12 @@ namespace App\Controller\Api\V1\Event
             $limitParam = (int) ($args['limit']?? 20);
 
             if (!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $datetimeString)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => 'Invalid format'
-                ], 400);
+                return $this->response(false, 'Invalid format', null, 400);
             }
 
             try 
             {
-                $connexionRead = Connexion::read();
-                $repository = new EventRepository($connexionRead);
+                $repository = new EventRepository(Connexion::read());
                 $events = $repository->retrieveAll(
                     dateTime: $datetimeString,
                     limit: $limitParam
@@ -382,26 +320,19 @@ namespace App\Controller\Api\V1\Event
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Events not found'
-                    ], 400);
+                    return $this->response(false, 'Events not found', null, 400);
                 }
 
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => [
-                        "rows_returned" => $rowCounted,
-                        "evenements" => $events,
-                    ]
+                return $this->response(true, 'Events retrieved successfully',[
+                    "rows_returned" => $rowCounted,
+                    "evenements" => $events,
                 ], 200);
+
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
+
         /**
          * Method getAllEventFilterByDatetimeAndTownAction [GET]
          * 
@@ -423,18 +354,14 @@ namespace App\Controller\Api\V1\Event
             $limitParam = (int) ($args['limit']?? 20);
 
             if (!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $strDatetime)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => 'Invalid format'
-                ], 400);
+                return $this->response(false, 'Invalid format', null, 400);
             }
             if (in_array($strVille, ["all", "*", "any"])) {
                 $strVille = null;
             }
             try 
             {
-                $connexionRead = Connexion::read();
-                $repository = new EventRepository($connexionRead);
+                $repository = new EventRepository(Connexion::read());
                 $events = $repository->retrieveAll(
                     dateTime: $strDatetime,
                     ville: $strVille,
@@ -443,24 +370,15 @@ namespace App\Controller\Api\V1\Event
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Events not found'
-                    ], 400);
+                    return $this->response(false, 'Events not found', null, 400);
                 }
 
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => [
-                        "rows_returned" => $rowCounted,
-                        "evenements" => $events,
-                    ]
+                return $this->response(true, 'Events retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "evenements" => $events,
                 ], 200);
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
 
@@ -483,37 +401,29 @@ namespace App\Controller\Api\V1\Event
 
             $school_id = (int) $args['id'];
            // Check Parameter School Id
-            if (!$this->checkArguments($school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "School ID number cannot be blank or string. It's must be numeric",
+                $school_id
+            );
+
+
             try 
             {
-                $connexionRead = Connexion::read();
-                $repository = new EventRepository($connexionRead);
+                $repository = new EventRepository(Connexion::read());
                 $eventsRows = $repository->retrieve(schoolid: $school_id);
 
                 $rowCounted = $repository->getTempRowCounted();
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Events not found'
-                    ], 400);
+                    $this->response(false, 'Events not found', null, 400);
                 }
 
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['evenements'] = $eventsRows;
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                return $this->response(true, "Events retrieved successfully", [
+                    "rows_returned" => $rowCounted,
+                    "evenements" => $eventsRows,
                 ], 200);
+
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -534,30 +444,21 @@ namespace App\Controller\Api\V1\Event
         ) {
             $school_id = (int) $args['id'];
             // Check Parameter School Id
-            if (!$this->checkArguments($school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "School ID number cannot be blank or string. It's must be numeric",
+                $school_id
+            );
 
             // Check if school exists
             try {
-                $connexionRead = Connexion::Read();
-                $schoolRepository = new SchoolRepository($connexionRead);
+                $schoolRepository = new SchoolRepository(Connexion::read());
                 $schoolRepository->retrieve(id: $school_id);
                 $rowCounted = $schoolRepository->getTempRowCounted();
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "School Not Found."
-                    ], 500);
+                    return $this->response(false, 'School Not Found.', null, 400);
                 }
             } catch (SchoolException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
 
             // Retrieve  Body
@@ -566,29 +467,18 @@ namespace App\Controller\Api\V1\Event
             try 
             {
                 // Establish the connection Database
-                $connexionWrite = Connexion::Write();
-                $repository = new EventRepository($connexionWrite);
+                $repository = new EventRepository(Connexion::write());
 
                 // Create new Event
-                $event = new Event(
-                    id: NULL,
-                    titre: $jsonObject->titre?? null,
-                    description: $jsonObject->description?? null,
-                    date: $jsonObject->date?? null,
-                    lieu: $jsonObject->lieu?? null,
-                    ecoleid: $school_id
-                );
+                $event = Event::fromObject(data: $jsonObject)
+                    ->setEcoleid($school_id);
 
                 // Add new Event
                 $repository->add(event: $event);
                 $rowCounted = $repository->rowCount();
                 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Failed to create event'
-                    ], 500);
-                    
+                    return $this->response(false, 'Failed to create event', null, 400);
                 }
                 $event_id = (int) $repository->lastInsertId();
 
@@ -596,26 +486,15 @@ namespace App\Controller\Api\V1\Event
                 $rowCounted = $repository->getTempRowCounted();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Failed to retrieve event after creation'
-                    ], 404);
+                    return $this->response(false, 'Failed to retrieve event after creation', null, 404);
                 }
-
-                $returnData = [];
-                $returnData['rows_inserted'] =  $rowCounted;
-                $returnData['evenement'] = current($events);
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" =>  $returnData
-                ], 201); 
+                return $this->response(true, 'Event created successfully', [
+                    "rows_inserted" => $rowCounted,
+                    "evenement" => $event,
+                ], 201);
 
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 400);
             }
         }
         /**
@@ -635,13 +514,10 @@ namespace App\Controller\Api\V1\Event
             $school_id = (int) $args['id'] ?? null;
             $event_id = (int) $args['evenementid'] ?? null;
 
-            // Check Parameter School Id
-            if ($this->checkArguments($event_id) === false) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Event ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "Event ID number cannot be blank or string. It's must be numeric",
+                $event_id
+            );
 
             try {
                 // Establish the connection Database
@@ -657,20 +533,13 @@ namespace App\Controller\Api\V1\Event
                     ], 500);
                 }
                 $eventRow = current($eventRows);
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" =>[
-                        "rows_returned" => $rowCounted,
-                        "evenement" => $eventRow,
-                    ]
+                return $this->response(true, 'Event retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "evenement" => $eventRow,
                 ], 200);
 
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -691,27 +560,22 @@ namespace App\Controller\Api\V1\Event
             $event_id = (int) $args['evenementid'];
 
             // Check Parameter School Id
-            if (!$this->checkArguments($event_id, $school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Event ID or School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "Event ID or School ID number cannot be blank or string. It's must be numeric", 
+                $event_id, $school_id
+            );
+            //
             // Retrive data from Json
             $jsonObject = $request->getParsedBody();
             try 
             {
                 // Establish the connection Database
-                $connexionWrite = Connexion::write();
-                $repository = new EventRepository($connexionWrite);
+                $repository = new EventRepository(Connexion::write());
                 $eventRows = $repository->retrieve(id: $event_id, schoolid: $school_id);
                 $rowCounted = $repository->rowCount();
         
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Event Not Found.'
-                    ], 500);
+                    return $this->response(false, 'Event Not Found.', null, 400);
                 }
                 $eventRow = current($eventRows);
                 $event = Event::fromState(data: $eventRow);
@@ -723,35 +587,24 @@ namespace App\Controller\Api\V1\Event
 
                 $repository->update(event: $event);
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Event not updated.'
-                    ], 400);
+                    return $this->response(false, 'Event not updated.', null, 400);
                 }
                 // Fetch after Update
                 $eventRows = $repository->retrieve(id: $event_id);
                 $rowCounted = $repository->rowCount();
               
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'No event fetched after update.'
-                    ], 404);
+                    return $this->response(false, 'No event fetched after update.', null, 404);
                 }
                 $eventRow = current($eventRows);
-                $returnData = [];
-                $returnData['rows_counted'] =  $rowCounted;
-                $returnData['evenement'] = $eventRow;
 
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data"=> $returnData
+                return $this->response(true, 'Event updated successfully', [
+                    "rows_updated" => $rowCounted,
+                    "evenement" => $eventRow,
                 ], 200);
+
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -771,12 +624,11 @@ namespace App\Controller\Api\V1\Event
             $school_id = (int) $args['id'];
             $event_id = (int) $args['evenementid'];
             // Check Parameter Event Id
-            if (!$this->checkArguments($event_id, $school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Event ID or School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "Event ID or School ID number cannot be blank or string. It's must be numeric", 
+                $event_id, $school_id
+            );
+
             // Retrieve  Body
             $jsonObject = $request->getParsedBody();
             try {
@@ -787,10 +639,7 @@ namespace App\Controller\Api\V1\Event
                 $rowCounted = $repository->rowCount();
                 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Event Not Found.'
-                    ], 500);
+                    return $this->response(false, 'Event Not Found.', null, 400);
                 }
                 $eventRow = current($eventRows);
                 $refClass = new \ReflectionClass(Event::class);
@@ -810,37 +659,23 @@ namespace App\Controller\Api\V1\Event
                 }
                 $repository->update(event: $event);
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Event not updated.'
-                    ], 400);
+                    return $this->response(false, 'Event not updated.', null, 400);
                 }
 
                 // Fetch after Update
                 $eventRows = $repository->retrieve(id: $event_id);
                 $rowCounted = $repository->rowCount();
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'No event fetched after update.'
-                    ], 404);
+                    return $this->response(false, 'No event fetched after update.', null, 404);
                 }
                 $eventRow = current($eventRows);
 
-                $returnData = [];
-                $returnData['rows_counted'] = $rowCounted;
-                $returnData['evenement'] =  $eventRow;
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data"=> $returnData
-                ], 200);
-
-
+                return $this->response(true, 'Event updated successfully', [
+                    "rows_updated" => $rowCounted,
+                    "evenement" => $eventRow,
+                ], 20);
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -860,49 +695,31 @@ namespace App\Controller\Api\V1\Event
             $school_id = (int) $args['id'];
             $event_id = (int) $args['evenementid'];
             // Check Parameter Event ID or School Id
-            if (!$this->checkArguments($event_id, $school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Event ID or School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "Event ID or School ID number cannot be blank or string. It's must be numeric", 
+                $event_id, $school_id
+            );
 
             try {
                 // Establish the connection Database
                 $connexionWrite = Connexion::write();
                 $repository = new EventRepository($connexionWrite);
-                $eventRows = $repository->retrieve(id: $event_id, schoolid: $school_id);
+                $repository->retrieve(id: $event_id, schoolid: $school_id);
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Event Not Found.'
-                    ], 500);
-
+                    return $this->response(false, 'Event Not Found.', null, 500);
                 }
                 $repository->remove(id: $event_id);
                 $rowCounted = $repository->rowCount();
                 if ($repository->rowCount()=== 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Event not found for to delete.'
-                    ], 404);
-
+                    return $this->response(false, 'Event not deleted.', null, 400);
                 }
-                $returnData = [];
-                $returnData['rows_deleted'] = $rowCounted;
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "message" => "Event $event_id deleted",
-                    "data" => $returnData,
+                return $this->response(true, "Event $event_id deleted", [
+                    "rows_deleted" => $rowCounted,
                 ], 204);
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
     }

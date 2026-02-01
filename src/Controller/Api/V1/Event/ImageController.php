@@ -51,17 +51,14 @@ namespace App\Controller\Api\V1\Event
             $event_id  = (int) $args['evenementid'] ?? null;
 
             // Check Parameter School Id
-            if ($this->checkArguments($event_id) === false) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Event ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "Event ID number cannot be blank or string. It's must be numeric",
+                $event_id
+            );
             
             try 
             {
-                $connexionRead = Connexion::Read();
-                $repository = new ImageRepository($connexionRead);
+                $repository = new ImageRepository(Connexion::Read());
                 $images = $repository->retrieve(
                     eventid: $event_id, 
                     schoolid: $school_id, 
@@ -70,24 +67,16 @@ namespace App\Controller\Api\V1\Event
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Images Not Found."
-                    ], 500);
+                    return $this->response(false, 'Images not found', null, 404);
                 }
     
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['images'] = $images;
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                return $this->response(true, 'Images retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "images" => $images,
                 ], 200);
+
             } catch (ImageException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
 
@@ -112,12 +101,12 @@ namespace App\Controller\Api\V1\Event
 
 
             // Check Parameter School Id
-            if ($this->checkArguments($event_id) === false) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Event ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "Event ID number cannot be blank or string. It's must be numeric",
+                $event_id
+            );
+
+            // Retrieve  Body
             $data = $request->getParsedBody();
             $attributesRow = $data['attributes']?? false;
             $attributes = json_decode($attributesRow);
@@ -128,38 +117,27 @@ namespace App\Controller\Api\V1\Event
 
             try 
             {
-                $connexionRead = Connexion::read();
-                $repository = new EventRepository($connexionRead);
+                $repository = new EventRepository(Connexion::read());
                 $eventRows =  $repository->retrieve(id: $event_id, schoolid: $school_id);
                 $rowCounted =  $repository->getTempRowCounted();
                 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Event Not Found."
-                    ], 500);
+                    return $this->response(false, 'Event not found', null, 404);
                 }
                 $eventRow = current($eventRows);
                 $event = Event::fromState(data: $eventRow);
 
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 400);
             }
 
-            $connexionWrite = Connexion::write();
-            $repository = new ImageRepository($connexionWrite);
+            $repository = new ImageRepository(Connexion::write());
             try 
             {
                 if ($event && (!is_null($event->getMaximage()) && $event->isMaximunImage())) {
                     $msg = "You can't add this image, the maximum ";
                     $msg .= "number of images has been reached.";
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => $msg
-                    ], 400);
+                    return $this->response(false, $msg, null, 409);
                 }
     
                 $extension = $this->extensionFile(
@@ -192,10 +170,7 @@ namespace App\Controller\Api\V1\Event
                     if ($repository->inTransaction()) {
                         $repository->rollBack();
                     }
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'File to upload image'
-                    ], 500);
+                   return $this->response(false, 'No image file provided', null, 400);
                 }
                 
                 $lastImageID = (int) $repository->lastInsertId();
@@ -209,10 +184,7 @@ namespace App\Controller\Api\V1\Event
                     if ($repository->inTransaction()) {
                         $repository->rollBack();
                     }
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Failed to update info Event'
-                    ], 500);
+                    return $this->response(false, 'Failed to update event info', null, 400);
                 }
 
                 $imageRows = $repository->retrieve(
@@ -226,35 +198,23 @@ namespace App\Controller\Api\V1\Event
                     if ($repository->inTransaction()) {
                         $repository->rollBack();
                     }
-                    $msg = "Failed to retrieve image attributes after upload";
-                    $msg.= " - try uploading image aigin";
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => $msg
-                    ], 500);
+                    return $this->response(false, 'Image upload failed. Please try again.', null, 409);
                 }
                 $imageRow = current($imageRows);
                 $newImage = Image::fromState($imageRow);
                 $newImage->saveImageFile($tmpName);
                 $repository->commit();
 
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['images'] = $newImage->toArray();
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" =>  $returnData
+                return $this->response(true, 'Resource created successfully', [
+                    "rows_returned" => $rowCounted,
+                    "images" => $newImage->toArray(),
                 ], 201);
 
             } catch (ImageException $ex) {
                 if ($repository->inTransaction()) {
                     $repository->rollBack();
                 }
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
        
@@ -277,19 +237,16 @@ namespace App\Controller\Api\V1\Event
             $school_id = (int) $args['id'] ?? null;
             $event_id  = (int) $args['evenementid'] ?? null;
             $image_id  = (int) $args['imageid'] ?? null;
+
             // Check Parameter Event ID AND Image ID
-            if (!$this->checkArguments($event_id, $image_id)) {
-               $msg = 'Event ID or Image ID cannot be blank or string. ';
-               $msg.= 'It\'s must be numeric';
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $msg
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "Event ID or Image ID cannot be blank or string. It's must be numeric",
+                $event_id, $image_id
+            );
+
             try{
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new ImageRepository($connexionRead);
+                $repository = new ImageRepository(Connexion::read());
                 $imageRows = $repository->retrieve(
                     id: $image_id, 
                     eventid: $event_id,
@@ -298,22 +255,15 @@ namespace App\Controller\Api\V1\Event
                 );
 
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Images Not Found"
-                    ], 500);
+                    return $this->response(false, 'Images not found', null, 404);
                 }
 
-               
                 $imageRow = current($imageRows);
                 $image = Image::fromState($imageRow);
                 $image->returnImageFile();
 
             } catch (ImageException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -336,14 +286,11 @@ namespace App\Controller\Api\V1\Event
             $event_id  = (int) $args['evenementid'] ?? null;
             $image_id  = (int) $args['imageid'] ?? null;
             // Check Parameter EVENT ID AND IMAGE ID
-            if (!$this->checkArguments($event_id, $image_id)) {
-                $msg = 'EVENT ID or Image ID cannot be blank or string. ';
-                $msg.= 'It\'s must be numeric';
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $msg
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "EVENT ID or Image ID cannot be blank or string. It's must be numeric",
+                $event_id, $image_id
+            );
+            
 
             try 
             {
@@ -355,19 +302,13 @@ namespace App\Controller\Api\V1\Event
                 );
                 $rowCounted =  $repository->getTempRowCounted();
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Event Not Found."
-                    ], 500);
+                    return $this->response(false, 'Event not found', null, 404);
                 }
                 $eventRow = current($eventRows);
                 $event = Event::fromState(data: $eventRow);
 
             } catch (EventException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 400);
             }
             $connexionWrite = Connexion::write();
             $repository = new ImageRepository($connexionWrite);
@@ -386,10 +327,7 @@ namespace App\Controller\Api\V1\Event
                     if ($repository->inTransaction()) {
                         $repository->rollBack();
                     }
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Image Not Found"
-                    ], 404);
+                    return $this->response(false, 'Image Not Found', null, 404);
                 }
                 $imageRow = current($imageRows);
                 $image = Image::fromState($imageRow);
@@ -404,10 +342,8 @@ namespace App\Controller\Api\V1\Event
                     if ($repository->inTransaction()) {
                         $repository->rollBack();
                     }
-                     return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Failed to delete Image $image_id."
-                    ], 500);
+                    return $this->response(false, "Image {$image_id} not found.", null, 404);
+
                 }
                 $valMAx = intval($event->getMaximage());
                 $maxima = ($valMAx > 0)? $valMAx - 1 : $valMAx;
@@ -416,10 +352,7 @@ namespace App\Controller\Api\V1\Event
 
                 $rowCounted = $repository->rowCount();
                 if ( $rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Failed to update info Event'
-                    ], 500);
+                    return $this->response(false, 'Failed to update event info', null, 409);
                 }
             
                $image->deleteImageFile();
@@ -433,10 +366,7 @@ namespace App\Controller\Api\V1\Event
                 if ($repository->inTransaction()) {
                     $repository->rollBack();
                 }
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 500);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -461,19 +391,14 @@ namespace App\Controller\Api\V1\Event
             $image_id  = (int) $args['imageid'] ?? null;
 
             // Check Parameter School ID
-            if (!$this->checkArguments($event_id, $image_id)) {
-               $msg = 'Event ID or Image ID cannot be blank or string. ';
-               $msg.= 'It\'s must be numeric';
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $msg
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "Event ID or Image ID cannot be blank or string. It's must be numeric",
+                $event_id, $image_id
+            );
            
             try{
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new ImageRepository($connexionRead);
+                $repository = new ImageRepository(Connexion::read());
                 $imageRows = $repository->retrieve(
                     id: $image_id, 
                     schoolid: $school_id,
@@ -481,29 +406,20 @@ namespace App\Controller\Api\V1\Event
                 );
 
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Images Not Found"
-                    ], 500);
+                    return $this->response(false, 'Images not found', null, 404);
                 }
                 $imageRow = current($imageRows);
                 $image = Image::fromState($imageRow);
              
-                $returnData['attributes'] =  [
-                    "title" =>  $image->getTitle(),
-                    "filename" => $image->getFilename(),
-                    "mimetype" => $image->getMimetype()
-                ];
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                return $this->response(true, 'Images retrieved successfully', [
+                    "attributes" => [
+                        "title" =>  $image->getTitle(),
+                        "filename" => $image->getFilename(),
+                        "mimetype" => $image->getMimetype()
+                    ]
                 ], 200);
-
             } catch (ImageException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
          /**
@@ -527,22 +443,15 @@ namespace App\Controller\Api\V1\Event
             $event_id  = (int) $args['evenementid'] ?? null;
             $image_id  = (int) $args['imageid'] ?? null;
             // Check Parameter School ID
-            if (!$this->checkArguments($event_id, $image_id)) {
-               $msg = 'Event ID or Image ID cannot be blank or string. ';
-               $msg.= 'It\'s must be numeric';
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $msg
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "Event ID or Image ID cannot be blank or string. It's must be numeric",
+                $event_id, $image_id
+            );
             // Retrieve  Body
             $jsonObject = $request->getParsedBody();
              // Check Field to Update
             if (!isset($jsonObject->title) && !isset( $jsonObject->filename)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "No fields to update are provided."
-                ], 400);
+                return $this->response(false, 'No fields to update are provided.', null, 400);
             }
             // Establish the connection Database
             $connexionWrite = Connexion::write();
@@ -557,10 +466,7 @@ namespace App\Controller\Api\V1\Event
                     eventid: $event_id
                 );
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Images Not Found."
-                    ], 500);
+                    return $this->response(false, 'Images not found', null, 404);
                 }
                 $imageRow = current($imageRows);
                 $image = Image::fromState($imageRow);
@@ -581,12 +487,10 @@ namespace App\Controller\Api\V1\Event
                     if ($repository->inTransaction()) {
                         $repository->rollBack();
                     }
-                    $msg  = 'Image attributes not updated - ';
-                    $msg .= 'the given values may be the same as  the stored values ';
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => $msg
-                    ], 400);
+                    return $this->response(
+                        false,'No changes detected — provided values are identical to existing values',
+                        null, 409
+                    );
                 }
                 $imageRows = $repository->retrieve(
                     id: $image_id, 
@@ -594,10 +498,7 @@ namespace App\Controller\Api\V1\Event
                     schoolid: $school_id
                 );
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "No Images found after Update attributes"
-                    ], 500);
+                    return $this->response(false, 'No Images found after Update attributes', null, 404);
                 }
                 $imageRow = current($imageRows);
                 $image = Image::fromState($imageRow);
@@ -610,23 +511,15 @@ namespace App\Controller\Api\V1\Event
                     );
                 }
                 $repository->commit();
-                $returnData = [];
-                $returnData['image'] =  $image->toArray();
-      
-                return $this->jsonResponse([
-                    "success" => true,
-                    "message" => 'Image attributes updated',
-                    "data" => $returnData
+                return $this->response(true, 'Image attributes updated', [
+                    "image" => $image->toArray()
                 ], 200);
 
             } catch (ImageException $ex) {
                 if ($repository->inTransaction()) {
                    $repository->rollBack();
                 }
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" =>  $ex->getMessage()
-                ], 500);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
     }

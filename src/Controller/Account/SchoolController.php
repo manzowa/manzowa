@@ -116,7 +116,7 @@ class SchoolController extends \App\Controller\Controller
                         filename: $newFilename,
                         mimetype: $uploadedFile->getMimeTypeFromFile(),
                         ecoleid: $school_id,
-                        eventid: null
+                        evenementid: null
                     );
                     if (!is_null($school->getMaximage()) && $school->isMaximunImage()) {
                         if ($repository->inTransaction()) {

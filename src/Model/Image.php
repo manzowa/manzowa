@@ -375,6 +375,18 @@ namespace App\Model
                 location: $data['location']?? "ecoles"
             );
         }
+        public static function fromObject(object $data): Image {
+            return new static(
+                id: $data->id ?? null,
+                title:  $data->title ?? null,
+                filename:  $data->filename ?? null,
+                mimetype:  $data->mimetype ?? null,
+                type:  $data->type ?? "S",
+                ecoleid: $data->ecoleid ?? null,
+                evenementid: $data->evenementid ?? null,
+                location: $data->location ?? "ecoles"
+            );
+        }
 
         public function url():string
         {

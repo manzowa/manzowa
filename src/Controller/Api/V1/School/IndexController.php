@@ -45,28 +45,20 @@ namespace App\Controller\Api\V1\School
         ): Response {
             try 
             {
-                $connexionRead = Connexion::read();
-                $repository = new SchoolRepository($connexionRead);
+                $repository = new SchoolRepository(Connexion::read());
                 $schools = $repository->retrieve();
                 $rowCounted = $repository->getTemprowCounted();
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'School not found'
-                    ], 400);
+                    return $this->response(false, 'School not found', null, 404);
                 }
 
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['schools'] = $schools;
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                return $this->response(true, 'Schools retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "schools" => $schools
                 ], 200);
+
             } catch (SchoolException | AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -88,63 +80,37 @@ namespace App\Controller\Api\V1\School
             $jsonObject = $request->getParsedBody();
             try 
             {
-                $school = new School(
-                    id: NULL,
-                    nom: $jsonObject->nom ?? NULL,
-                    email: $jsonObject->email ?? NULL,
-                    telephone: $jsonObject->telephone ?? NULL,
-                    type: $jsonObject->type ?? NULL,
-                    site: $jsonObject->site ?? NULL,
-                    adresses: $jsonObject->adresses?? []
-                );
                 // Establish the connection Database
-                $connexionWrite = Connexion::write();
-                $repository = new SchoolRepository($connexionWrite);
+                $repository = new SchoolRepository(Connexion::write());
+                $school = School::fromObject(data: $jsonObject);
                 $repository->retrieveByName(nom: $school->getNom());
                 $rowCounted = $repository->getTempRowCounted();
 
                 if ($rowCounted !== 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'School already exists'
-                    ], 422);
+                    return $this->response(false, 'School already exists', null, 409);
                 }
                 // Add new Ecole
                 $repository->add(school: $school);
                 $rowCounted = $repository->getTempRowCounted();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Failed to create school'
-                    ], 500);
-                    
+                    return $this->response(false, 'Invalid school data', null, 422);
                 }
                 $school_id = (int) $repository->getStockId();
                 $schools = $repository->retrieve($school_id);
                 $rowCounted = $repository->getTempRowCounted();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Failed to retrieve school after creation'
-                    ], 404);
+                    return $this->response(false, 'Failed to retrieve school after creation', null, 500);
                 }
 
-                $returnData = [];
-                $returnData['rows_inserted'] =  $rowCounted;
-                $returnData['school'] = current($schools);
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" =>  $returnData
+                return $this->response(true, 'School added successfully', [
+                    "rows_inserted" => $rowCounted,
+                    "school" => current($schools)
                 ], 201);
-
+          
             } catch (SchoolException| AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -164,17 +130,13 @@ namespace App\Controller\Api\V1\School
 
             $page = (int) $args['page'];
             // Check Parameter Page
-            if (!$this->checkArguments($page)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Page number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                'Page number cannot be blank or string. It\'s must be numeric', $page
+            );
             try 
             {
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new SchoolRepository($connexionRead);
+                $repository = new SchoolRepository(Connexion::read());
                 $counter = $repository->count();
                 // Limit par page;
                 $limitPerPage = 10;
@@ -183,10 +145,7 @@ namespace App\Controller\Api\V1\School
                 // First Page
                 if ($numOfPages == 0)  $numOfPages = 1;
                 if ($numOfPages < $page || 0 == $page) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Page not found."
-                    ], 400);
+                    return $this->response(false, 'Page not found', null, 404);
                 }
                 // Offset Page
                 $offset = (($page == 1) ? 0 : ($limitPerPage * ($page - 1)));
@@ -194,23 +153,18 @@ namespace App\Controller\Api\V1\School
                     limit: $limitPerPage, offset: $offset
                 );
                 $rowCounted = $repository->getTemprowCounted();
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['total_rows'] = $ecolesCount;
-                $returnData['total_pages'] = $numOfPages;
-                $returnData['has_next_page'] =  ($page < $numOfPages) ? true : false;
-                $returnData['has_privious_page'] =  ($page > 1) ? true : false;
-                $returnData['schools'] = $schoolRows;
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                
+                return $this->response(true, "Schools retrieved successfully", [
+                    "rows_returned" => $rowCounted,
+                    "total_rows" => $ecolesCount,
+                    "total_pages" => $numOfPages,
+                    "has_next_page" => ($page < $numOfPages) ? true : false,
+                    "has_privious_page" => ($page > 1) ? true : false,
+                    "schools" => $schoolRows
                 ], 200);
 
             } catch (SchoolException | AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
          /**
@@ -231,17 +185,14 @@ namespace App\Controller\Api\V1\School
             $page = (int) $args['page'];
             $limitParam = (int) ($args['limit']?? 5);
             // Check Parameter Page
-            if (!$this->checkArguments($page)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Page number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "Page number cannot be blank or string. It's must be numeric", $page
+            );
+
             try 
             {
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new SchoolRepository($connexionRead);
+                $repository = new SchoolRepository(Connexion::read());
                 $counter = $repository->count();
                 // Limit par page;
                 $limitPerPage =  $limitParam;
@@ -250,10 +201,7 @@ namespace App\Controller\Api\V1\School
                 // First Page
                 if ($numOfPages == 0)  $numOfPages = 1;
                 if ($numOfPages < $page || 0 == $page) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Page not found."
-                    ], 400);
+                    return $this->response(false, 'Page not found', null, 404);
                 }
                 // Offset Page
                 $offset = (($page == 1) ? 0 : ($limitPerPage * ($page - 1)));
@@ -261,23 +209,18 @@ namespace App\Controller\Api\V1\School
                     limit: $limitPerPage, offset: $offset
                 );
                 $rowCounted = $repository->getTemprowCounted();
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['total_rows'] = $ecolesCount;
-                $returnData['total_pages'] = $numOfPages;
-                $returnData['has_next_page'] =  ($page < $numOfPages) ? true : false;
-                $returnData['has_previous_page'] =  ($page > 1) ? true : false;
-                $returnData['schools'] = $schoolRows;
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
-                ], 200);
+                
 
+                return $this->response(true, "Schools retrieved successfully", [
+                    "rows_returned" => $rowCounted,
+                    "total_rows" => $ecolesCount,
+                    "total_pages" => $numOfPages,
+                    "has_next_page" => ($page < $numOfPages) ? true : false,
+                    "has_privious_page" => ($page > 1) ? true : false,
+                    "schools" => $schoolRows
+                ], 200);
             } catch (SchoolException | AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -303,17 +246,14 @@ namespace App\Controller\Api\V1\School
             $type = isset($typeParam) ? trim($typeParam) : null;
 
             // Check Parameter Page
-            if (!$this->checkArguments($page)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Page number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "Page number cannot be blank or string. It's must be numeric", $page
+            );
+
             try 
             {
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new SchoolRepository($connexionRead);
+                $repository = new SchoolRepository(Connexion::read());
                 $counter = $repository->count();
                 // Limit par page;
                 $limitPerPage = $offsetParam;
@@ -324,10 +264,7 @@ namespace App\Controller\Api\V1\School
                 // First Page
                 if ($numOfPages == 0)  $numOfPages = 1;
                 if ($numOfPages < $page || 0 == $page) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Page not found."
-                    ], 400);
+                    return $this->response(false, 'Page not found', null, 404);
                 }
                 // Offset Page
                 $offset = (($page == 1) ? 0 : ($limitPerPage * ($page - 1)));
@@ -337,23 +274,17 @@ namespace App\Controller\Api\V1\School
                 );
                 $rowCounted = $repository->getTemprowCounted();
                
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['total_rows'] = $ecolesCount;
-                $returnData['total_pages'] = $numOfPages;
-                $returnData['has_next_page'] =  ($page < $numOfPages) ? true : false;
-                $returnData['has_privious_page'] =  ($page > 1) ? true : false;
-                $returnData['schools'] = $schoolRows;
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                return $this->response(true, "Schools retrieved successfully", [
+                    "rows_returned" => $rowCounted,
+                    "total_rows" => $ecolesCount,
+                    "total_pages" => $numOfPages,
+                    "has_next_page" => ($page < $numOfPages) ? true : false,
+                    "has_privious_page" => ($page > 1) ? true : false,
+                    "schools" => $schoolRows
                 ], 200);
 
             } catch (SchoolException | AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
 
@@ -373,40 +304,28 @@ namespace App\Controller\Api\V1\School
         ): Response {
             $school_id = (int) $args['id'];
             // Check Parameter School Id
-            if (is_null($school_id) || empty($school_id) || !is_numeric($school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "School ID number cannot be blank or string. It's must be numeric",
+                $school_id
+            );
 
             try {
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new SchoolRepository($connexionRead);
+                $repository = new SchoolRepository(Connexion::read());
                 $schools = $repository->retrieve(id: $school_id);
                 $rowCounted = $repository->getTemprowCounted();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "School Not Found."
-                    ], 500);
+                    return $this->response(false, 'School Not Found', null, 404);
                 }
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['school'] = current($schools);
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                
+                return $this->response(true, 'School retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "school" => current($schools)
                 ], 200);
 
             } catch (SchoolException | AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -426,28 +345,20 @@ namespace App\Controller\Api\V1\School
             $school_id = (int) $args['id'];
 
             // Check Parameter School Id
-            if (!$this->checkArguments($school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments("School ID number cannot be blank or string. It's must be numeric", $school_id);
+
             // Retrive data from Json
             $jsonObject = $request->getParsedBody();
             try 
             {
                 // Establish the connection Database
-                $connexionWrite = Connexion::write();
-                $repository = new SchoolRepository($connexionWrite);
+                $repository = new SchoolRepository(Connexion::write());
                 $schoolRows = $repository->retrieve(id: $school_id);
                 $rowCounted = $repository->getTemprowCounted();
                 $schoolRow = current($schoolRows);
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'School Not Found.'
-                    ], 500);
+                    return $this->response(false, 'School Not Found', null, 404);
                 }
                 $school = School::fromState(data: $schoolRow);
                 $school
@@ -458,10 +369,7 @@ namespace App\Controller\Api\V1\School
                     ->setSite(site: $jsonObject->site);
                 $repository->update(school: $school);
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'School not updated.'
-                    ], 400);
+                    return $this->response(false, 'School not updated', null, 409);
                 }
                 // Fetch after Update
                 $schoolRows = $repository->retrieve(id: $school_id);
@@ -469,24 +377,15 @@ namespace App\Controller\Api\V1\School
                 $schoolRow = current($schoolRows);
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'No school fetched after update.'
-                    ], 404);
+                    return $this->response(false, 'No school fetched after update', null, 404);
                 }
-                $returnData = [];
-                $returnData['rows_counted'] =  $rowCounted;
-                $returnData['school'] = $schoolRow;
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data"=> $returnData
+                
+                return $this->response(true, 'School updated successfully', [
+                    "rows_updated" => $rowCounted,
+                    "school" => current($schoolRows)
                 ], 200);
             } catch (SchoolException | AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -505,27 +404,19 @@ namespace App\Controller\Api\V1\School
         ): Response {
             $school_id = (int) $args['id'];
             // Check Parameter School Id
-            if (!$this->checkArguments($school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments("School ID number cannot be blank or string. It's must be numeric", $school_id);
+
             // Retrieve  Body
             $jsonObject = $request->getParsedBody();
             try {
                 // Establish the connection Database
-                $connexionWrite = Connexion::write();
-                $repository = new SchoolRepository($connexionWrite);
+                $repository = new SchoolRepository(Connexion::write());
                 $schoolRows = $repository->retrieve(id: $school_id);
                 $rowCounted = $repository->getTemprowCounted();
                 $schoolRow = current($schoolRows);
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'School Not Found.'
-                    ], 500);
+                    return $this->response(false, 'School Not Found', null, 404);
                 }
                 $refClass = new \ReflectionClass(School::class);
                 $props = $refClass->getProperties();
@@ -544,10 +435,7 @@ namespace App\Controller\Api\V1\School
                 }
                 $repository->update(school: $school);
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'School not updated.'
-                    ], 400);
+                    return $this->response(false, 'School not updated', null, 409);
                 }
 
                 // Fetch after Update
@@ -556,24 +444,16 @@ namespace App\Controller\Api\V1\School
                 $schoolRow = current($schoolRows);
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'No school fetched after update.'
-                    ], 404);
+                    return $this->response(false, 'No school fetched after update', null, 404);
                 }
 
-                $returnData = [];
-                $returnData['rows_counted'] = $rowCounted;
-                $returnData['school'] =  $schoolRow;
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data"=> $returnData
+                return $this->response(true, 'School updated successfully', [
+                    "rows_updated" => $rowCounted,
+                    "school" => current($schoolRows)
                 ], 200);
+
             } catch (SchoolException | AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -592,50 +472,28 @@ namespace App\Controller\Api\V1\School
         ): Response {
             $school_id = (int) $args['id'];
             // Check Parameter School Id
-            // Check Parameter School Id
-            if (!$this->checkArguments($school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments("School ID number cannot be blank or string. It's must be numeric", $school_id);
 
             try {
                 // Establish the connection Database
-                $connexionWrite = Connexion::write();
-                $repository = new SchoolRepository($connexionWrite);
-                $schoolRows = $repository->retrieve(id: $school_id);
+                $repository = new SchoolRepository(Connexion::write());
+                $repository->retrieve(id: $school_id);
                 $rowCounted = $repository->getTemprowCounted();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'School Not Found.'
-                    ], 500);
-
+                    return $this->response(false, 'School Not Found', null, 404);
                 }
                 $repository->remove(id: $school_id);
                 $rowCounted = $repository->rowCount();
                 if ($repository->rowCount()=== 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'School not found for to delete.'
-                    ], 404);
-
+                    return $this->response(false, 'School not found for to delete', null, 404);
                 }
-                $returnData = [];
-                $returnData['rows_deleted'] = $rowCounted;
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "message" => "School $school_id deleted",
-                    "data" => $returnData,
+                
+                return $this->response(true, 'School deleted successfully', [
+                    "rows_deleted" => $rowCounted
                 ], 204);
             } catch (SchoolException | SchoolException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -655,38 +513,24 @@ namespace App\Controller\Api\V1\School
             $nom = urldecode(htmlspecialchars($args['nom'], ENT_QUOTES));
             // Check Parameter School Name
             if (is_null($nom) || empty($nom)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School name cannot be blank"
-                ], 400);
+                return $this->response(false, 'School name cannot be blank', null, 400);
             }
             try {
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new SchoolRepository($connexionRead);
+                $repository = new SchoolRepository(Connexion::read());
                 $schools = $repository->searchByName(nom: $nom);
                 $rowCounted = $repository->getTemprowCounted();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "School Not Found."
-                    ], 500);
+                    return $this->response(false, "School Not Found.", null, 404);
                 }
 
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['schools'] =  $schools;
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                return $this->response(true, "Schools found", [
+                    "rows_returned" => $rowCounted,
+                    "schools" => $schools
                 ], 200);
             } catch (SchoolException | AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -708,38 +552,26 @@ namespace App\Controller\Api\V1\School
             $limit = (int) ($args['limit']?? 10);
             // Check Parameter School Name
             if (is_null($nom) || empty($nom)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => 'School name cannot be blank'
-                ], 400);
+                return $this->response(false, 'School name cannot be blank', null, 400);
             }
+
 
             try {
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new SchoolRepository($connexionRead);
+                $repository = new SchoolRepository( Connexion::read());
                 $schools = $repository->searchByName(nom: $nom, limit: $limit);
                 $rowCounted = $repository->getTemprowCounted();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "School Not Found."
-                    ], 500);
+                    return $this->response(false, "School Not Found.", null, 404);
                 }
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['schools'] =  $schools;
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                
+                return $this->response(true, "Schools found", [
+                    "rows_returned" => $rowCounted,
+                    "schools" => $schools
                 ], 200);
             } catch (SchoolException | AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
     }

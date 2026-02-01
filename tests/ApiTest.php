@@ -8,7 +8,7 @@ class ApiTest extends TestCase
 
      protected function setUp(): void
     {
-        $this->baseUrl = "https://manzowa.com/api/v1"; 
+        $this->baseUrl = "https://manzowa.com/api/v1/ecoles"; 
     }
 
     public function testGetAllItems()

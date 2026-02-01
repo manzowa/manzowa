@@ -40,23 +40,18 @@ namespace App\Controller\Api\V1\School
         {
             $school_id = (int) $args['id'];
             // Check Parameter School Id
-            if (!$this->checkArguments($school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "School ID number cannot be blank or string. It's must be numeric",
+                $school_id
+            );
+            
             try {
-                $connexionRead = Connexion::Read();
-                $repository = new ScheduleRepository($connexionRead);
+                $repository = new ScheduleRepository(Connexion::read());
                 $schedules = $repository->retrieve(schoolid: $school_id);
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Schedules Not Found."
-                    ], 500);
+                    return $this->response(false, 'No schedules found', null, 404);
                 }
     
                 $returnData['rows_returned'] = $rowCounted;
@@ -67,10 +62,7 @@ namespace App\Controller\Api\V1\School
                     "data" => $returnData
                 ], 200);
             } catch (ScheduleException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
 
@@ -101,7 +93,7 @@ namespace App\Controller\Api\V1\School
             }
             // Check if school exists
             try {
-                $connexionRead = Connexion::Read();
+                $connexionRead = Connexion::read();
                 $schoolRepository = new SchoolRepository($connexionRead);
                 $schoolRepository->retrieve(id: $school_id);
                 $rowCounted = $schoolRepository->getTempRowCounted();
@@ -172,7 +164,7 @@ namespace App\Controller\Api\V1\School
 
             // Récupération des données
             try {
-                $connexionRead = Connexion::Read();
+                $connexionRead = Connexion::read();
                 $repository = new ScheduleRepository($connexionRead);
                 $schedule = $repository->retrieve(
                     id: $schedule_id, 
@@ -233,7 +225,7 @@ namespace App\Controller\Api\V1\School
         
             // Mise à jour dans la base de données
             try {
-                $connexionWrite = Connexion::Write();
+                $connexionWrite = Connexion::write();
                 $repository = new ScheduleRepository($connexionWrite);
                 $scheduleRows =$repository->retrieve(id: $schedule_id, schoolid: $school_id);
                 $rowCounted = $repository->rowCount();
@@ -304,7 +296,7 @@ namespace App\Controller\Api\V1\School
 
             // Suppression dans la base de données
             try {
-                $connexionWrite = Connexion::Write();
+                $connexionWrite = Connexion::write();
                 $repository = new ScheduleRepository($connexionWrite);
                 $repository->remove(id: $schedule_id, schoolid: $school_id);
                 $rowCounted = $repository->rowCount();

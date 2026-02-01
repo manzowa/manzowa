@@ -42,40 +42,27 @@ namespace App\Controller\Api\V1\School
         {
             $school_id = (int) $args['id'];
             // Check Parameter School Id
-            if (!$this->checkArguments($school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "School ID number cannot be blank or string. It's must be numeric",
+                $school_id
+            );
 
             try {
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new AddressRepository($connexionRead);
+                $repository = new AddressRepository(Connexion::read());
                 $addresses = $repository->retrieve(schoolid: $school_id);
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Address Not Found.'
-                    ], 500);
+                    return $this->response(false, 'No addresses found', null, 404);
                 }
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['adressses'] = $addresses;
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data"=> $returnData
+                return $this->response(true, 'Addresses retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "adressses" => $addresses
                 ], 200);
 
             } catch (AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -95,81 +82,51 @@ namespace App\Controller\Api\V1\School
     
             $school_id = (int) $args['id'];
            // Check Parameter School Id
-            if (!$this->checkArguments($school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "School ID number cannot be blank or string. It's must be numeric",
+                $school_id
+            );
+            
             $jsonObject = $request->getParsedBody();
             try 
             {
-                $connexionRead = Connexion::Read();
-                $repository = new SchoolRepository($connexionRead);
+                $repository = new SchoolRepository(Connexion::read());
                 $repository->retrieve(id: $school_id);
                 $rowCounted = $repository->getTempRowCounted();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "School Not Found."
-                    ], 500);
+                    return $this->response(false, 'School Not Found', null, 404);
                 }
-            
-                $address = new Address(
-                    id: NULL, 
-                    voie: $jsonObject->voie?? NULL, 
-                    quartier:$jsonObject->quartier ?? NULL, 
-                    commune: $jsonObject->commune?? NULL, 
-                    district: $jsonObject->district ?? NULL, 
-                    ville: $jsonObject->ville ?? NULL, 
-                    reference: $jsonObject->reference?? NULL, 
-                    ecoleid: $school_id
-                );
+        
+                $address = Address::fromObject(data: $jsonObject)
+                    ->setEcoleId(ecoleid: $school_id);
 
-                $connexionWrite = Connexion::write();
-                $repository = new AddressRepository($connexionWrite);
+                $repository = new AddressRepository(Connexion::write());
                 $repository->exists(address: $address);
 
                 if ($repository->exists(address: $address)) {    
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Address already exists"
-                    ], 409);
+                    return $this->response(false, 'Address already exists', null, 409);
                 }
             
                 $repository->add(address: $address);
                 if ($repository->rowCount() === 0) {  
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Failed to add address."
-                    ], 400);
+                    return $this->response(false, 'Failed to add address', null, 400);
                 }
                 $lastInsertID = (int) $repository->lastInsertId();
                 $rows = $repository->retrieve(id: $lastInsertID);
 
                 if ($repository->rowCount() === 0) {   
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Failed to retrieve address after to create."
-                    ], 400);
+                    return $this->response(false, 'Failed to retrieve address after creation', null, 400);
                 }
                 $row = current($rows);
                 $stateAdresse= Address::fromState(data: $row);
 
-                $returnData = [];
-                $returnData['rows_returned'] = $repository->rowCount();
-                $returnData['adressses'] = $stateAdresse->toArray();
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" =>  $returnData
+                return $this->response(true, 'Address added successfully', [
+                    "rows_returned" => $repository->rowCount(),
+                    "adressses" => $stateAdresse->toArray()
                 ], 201);
             } catch (AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -190,43 +147,29 @@ namespace App\Controller\Api\V1\School
             $school_id = (int) $args['id'];
             $address_id = (int) $args['adresseid'];
             // Check Parameter School ID
-            if (!$this->checkArguments($school_id, $address_id)) {
-               $msg = 'School ID or Addres ID cannot be blank or string. ';
-               $msg.= 'It\'s must be numeric';
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $msg
-                ], 400);
-            }
-
+            $this->ensureValidArguments(
+                "School ID or Addres ID cannot be blank or string. It's must be numeric",
+                $school_id, $address_id
+            );
+        
             try 
             {
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new AddressRepository($connexionRead);
+                $repository = new AddressRepository(Connexion::read());
                 $addresses = $repository->retrieve(
                     id: $address_id , schoolid: $school_id
                 );
                 $rowCounted = $repository->rowCount();
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" =>'Adresse Not Found.'
-                    ], 500);
+                    return $this->response(false, 'Address not found', null, 404);
                 }
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['adressse'] = $addresses;
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                
+                return $this->response(true, 'Address retrieved successfully', [
+                    "rows_returned" => $repository->rowCount(),
+                    "adressses" => $addresses
                 ], 200);
             } catch (AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -247,14 +190,11 @@ namespace App\Controller\Api\V1\School
             $school_id = (int) $args['id'];
             $address_id = (int) $args['adresseid'];
             // Check Parameter School ID
-            if (!$this->checkArguments($school_id, $address_id)) {
-               $msg = 'School ID or Addres ID cannot be blank or string. ';
-               $msg.= 'It\'s must be numeric';
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $msg
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                "School ID or Addres ID cannot be blank or string. It's must be numeric",
+                $school_id, $address_id
+            );
+        
             $jsonObject = $request->getParsedBody();
             // Prepare Data
             try 
@@ -268,11 +208,7 @@ namespace App\Controller\Api\V1\School
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" =>'Adresse Not Found.'
-                    ], 500);
-
+                    return $this->response(false, 'Address not found', null, 404);
                 }
                 $addressRow = current($addressRows);
                 $address = Address::fromState(data: $addressRow);
@@ -285,10 +221,7 @@ namespace App\Controller\Api\V1\School
                 $repository->update(address: $address);
 
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Address not updated.'
-                    ], 400);
+                    return $this->response(false, 'Address not updated', null, 409);
                 }
                 // Fetch after Update
                 $addressRows = $repository->retrieve(
@@ -302,21 +235,15 @@ namespace App\Controller\Api\V1\School
                         "success" => false,
                         "message" => 'No Address found after update.'
                     ], 404);
+                    return $this->response(false, 'Address not found after update', null, 404);
                 }
 
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['adressse'] =$addressRows;
-
-                 return $this->jsonResponse([
-                    "success" => true,
-                    "data"=> $returnData
+                return $this->response(true, 'Address updated successfully', [
+                    "rows_returned" => $repository->rowCount(),
+                    "adressses" => $addressRows
                 ], 200);
             } catch (AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -337,17 +264,11 @@ namespace App\Controller\Api\V1\School
             $school_id = (int) $args['id'];
             $address_id = (int) $args['adresseid'];
             // Check Parameter School ID
-            if ((is_null($school_id)  || empty($school_id))
-                || (is_null( $address_id) || empty( $address_id))
-            ) {
-               $msg = 'School ID or Addres ID cannot be blank or string. ';
-               $msg.= 'It\'s must be numeric';
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $msg
-                ], 400);
-            }
-
+            $this->ensureValidArguments(
+                "School ID or Addres ID cannot be blank or string. It's must be numeric",
+                $school_id, $address_id
+            );
+        
             $jsonObject = $request->getParsedBody();
    
             $refClass = new \ReflectionClass(Address::class);
@@ -361,27 +282,20 @@ namespace App\Controller\Api\V1\School
                 } 
             }
             if ($propExisted) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "No fields to update are provided."
-                ], 400);
+                return $this->response(false, 'No updatable fields were provided', null, 400);
             }
 
             // Prepare Data
             try {
                 // Establish the connection Database
-                $connexionWrite = Connexion::write();
-                $repository = new AddressRepository($connexionWrite);
+                $repository = new AddressRepository(Connexion::write());
                 $addressRows = $repository->retrieve(
                     id: $address_id, schoolid: $school_id
                 );
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Address Not Found.'
-                    ], 500);
+                    return $this->response(false, 'Address not found', null, 404);
                 }
                 $addressRow = current($addressRows);
                 $address = Address::fromState(data: $addressRow);
@@ -390,10 +304,7 @@ namespace App\Controller\Api\V1\School
                 $repository->update(address: $address);
 
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Address not updated.'
-                    ], 404);
+                    return $this->response(false, 'Address not updated', null, 409);
                 }
                 // Fetch after Update
                 $addressRows = $repository->retrieve(
@@ -403,25 +314,15 @@ namespace App\Controller\Api\V1\School
                 $rowCounted = $repository->rowCount();
                 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'No Address found after update.'
-                    ], 404);
+                    return $this->response(false, 'Address not found after update', null, 404);
                 }
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['adressse'] =$addressRows;
-    
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                return $this->response(true, 'Address updated successfully', [
+                    "rows_returned" => $rowCounted,
+                    "adressses" => $addressRows
                 ], 200);
                 
             } catch (AddressException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -442,31 +343,22 @@ namespace App\Controller\Api\V1\School
             $school_id = (int) $args['id'];
             $address_id = (int) $args['adresseid'];
             // Check Parameter School ID
-            if ((is_null($school_id)  || empty($school_id))
-                || (is_null( $address_id) || empty( $address_id))
-            ) {
-               $msg = 'School ID or Addres ID cannot be blank or string. ';
-               $msg.= 'It\'s must be numeric';
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $msg
-                ], 400);
-            }
-
+            $this->ensureValidArguments(
+                "School ID or Addres ID cannot be blank or string. It's must be numeric",
+                $school_id, $address_id
+            );
+            
+            $repository = new AddressRepository(Connexion::write());
             try {
                  // Establish the connection Database
-                $connexionWrite = Connexion::write();
-                $repository = new AddressRepository($connexionWrite);
+                
                 $addressRows = $repository->retrieve(
                     id: $address_id, schoolid: $school_id
                 );
                 $rowCounted = $repository->rowCount();
                  
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Address Not Found.'
-                    ], 500);
+                    return $this->response(false, 'Address not found', null, 404);
                 }
                 $addressRow = current($addressRows);
                 $address = Address::fromState(data: $addressRow);
@@ -481,26 +373,18 @@ namespace App\Controller\Api\V1\School
                     if ($repository->inTransaction()) {
                         $repository->rollBack();
                     }
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'No Address found to delete.'
-                    ], 404);
+                    return $this->response(false, 'Address not found', null, 404);
                 }
                 $repository->commit();
 
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Address $address_id deleted"
-                ], 204);
+                return $this->response(true, "Address {$address_id} deleted successfully", null, 200);
+
 
             } catch (AddressException $ex) {
                 if ($repository->inTransaction()) {
                     $repository->rollBack();
                 }
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }            
         }
     }

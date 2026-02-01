@@ -42,9 +42,10 @@ namespace App\Controller\Api\V1
         ) : Response {
             sleep(1); // Important
             // Establish the connection Database
-            $connexionWrite = Connexion::write();
-            $repository = new UserRepository($connexionWrite);
+            $repository = new UserRepository(Connexion::write());
             $jsonObject = $request->getParsedBody();
+            // Start Transaction
+            $repository->beginTransaction();
 
             try 
             {
@@ -54,20 +55,21 @@ namespace App\Controller\Api\V1
                 $user = $repository->findByUsernameOrEmail($username);
 
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Username or Password is incorrect'
-                    ], 401);
+                    if ($repository->inTransaction()) {
+                        $repository->rollBack();
+                    }
+                    
+                    return $this->response(false, 'Username or Password is incorrect', null, 401);
                 }
 
                 if (!$user->isPassword($password)) {
                     $user->incrementAttempts(); // Update login attempts
                     $repository->update($user);
                     if ($repository->rowCount() === 0) {
-                        return $this->jsonResponse([
-                            "success" => false,
-                            "message" => 'Username or Password is incorrect'
-                        ], 401);
+                        if ($repository->inTransaction()) {
+                            $repository->rollBack();
+                        }
+                        return $this->response(false, 'Username or Password is incorrect', null, 401);
                     }
                 }
                 $accessToken  = \App\generateToken();
@@ -76,8 +78,7 @@ namespace App\Controller\Api\V1
                 $access_token_expiry_seconds = 1200;
                 $refresh_token_expiry_seconds = 1209600;
 
-                // Start Transaction
-                $repository->beginTransaction();
+               
                 $user->resetAttempts();
                 $repository->update($user);
 
@@ -91,31 +92,26 @@ namespace App\Controller\Api\V1
                 );
                 $repository->addToken($token);
                 $lastSessionId = $repository->getStockId();
-                $repository->commit();
-
-                $returnData = [];
-                $returnData['session_id'] = intval($lastSessionId);
-                $returnData['access_token'] = $accessToken;
-                $returnData['access_token_expires_in'] = $access_token_expiry_seconds;
-                $returnData['refresh_token'] = $refreshToken;
-                $returnData['refresh_token_expires_in'] = $refresh_token_expiry_seconds;
-
+               
+                if ($repository->inTransaction()) {
+                    $repository->commit();
+                }
                 
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
-                ], 201);
+                return $this->response(true, 'Token created successfully', [
+                    'session_id' => intval($lastSessionId),
+                    'access_token' => $accessToken,
+                    'access_token_expires_in' => $access_token_expiry_seconds,
+                        'refresh_token' => $refreshToken,
+                        'refresh_token_expires_in' => $refresh_token_expiry_seconds
+                    ], 201
+                );
 
             } catch (UserException $ex) {
                 if ($repository->inTransaction()) {
                     $repository->rollBack();
                 }
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
-            return $response;
         }
         /**
          * Method deleteTokenAction [DELETE]
@@ -134,46 +130,28 @@ namespace App\Controller\Api\V1
             
             $session_id = (int) $args['id'];
             // Check Parameter ID
-            if (!$this->checkArguments($session_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Token ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments("Invalid Token ID", $session_id);
+
             try {
                 // Establish the connection Database
-                $connexionWrite = Connexion::write();
                 $accessToken = \App\beareToken( 
                     $request->getHeaderLine('HTTP_AUTHORIZATION')
                 );
-                $repository = new UserRepository($connexionWrite);
+                $repository = new UserRepository(Connexion::write());
                 $repository->removeToken($session_id, $accessToken);
 
                 if ($repository->getTempRowCounted() === 0) {
-                    $msg = "Failed to log out of this sessions using ";
-                    $msg.= "access token provided";
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => $msg
-                    ], 400);
+                   
+                    return $this->response(false, "Failed to log out of this sessions using access token provided", null, 400);
                 }
-                $returnData = [];
-                $returnData['session_id'] = intval($session_id);
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "message" => "Logged out ",
-                    "data" =>  $returnData
+        
+                return $this->response(true, 'Logged out successfully', [
+                    "session_id" => intval($session_id)
                 ], 204);
 
             } catch (UserException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
-
-            return $response;
         }
         /**
          * Method patchTokenAction [PATCH]
@@ -192,24 +170,19 @@ namespace App\Controller\Api\V1
 
             $session_id = (int) $args['id'];
             // Check Parameter ID
-            if (!$this->checkArguments($session_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "Token ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments("Invalid Token ID", $session_id);
+            $repository = new UserRepository(Connexion::write());
 
             try 
             {
                 // Establish the connection Database
-                $connexionWrite = Connexion::write();
                 $jsonObject = $request->getParsedBody();
                 $accessToken = \App\beareToken( 
                     $request->getHeaderLine('HTTP_AUTHORIZATION')
                 );
                 $refreshToken = $jsonObject->refreshToken;
 
-                $repository = new UserRepository($connexionWrite);
+                
                 $tokens = $repository->retrieveToken(
                     id: $session_id, 
                     accessToken:$accessToken, 
@@ -217,10 +190,9 @@ namespace App\Controller\Api\V1
                 );
               
                 if ($repository->getTempRowCounted() == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Access token or refresh token is invalid'
-                    ], 401);
+                    return $this->errorResponse(
+                        'Access token or refresh token is invalid', 401
+                    );
                 }
                 $token = current($tokens);
                
@@ -229,24 +201,16 @@ namespace App\Controller\Api\V1
 
                 // Check if user is active
                 if (!$user->isActive()) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'User account is not active'
-                    ], 401);
+                    
+                    return $this->response(false, 'User account is not active', null, 401);
                 }
                 // Check if user has exceeded maximum login attempts
                 if ($user->isLocked()) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'User account is currently locked out'
-                    ], 401);
+                    return $this->response(false, 'User account is currently locked out', null, 401);
                 }
                  // Check refresh token expiration
                 if ($token->isRefreshtokenexpiry()) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Refresh token has expired - please log in again'
-                    ], 401);
+                    return $this->response(false, 'Refresh token has expired - please log in again', null, 401);
                 }
                 $accessToken=\App\generateToken();
                 $refreshToken=\App\generateToken();
@@ -262,29 +226,21 @@ namespace App\Controller\Api\V1
                 $repository->updateToken(token: $token);
             
                 if ($repository->getTempRowCounted() == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Access token could not be refresh - please log in again'
-                    ], 401);
+                    
+                    return $this->response(false, 'Access token could not be refresh - please log in again', null, 401);
                 }
-                $returnData = [];
-                $returnData['session_id'] = $session_id;
-                $returnData['access_token'] = $accessToken;
-                $returnData['access_token_expiry'] = $accessTokenExpirySeconds;
-                $returnData['refresh_token'] = $refreshToken;
-                $returnData['refresh_token_expiry'] = $refreshTokenExpirySeconds;
 
-                return $this->jsonResponse([
-                    "success" => true,
-                    "message" => 'Access token refreshed',
-                    'data' => $returnData
-                ], 200);
+                return $this->response(true, 'Access token refreshed successfully', [
+                        'session_id' => intval($session_id),
+                        'access_token' => $accessToken,
+                        'access_token_expires_in' => $accessTokenExpirySeconds,
+                        'refresh_token' => $refreshToken,
+                        'refresh_token_expires_in' => $refreshTokenExpirySeconds
+                    ], 200
+                );
 
             } catch (UserException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $ex->getMessage()
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
 
         }
@@ -293,10 +249,7 @@ namespace App\Controller\Api\V1
          */
         public function optionsTokenAction(Request $request, Response $response): Response
         {
-            return $this->jsonResponse([
-                "success" => true,
-                "message" => 'Options request successful'
-            ], 204);
+            return $this->response(true, 'Options request successful', null, 204);
         }
     }
 }

@@ -185,6 +185,25 @@ namespace App\Model
                 refreshTokenExpiry: $data['refreshTokenExpiry'] ?? null
             );
         }
+        public static function fromObject(object $data): Token {
+            return new static(
+                id: $data->id ?? null,
+                userid: $data->userid ?? null,
+                accessToken: $data->accessToken ?? null,
+                accessTokenExpiry: $data->accessTokenExpiry ?? null,
+                refreshToken: $data->refreshToken ?? null,
+                refreshTokenExpiry: $data->refreshTokenExpiry ?? null
+            );
+        }
+        public static function fromJson(string $json): Token {
+            $data = json_decode($json, true);
+            return self::fromState($data);
+        }
+
+
+        public function isAccesstokenexpiry(): bool {
+            return (strtotime($this->getAccessTokenExpiry()) < time());
+        }
 
         public function isRefreshtokenexpiry(): bool {
             return (strtotime($this->getRefreshTokenExpiry()) < time());

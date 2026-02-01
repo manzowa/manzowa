@@ -3,24 +3,12 @@ namespace App\Controller;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use App\Helper\JsonResponseTrait;
 
 
 class ApiController
 {
-
-    
-    protected function jsonResponse(
-        array $data, 
-        int $status
-    ): Response {
-        $response = new \Slim\Psr7\Response();
-        $response->getBody()->write(json_encode($data, JSON_PRETTY_PRINT));
-        return $response->withStatus($status)
-          ->withHeader('Access-Control-Allow-Origin', '*')
-            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
-            ->withHeader('Content-Type', 'application/json');
-    }
+    use JsonResponseTrait;
 
     protected function checkArguments(...$args): bool 
     {
@@ -43,5 +31,17 @@ class ApiController
     {
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
         return strtolower($extension);
+    }
+
+    protected function ensureValidArguments( string $message = '', ...$args): Response|bool
+    {
+        if (!$this->checkArguments(...$args)) {
+            return $this->jsonResponse([
+                "success" => false,
+                "message" => $message
+            ], 400);
+        }
+
+        return true;
     }
 }

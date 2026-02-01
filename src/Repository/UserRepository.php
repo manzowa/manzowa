@@ -11,16 +11,29 @@ class UserRepository extends Repository implements \Countable
     public function retrieve(?int $id = null, int $limit=0): array 
     {
         $users = [];
+        $conditions = [];
+        $params = [];
+
         $limit = ($limit > 0 && $limit <= 100) ? $limit : 20;
         $command = "SELECT * FROM users ";
-        if (!is_null($id) ) {
-            $command .= "WHERE id = :id";
-              $this->prepare($command)
-            ->bindParam(':id', $id, \PDO::PARAM_INT);
-        } else {
-            $command .= "ORDER BY id desc LIMIT :limit";
-            $this->prepare($command)
-            ->bindParam(':limit', $limit, \PDO::PARAM_INT);
+
+        if (!is_null($id)) {
+            $conditions[] = "id = :id";
+            $params[':id'] = $id;
+        }
+        if (count($conditions) > 0) {   
+            $command .= " WHERE " . implode(" AND ", $conditions);
+        }
+        $command .= " ORDER BY id DESC ";
+
+        if (!is_null($limit) ) {
+            $command .= " LIMIT :limit ";
+            $params[':limit'] = $limit;
+        }
+
+        $this->prepare($command);
+        foreach ($params as $param => $value) {
+            $this->bindParam($param, $value, \PDO::PARAM_STR);
         }
         $userRows = $this->executeQuery()
             ->getResults();
@@ -30,6 +43,7 @@ class UserRepository extends Repository implements \Countable
                 $users[] = $user;
             }
         }
+        
         return $users;
     }
     public function add(User $user): self {
@@ -38,11 +52,15 @@ class UserRepository extends Repository implements \Countable
         $username = $user->getUsername();
         $email = $user->getEmail();
         $password = $user->getPassword();
-        $active = $user->getActive();
         $attempts = $user->getAttempts();
-       
-        $command  = 'INSERT INTO users (fullname, username, email, password, active, attempts) ';
-        $command .= 'VALUES (:fullname, :username, :email, :password, :active, :attempts)';
+        $status = $user->getStatus()?->value;
+        $role_id = $user->getRole()?->value;
+        $createdAt = $user->getCreatedAt();
+        $updatedAt = $user->getUpdatedAt();
+        $metadata = $user->getMetadata();
+
+        $command  = 'INSERT INTO users (fullname, username, email, password, attempts, status, role_id, created_at, updated_at, metadata) ';
+        $command .= 'VALUES (:fullname, :username, :email, :password, :attempts, :status, :role_id, :created_at, :updated_at, :metadata)';
 
         $this
             ->prepare($command)
@@ -50,8 +68,12 @@ class UserRepository extends Repository implements \Countable
             ->bindParam(':username', $username, \PDO::PARAM_STR)
             ->bindParam(':email', $email, \PDO::PARAM_STR)
             ->bindParam(':password', $password, \PDO::PARAM_STR)
-            ->bindParam(':active', $active, \PDO::PARAM_STR)
             ->bindParam(':attempts', $attempts, \PDO::PARAM_INT)
+            ->bindParam(':status', $status, \PDO::PARAM_STR)
+            ->bindParam(':role_id', $role_id, \PDO::PARAM_INT)
+            ->bindParam(':created_at', $createdAt, \PDO::PARAM_STR)
+            ->bindParam(':updated_at', $updatedAt, \PDO::PARAM_STR)
+            ->bindParam(':metadata', $metadata, \PDO::PARAM_STR)
             ->executeInsert();
         return $this;
     }
@@ -61,11 +83,16 @@ class UserRepository extends Repository implements \Countable
         $username = $user->getUsername();
         $email = $user->getEmail();
         $password = $user->getPassword();
-        $active = $user->getActive();
         $attempts = $user->getAttempts();
+        $status = $user->getStatus()?->value;
+        $role_id = $user->getRole()?->value;
+        $createdAt = $user->getCreatedAt();
+        $updatedAt = $user->getUpdatedAt();
+        $metadata = $user->getMetadata();
 
         $command  = 'UPDATE users SET fullname= :fullname, username= :username, email= :email, ';
-        $command .= 'password= :password, active= :active, attempts= :attempts '; 
+        $command .= 'password= :password, attempts= :attempts, status= :status, role_id= :role_id, ';
+        $command .= 'reated_at= :created_at, updated_at= :updated_at, metadata= :metadata '; 
         $command .= 'WHERE id= :id ';
 
         $this 
@@ -74,8 +101,12 @@ class UserRepository extends Repository implements \Countable
             ->bindParam(':username', $username, \PDO::PARAM_STR)
             ->bindParam(':email', $email, \PDO::PARAM_STR)
             ->bindParam(':password', $password, \PDO::PARAM_STR)
-            ->bindParam(':active', $active, \PDO::PARAM_STR)
             ->bindParam(':attempts', $attempts, \PDO::PARAM_INT)
+            ->bindParam(':status', $status, \PDO::PARAM_STR)
+            ->bindParam(':role_id', $role_id, \PDO::PARAM_INT)
+            ->bindParam(':created_at', $createdAt, \PDO::PARAM_STR)
+            ->bindParam(':updated_at', $updatedAt, \PDO::PARAM_STR)
+            ->bindParam(':metadata', $metadata, \PDO::PARAM_STR)
             ->bindParam(':id', $id, \PDO::PARAM_INT)
             ->executeUpdate();
         return $this;

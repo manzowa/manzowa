@@ -344,4 +344,57 @@ $app->group('/api/v1', function ($group) {
             ])->setName('event.allby.id');
         });
     });
+    // Action coments
+    $group->group('/commentaires', function ($group) {
+        $group->get('', [
+            App\Controller\Api\V1\CommentController::class,
+            'getCommentsAction'
+        ])->setName('comments.index');
+        $group->post('', [
+            App\Controller\Api\V1\CommentController::class,
+            'postCommentsAction'
+        ])->setName('comments.post')
+            ->add(new App\Middleware\JsonMiddleware())
+            ->add(new App\Middleware\JsonBodyParserMiddleware());
+        
+        $group->group('/{id:[0-9]+}', function ($group) {
+            $group->get('', [
+                App\Controller\Api\V1\CommentController::class,
+                'getCommentByIdAction'
+            ])->setName('comments.id');
+            $group->put('', [
+                App\Controller\Api\V1\CommentController::class,
+                'putCommentByIdAction'
+            ])->setName('comments.put')
+                ->add(new App\Middleware\JsonMiddleware())
+                ->add(new App\Middleware\JsonBodyParserMiddleware());
+        });
+    });
+
+    // Action ratings
+    $group->group('/notations', function ($group) {
+        $group->get('', [
+            App\Controller\Api\V1\RatingController::class,
+            'getRatingsAction'
+        ])->setName('ratings.index');
+        $group->post('', [
+            App\Controller\Api\V1\RatingController::class,
+            'postRatingAction'
+        ])->setName('ratings.post')
+            ->add(new App\Middleware\JsonMiddleware())
+            ->add(new App\Middleware\JsonBodyParserMiddleware());
+    
+        $group->group('/{id:[0-9]+}', function ($group) {
+            $group->get('', [
+                App\Controller\Api\V1\RatingController::class,
+                'getRatingByIdAction'
+            ])->setName('ratings.id');  
+            $group->put('', [
+                App\Controller\Api\V1\RatingController::class,
+                'putRatingByIdAction'
+            ])->setName('ratings.put')
+                ->add(new App\Middleware\JsonMiddleware())
+                ->add(new App\Middleware\JsonBodyParserMiddleware());
+        });
+    });
 })->add(new App\Middleware\DatabaseConnectionMiddleware());

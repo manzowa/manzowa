@@ -266,5 +266,23 @@ namespace App\Model
                 ecoleid: $data['ecoleid']?? null
             );
         }
+
+        public static function fromObject(object $data): Address {
+            return new static(
+                id: $data->id ?? null,
+                voie:  $data->voie ?? null,
+                quartier:  $data->quartier ?? null,
+                commune:  $data->commune ?? null,
+                district: $data->district ?? null,
+                ville: $data->ville ?? null,
+                reference: $data->reference ?? null,
+                ecoleid: $data->ecoleid ?? null
+            );
+        }
+
+        public static function fromJson(string $json): Address {
+            $data = json_decode($json, true);
+            return self::fromState($data);
+        }
     }
 }

@@ -46,38 +46,24 @@ namespace App\Controller\Api\V1\School
         ): Response {
             $school_id = (int) $args['id'];
             // Check Parameter School Id
-            if (!$this->checkArguments($school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments("School ID number cannot be blank or string. It's must be numeric", $school_id);
+
             try 
             {
-                $connexionRead = Connexion::Read();
-                $repository = new ImageRepository($connexionRead);
+                $repository = new ImageRepository(Connexion::Read());
                 $images = $repository->retrieve(schoolid: $school_id);
                 $rowCounted = $repository->rowCount();
 
                 if ($rowCounted == 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Images Not Found."
-                    ], 500);
+                    return $this->response(false, 'No images found', null, 404);
                 }
-    
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['images'] = $images;
 
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                return $this->response(true, 'Images retrieved successfully', [
+                    "rows_returned" => $rowCounted,
+                    "images" => $images
                 ], 200);
             } catch (ImageException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
 
@@ -100,12 +86,9 @@ namespace App\Controller\Api\V1\School
             $school_id = (int) $args['id'];
 
             // Check Parameter School Id
-            if (!$this->checkArguments($school_id)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "School ID number cannot be blank or string. It's must be numeric"
-                ], 400);
-            }
+            $this->ensureValidArguments("School ID number cannot be blank or string. It's must be numeric", $school_id);
+
+
             $data = $request->getParsedBody();
             $attributesRow = $data['attributes']?? false;
             $attributes = json_decode($attributesRow);
@@ -114,18 +97,15 @@ namespace App\Controller\Api\V1\School
             $uploadedFiles = $request->getUploadedFiles();
             $uploadedFile = $uploadedFiles['imagefile'] ?? false;
     
+            $connexionWrite = Connexion::write();
             try 
             {
-                $connexionWrite = Connexion::write();
                 $repositorySchool = new SchoolRepository($connexionWrite);
                 $schoolRows = $repositorySchool->retrieve(id: $school_id);
                 $rowCounted = $repositorySchool->getTempRowCounted();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "School Not Found."
-                    ], 500);
+                    return $this->response(false, 'School Not Found', null, 404);
                 }
                 
                 $schoolRow = current($schoolRows);
@@ -134,10 +114,7 @@ namespace App\Controller\Api\V1\School
                 if (!is_null($school->getMaximage()) && $school->isMaximunImage()) {
                     $msg = "You can't add this image, the maximum ";
                     $msg .= "number of images has been reached.";
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => $msg
-                    ], 400);
+                    return $this->response(false, $msg, null, 409);
                 }
     
                 $extension = $this->extensionFile(
@@ -150,81 +127,62 @@ namespace App\Controller\Api\V1\School
                 $tmpName = $uploadedFile
                     ->getStream()
                     ->getMetadata('uri');
-            
-                $image = new Image(
-                    id: null, 
-                    title: $attributes->title, 
-                    filename: $newFilename,
-                    mimetype: $uploadedFile->getClientMediaType(),
-                    ecoleid: $school_id
-                );
+                    
+                $image = Image::fromObject(data: $attributes)
+                    ->setFilename($newFilename)
+                    ->setMimetype($uploadedFile->getClientMediaType())
+                    ->setEcoleid($school_id);
+
                 $repository = new ImageRepository($connexionWrite);
                 if ($repository->imageExists($attributes->filename, $school_id)) {
                     $msg = 'A file with that filename already exists ';
                     $msg.= '- try a different filename';
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => $msg
-                    ], 409);
+                    return $this->response(false, $msg, null, 409);
                 }
 
                 // Start Transaction
-                $repository->beginTransaction();
+                $connexionWrite->beginTransaction();
                 $repository->add(image: $image);
 
                 if ($repository->rowCount() === 0) {
-                    if ($repository->inTransaction()) {
-                        $repository->rollBack();
+                    if ($connexionWrite->inTransaction()) {
+                        $connexionWrite->rollBack();
                     }
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'File to upload image'
-                    ], 500);
+                    return $this->response(false, 'No image file provided', null, 400);
                 }
                 $lastImageID = (int) $repository->lastInsertId();
                 $maxima = 1 + intval($school->getMaximage());
                 $school->setMaximage(maximage: $maxima);
                 $repository->updateSchool(school: $school);
                 if ($repository->getTempRowCounted() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Failed to update info School'
-                    ], 500);
+                    return $this->response(false, 'Failed to update info School', null, 500);
                 }
 
                 $imageRows = $repository->retrieve(id: $lastImageID);
                 $rowCounted = $repository->rowCount();
                 if ($rowCounted === 0) {
-                    if ($repository->inTransaction()) {
-                        $repository->rollBack();
+                    if ($connexionWrite->inTransaction()) {
+                        $connexionWrite->rollBack();
                     }
                     $msg = "Failed to retrieve image attributes after upload";
                     $msg.= " - try uploading image aigin";
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => $msg
-                    ], 500);
+                    return $this->response(false, $msg, null, 500);
                 }
                 $imageRow = current($imageRows);
                 $newImage = Image::fromState($imageRow);
                 $newImage->saveImageFile($tmpName);
 
-                $repository->commit();
+                $connexionWrite->commit();
 
-                $returnData = [];
-                $returnData = [];
-                $returnData['rows_returned'] = $rowCounted;
-                $returnData['images'] = $newImage->toArray();
-
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" =>  $returnData
+                return $this->response(true, 'Image added successfully', [
+                    "rows_inserted" => $rowCounted,
+                    "image" => $newImage->toArray()
                 ], 201);
             } catch (ImageException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                if ($connexionWrite->inTransaction()) {
+                    $connexionWrite->rollBack();
+                }
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
 
         }
@@ -256,27 +214,22 @@ namespace App\Controller\Api\V1\School
                     "message" => $msg
                 ], 400);
             }
+            $this->ensureValidArguments("School ID or Image ID cannot be blank or string. It's must be numeric", $school_id, $image_id);
+
             try{
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new ImageRepository($connexionRead);
+                $repository = new ImageRepository(Connexion::read());
                 $imageRows = $repository->retrieve($image_id, $school_id);
 
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Images Not Found"
-                    ], 500);
+                    return $this->response(false, 'Image not found', null, 404);
                 }
                 $imageRow = current($imageRows);
                 $image = Image::fromState($imageRow);
                 $image->returnImageFile();
 
             } catch (ImageException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
         /**
@@ -298,14 +251,10 @@ namespace App\Controller\Api\V1\School
             $school_id = (int) $args['id'];
             $image_id  = (int) $args['imageid'];
             // Check Parameter School ID
-            if (!$this->checkArguments($school_id, $image_id)) {
-               $msg = 'School ID or Image ID cannot be blank or string. ';
-               $msg.= 'It\'s must be numeric';
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $msg
-                ], 400);
-            }
+            $this->ensureValidArguments("School ID or Image ID cannot be blank or string. It's must be numeric", $school_id, $image_id);
+            //
+
+
             // Establish the connection Database
             $connexionRead = Connexion::read();
             try{
@@ -315,10 +264,7 @@ namespace App\Controller\Api\V1\School
                 $rowCounted = $repositorySchool->getTempRowCounted();
 
                 if ($rowCounted === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "School Not Found."
-                    ], 500);
+                    return $this->response(false, 'School Not Found', null, 404);
                 }
                 
                 $schoolRow = current($schoolRows);
@@ -329,13 +275,10 @@ namespace App\Controller\Api\V1\School
                 $repository->beginTransaction();
                 $imageRows = $repository->retrieve(id: $image_id, schoolid: $school_id);
                 if ($repository->rowCount() === 0) {
-                    if ($repository->inTransaction()) {
-                        $repository->rollBack();
+                    if ($connexionRead->inTransaction()) {
+                        $connexionRead->rollBack();
                     }
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Image Not Found"
-                    ], 404);
+                    return $this->response(false, 'Image not found', null, 404);
                 }
                 $imageRow = current($imageRows);
                 $image = Image::fromState($imageRow);
@@ -343,8 +286,8 @@ namespace App\Controller\Api\V1\School
                 $repository->remove(id: $image_id, schoolid: $school_id);
 
                 if ($repository->rowCount() === 0) {
-                    if ($repository->inTransaction()) {
-                        $repository->rollBack();
+                    if ($connexionRead->inTransaction()) {
+                        $connexionRead->rollBack();
                     }
                      return $this->jsonResponse([
                         "success" => false,
@@ -357,26 +300,18 @@ namespace App\Controller\Api\V1\School
                 $repository->updateSchool(school: $school);
 
                 if ( $repository->getTempRowCounted() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => 'Failed to update info School'
-                    ], 500);
+                    return $this->response(false, 'Failed to update info School', null, 500);
                 }
                 $image->deleteImageFile();
-                $repository->commit();
+                $connexionRead->commit();
 
-                return $this->jsonResponse([
-                    "success" => true,
-                    "message" =>"Image $image_id Deleted"
-                ], 204);
+                return $this->response(true, "Image {$image_id} deleted", null, 200);
+
             } catch (ImageException $ex) {
                 if ($connexionRead->inTransaction()) {
                     $connexionRead->rollBack();
                 }
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 500);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
 
@@ -400,47 +335,32 @@ namespace App\Controller\Api\V1\School
             $school_id = (int) $args['id'];
             $image_id  = (int) $args['imageid'];
             // Check Parameter School ID
-            if (!$this->checkArguments($school_id, $image_id)) {
-               $msg = 'School ID or Image ID cannot be blank or string. ';
-               $msg.= 'It\'s must be numeric';
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $msg
-                ], 400);
-            }
+            $this->ensureValidArguments('School ID or Image ID cannot be blank or string. ', $school_id, $image_id);
            
             try{
                 // Establish the connection Database
-                $connexionRead = Connexion::read();
-                $repository = new ImageRepository($connexionRead);
+                $repository = new ImageRepository(Connexion::read());
                 $imageRows = $repository->retrieve($image_id, $school_id);
 
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Images Not Found"
-                    ], 500);
+                    return $this->response(false, 'Image not found', null, 404);
                 }
                 $imageRow = current($imageRows);
                 $image = Image::fromState($imageRow);
              
-                $returnData['attributes'] =  [
-                    "title" =>  $image->getTitle(),
-                    "filename" => $image->getFilename(),
-                    "mimetype" => $image->getMimetype()
-                ];
-                return $this->jsonResponse([
-                    "success" => true,
-                    "data" => $returnData
+                return $this->response(true, 'Image attributes retrieved successfully', [
+                    "attributes" => [
+                        "title" =>  $image->getTitle(),
+                        "filename" => $image->getFilename(),
+                        "mimetype" => $image->getMimetype()
+                    ]
                 ], 200);
 
             } catch (ImageException $ex) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    'message' => $ex->getMessage(),
-                ], 400);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
+
          /**
          * Method patchImageAttributesAction [PATCH]
          * 
@@ -461,40 +381,31 @@ namespace App\Controller\Api\V1\School
             $school_id = (int) $args['id'];
             $image_id  = (int) $args['imageid'];
             // Check Parameter School ID
-            if (!$this->checkArguments($school_id, $image_id)) {
-               $msg = 'School ID or Image ID cannot be blank or string. ';
-               $msg.= 'It\'s must be numeric';
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => $msg
-                ], 400);
-            }
+            $this->ensureValidArguments(
+                'School ID or Image ID cannot be blank or string. It\'s must be numeric', $school_id, $image_id
+            );
+
+
             // Retrieve  Body
             $jsonObject = $request->getParsedBody();
              // Check Field to Update
             if (!isset($jsonObject->title) && !isset( $jsonObject->filename)) {
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" => "No fields to update are provided."
-                ], 400);
+                return $this->response(false, 'No fields to update are provided.', null, 400);
             }
             // Establish the connection Database
             $connexionWrite = Connexion::write();
-            $repository = new ImageRepository($connexionWrite);
+            
 
             try {
-               
+                $repository = new ImageRepository($connexionWrite);
                 // Start Transaction
-                $repository->beginTransaction();
+                $connexionWrite->beginTransaction();
                 $imageRows = $repository->retrieve(
                     id: $image_id, 
                     schoolid: $school_id
                 );
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "Images Not Found."
-                    ], 500);
+                    return $this->response(false, 'Image not found', null, 404);
                 }
                 
                 $imageRow = current($imageRows);
@@ -513,25 +424,17 @@ namespace App\Controller\Api\V1\School
                 }
                 $repository->update(image: $image);
                 if ($repository->rowCount() === 0) {
-                    if ($repository->inTransaction()) {
-                        $repository->rollBack();
+                    if ($connexionWrite->inTransaction()) {
+                        $connexionWrite->rollBack();
                     }
-                    $msg  = 'Image attributes not updated - ';
-                    $msg .= 'the given values may be the same as  the stored values ';
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => $msg
-                    ], 400);
+                    return $this->response(false, 'Image attributes not updated', null, 400);
                 }
                 $imageRows = $repository->retrieve(
                     id: $image_id, 
                     schoolid: $school_id
                 );
                 if ($repository->rowCount() === 0) {
-                    return $this->jsonResponse([
-                        "success" => false,
-                        "message" => "No Images found after Update attributes"
-                    ], 500);
+                    return $this->response(false, 'Image not found after update', null, 404);
                 }
                 $imageRow = current($imageRows);
                 $image = Image::fromState($imageRow);
@@ -542,24 +445,17 @@ namespace App\Controller\Api\V1\School
                         newFilename: $newFilename
                     );
                 }
-                $repository->commit();
-                $returnData = [];
-                $returnData['image'] =  $image->toArray();
-      
-                return $this->jsonResponse([
-                    "success" => true,
-                    "message" => 'Image attributes updated',
-                    "data" => $returnData
+                $connexionWrite->commit();
+                
+                return $this->response(true, 'Image attributes updated', [
+                    "image" => $image->toArray()
                 ], 200);
 
             } catch (ImageException $ex) {
-                if ($repository->inTransaction()) {
-                    $repository->rollBack();
+                if ($connexionWrite->inTransaction()) {
+                    $connexionWrite->rollBack();
                 }
-                return $this->jsonResponse([
-                    "success" => false,
-                    "message" =>  $ex->getMessage()
-                ], 500);
+                return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
     }

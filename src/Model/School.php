@@ -356,6 +356,25 @@ namespace App\Model
                 horaires: $data['horaires']?? []
             );
         }
+        public static function fromObject(object $data): School {
+            return new static(
+                id: $data->id ?? null,
+                nom: static::checkValue($data->nom ?? null),
+                email: static::checkValue($data->email ?? null),
+                telephone: static::checkValue($data->telephone ?? null),
+                type: static::checkValue($data->type ?? null),
+                site: static::checkValue($data->site ?? null),
+                maximage: $data->maximage ?? null,
+                adresses: $data->adresses ?? [],
+                images: $data->images ?? [],
+                horaires: $data->horaires ?? []
+            );
+        }
+
+        public static function fromJson(string $json): School {
+            $data = json_decode($json);
+            return static::fromObject($data);
+        }
 
         private static function checkValue(?string $value): ?string {
             return (!empty($value) || $value === '0' || $value === 0) ? $value : null;

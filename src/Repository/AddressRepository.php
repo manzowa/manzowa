@@ -10,30 +10,37 @@ class AddressRepository extends Repository implements \Countable
     public function retrieve(?int $id = null, ?int $schoolid =null, int $limit=0): array
     {
         $addresses = [];
+        $conditions = [];
+        $params = [];
         $limit = ($limit > 0 && $limit <= 100) ? $limit : 20;
   
         $command  = 'SELECT a.* FROM adresses a ';
         $command .= 'INNER JOIN ecoles e on a.ecoleid = e.id ';
 
-        if (!is_null($id) && !is_null($schoolid)) {
-            $command .= 'WHERE a.ecoleid = :ecoleid ';
-            $command .= 'AND a.id = :adresseid ORDER BY a.id desc';
-            $this->prepare($command)
-            ->bindParam(':adresseid', $id, \PDO::PARAM_INT)
-            ->bindParam(':ecoleid', $schoolid, \PDO::PARAM_INT);
-
-        } elseif(!is_null($id) && is_null($schoolid)) {
-            $command .= 'WHERE a.id = :id  ORDER BY a.id desc';
-            $this->prepare($command)
-             ->bindParam(':id', $id, \PDO::PARAM_INT);
-
-        } elseif(!is_null($schoolid) && is_null($id)) {
-            $command .= 'WHERE a.ecoleid = :ecoleid ORDER BY a.id desc LIMIT :limit ';
-            $this->prepare($command)
-            ->bindParam(':ecoleid', $schoolid, \PDO::PARAM_INT)
-            ->bindParam(':limit', $limit, \PDO::PARAM_INT);
+        if (!is_null($id)) {
+            $conditions[] = 'a.id = :id';
+            $params[':id'] = [$id, \PDO::PARAM_INT];
+        }
+        if (!is_null($schoolid)) {
+            $conditions[] = 'a.ecoleid = :ecoleid';
+            $params[':ecoleid'] = [$schoolid, \PDO::PARAM_INT];
         }
 
+        // Append WHERE clause if any condition exists
+        if (count($conditions) > 0) {
+            $command .= 'WHERE ' . implode(' AND ', $conditions);
+        }
+        $command .= ' ORDER BY a.id desc ';
+
+        if (!is_null($limit) && is_null($id)) {
+            $command .= ' LIMIT :limit ';
+            $params[':limit'] = [$limit, \PDO::PARAM_INT];
+        }
+        $this->prepare($command);
+        // Bind parameters
+        foreach ($params as $param => [$value, $type]) {
+            $this->bindParam($param, $value, $type);
+        }
         $addressRows = $this->executeQuery()
             ->getResults();
         if (count($addressRows) > 0) {

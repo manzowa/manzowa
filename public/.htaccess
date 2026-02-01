@@ -1,30 +1,19 @@
 <IfModule mod_headers.c>
-    # Autoriser toutes les origines (domaine spécifique si nécessaire à la place de *)
     Header set Access-Control-Allow-Origin "*"
-    # Autoriser les méthodes HTTP utilisées dans les requêtes CORS
     Header set Access-Control-Allow-Methods "GET, POST, PATCH, OPTIONS, PUT, DELETE"
-    # Autoriser les en-têtes spécifiques dans les requêtes CORS
     Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
-    # Autoriser l'envoi de cookies et l'authentification (si nécessaire pour les sessions)
     Header set Access-Control-Allow-Credentials "true"
-    # Assurer la gestion des requêtes préliminaires (OPTIONS)
-    Header set Access-Control-Max-Age "86400"  # Cache du preflight pour 24h (86400 secondes)
+    Header set Access-Control-Max-Age "86400"
 </IfModule>
 
-# Autoriser les requêtes OPTIONS sans toucher à index.php
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    # Autoriser les fichiers statiques directement
     RewriteCond %{REQUEST_FILENAME} \.(css|js|ico|png|jpg|jpeg|json|woff2?|ttf|svg|eot)$ [NC]
     RewriteRule ^ - [L]
-    # Ignorer les fichiers et dossiers existants
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    # Ne pas rediriger les requêtes OPTIONS (preflight CORS)
     RewriteCond %{REQUEST_METHOD} !=OPTIONS
-    # Rediriger tout le reste vers index.php
     RewriteRule ^ index.php [QSA,L]
 </IfModule>
 
-# Fix pour le header Authorization
 SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
