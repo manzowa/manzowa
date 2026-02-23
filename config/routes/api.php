@@ -335,17 +335,25 @@ $app->group('/api/v1', function ($group) {
         ])->setName('events.all.index');
         // GET /evenements/filtre/{datetime}
         $group->group('/filtre', function ($group) {
-            $group->group('/{datetime}', function ($group) {
-                $group->get('', [
-                    App\Controller\Api\V1\Event\IndexController::class,
-                    'getAllEventFilterByDatetimeAction'
-                ])->setName('event.filter.nom');
+            // Filter By Datetime
+            $group->get(
+                '/datetime/{datetime}', [
+                App\Controller\Api\V1\Event\IndexController::class,
+                'getAllEventFilterByDatetimeAction'
+            ])->setName('event.filter.datetime');
+            // Filter By Town
+            $group->get(
+                '/ville/{ville:[a-zA-Z0-9_-]+}', [
+                App\Controller\Api\V1\Event\IndexController::class,
+                'getAllEventFilterByTownAction'
+            ])->setName('event.filter.town');
 
-               $group->get('/{ville:[a-zA-Z0-9_-]+}', [
-                    App\Controller\Api\V1\Event\IndexController::class,
-                    'getAllEventFilterByDatetimeAndTownAction'
-                ])->setName('event.filter.ville');
-            });
+            // Filter Datetime and Ville
+            $group->get(
+                '/datetime/{datetime}/ville/{ville:[a-zA-Z0-9_-]+}', [
+                App\Controller\Api\V1\Event\IndexController::class,
+                'getAllEventFilterByDatetimeAndTownAction'
+            ])->setName('event.filter.datetime.town');
         });
         // GET /evenements/{id}
         $group->group('/{id:[0-9]+}', function ($group) {

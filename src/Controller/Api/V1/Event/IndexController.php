@@ -288,7 +288,7 @@ namespace App\Controller\Api\V1\Event
             }
         }
         /**
-         * Method getAllEventFilterByDateAction [GET]
+         * Method getAllEventFilterByDatetimeAction [GET]
          * 
          * Il permet de recupère les événements
          * 
@@ -332,6 +332,50 @@ namespace App\Controller\Api\V1\Event
                 return $this->response(false, $ex->getMessage(), null, 500);
             }
         }
+        /**
+         * Method getAllEventFilterByTownAction [GET]
+         * 
+         * Il permet de recupère les événements
+         * 
+         * @param Request $request
+         * @param Response $response
+         * @param array $args
+         *
+         * @return mixed
+         */
+        public function getAllEventFilterByTownAction(
+            Request $request, 
+            Response $response, 
+            array $args
+        ): Response {
+            $strVille = urldecode($args['ville']) ?? null;
+            if (in_array($strVille, ["all", "*", "any"])) {
+                $strVille = null;
+            }
+            $limitParam = (int) ($args['limit']?? 20);
+
+            try 
+            {
+                $repository = new EventRepository(Connexion::read());
+                $events = $repository->retrieveAll(
+                    ville: $strVille,
+                    limit: $limitParam
+                );
+                $rowCounted = $repository->rowCount();
+
+                if ($rowCounted == 0) {
+                    return $this->response(false, 'Events not found', null, 400);
+                }
+
+                return $this->response(true, 'Events retrieved successfully',[
+                    "rows_returned" => $rowCounted,
+                    "evenements" => $events,
+                ], 200);
+
+            } catch (EventException $ex) {
+                return $this->response(false, $ex->getMessage(), null, 500);
+            }
+        }
 
         /**
          * Method getAllEventFilterByDatetimeAndTownAction [GET]
@@ -352,7 +396,7 @@ namespace App\Controller\Api\V1\Event
             $strDatetime = urldecode($args['datetime']) ?? null;
             $strVille = urldecode($args['ville']) ?? null;
             $limitParam = (int) ($args['limit']?? 20);
-
+            
             if (!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $strDatetime)) {
                 return $this->response(false, 'Invalid format', null, 400);
             }
