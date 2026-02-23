@@ -189,8 +189,8 @@ class EventRepository extends Repository implements \Countable
         }
 
         if (!is_null($dateTime)) {
-            $conditions[] = 'ev.date >= :date';
-            $params[':date'] = [$dateTime, \PDO::PARAM_STR];
+            $conditions[] = 'DATE(ev.date) >= :date';
+            $params[':date'] = [date('Y-m-d', strtotime($dateTime)), \PDO::PARAM_STR];
         }
 
         if (!is_null($nomEcole)) {
