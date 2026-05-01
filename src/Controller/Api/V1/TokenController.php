@@ -44,6 +44,7 @@ namespace App\Controller\Api\V1
             // Establish the connection Database
             $repository = new UserRepository(Connexion::write());
             $jsonObject = $request->getParsedBody();
+
             // Start Transaction
             $repository->beginTransaction();
 

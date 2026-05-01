@@ -31,17 +31,20 @@ $app->group('/api/v1', function ($group) {
             [App\Controller\Api\V1\TokenController::class, "postTokenAction"]
         )->setName('token.post')
             ->add(new App\Middleware\JsonMiddleware())
-            ->add(new App\Middleware\JsonBodyParserMiddleware())
-            ->add(new App\Middleware\JsonUserBodyMiddleware());
+            ->add(new App\Middleware\JsonBodyParserMiddleware());
+            // ->add(new App\Middleware\JsonUserBodyMiddleware());
+
         $group->options(
             '',
             [App\Controller\Api\V1\TokenController::class, 'optionsTokenAction']
         )->setName('token.options');
+
         $group->delete(
             '/{id:[0-9]+}',
             [App\Controller\Api\V1\TokenController::class, 'deleteTokenAction']
         )->setName('token.delete')
             ->add(new App\Middleware\AuthMiddleware());
+
         $group->patch(
             '/{id:[0-9]+}',
             [App\Controller\Api\V1\TokenController::class, 'patchTokenAction']
