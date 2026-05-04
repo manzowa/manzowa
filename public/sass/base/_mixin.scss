@@ -146,7 +146,7 @@
 }
 // Mixin pour les styles communs
 @mixin mo-title($level, $weight: normal) {
-  .mo-title#{if($weight == bold, -bold, '')}-#{$level} {
+  .mo-title#{if(sass($weight == bold): -bold; else: "")}-#{$level} {
     display: block;
     font-size: map.get(v.$title-sizes, $level); // ✅ Taille dynamique
     font-weight: $weight;

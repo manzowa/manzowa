@@ -53,7 +53,9 @@
     @include m.flex-wrap;
     .mo-nav-item {
       margin: 0.8rem;
-      @include m.link-border-bottom(v.$light, v.$info, v.$warning, v.$primary);
+      padding: 0.6rem;
+      //@include m.link-border-bottom(v.$light, v.$info, v.$warning, v.$primary);
+      border: 1px solid v.$orange;
     }
     .mo-nav-link {
       font-size: 1.8rem;

@@ -3,8 +3,119 @@
     <link rel="stylesheet" href="/lib/sgjs/css/sgjs.min.css">
 {% endblock %}
 {% block content %}
-    {% include 'home/section/_service.html.twig' %}
-    {% include 'home/section/_skill.html.twig' %}
-    {% include 'home/section/_portfolio.html.twig' %}
-    {% include 'home/section/_projet.html.twig' %}
+    {# Section Services #}
+    <section id="service" class="section mo-section-service">
+        <div class="mo-container mo-text-center mt-4">
+            <h6 class="mo-subtitle">🧠 Service</h6>
+            <h6 class="mo-section-title mb-4">Ce que je fais</h6>
+            <p class="mb-5 pb-4">Je mets mon expertise backend, dans les domaines suivants </p>
+
+            <div class="mo-row">
+                <div class="mo-item">
+                    <div class="mo-card">
+                        <div class="mo-card-body">
+                            <i class="lni lni-code-1 mo-h1"></i>
+                            <h5 class="mo-h3">API REST </h5>
+                            <p class="mo-h6">Conception d’API sécurisées, performantes et maintenables</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mo-item">
+                    <div class="mo-card">
+                        <div class="mo-card-body">
+                            <i class="lni lni-code-1 mo-h1"></i>
+                            <h5 class="mo-h3">Performance </h5>
+                            <p class="mo-h6">Optimisation SQL, amélioration des temps de réponse. </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mo-item">
+                    <div class="mo-card">
+                        <div class="mo-card-body">
+                            <i class="lni lni-code-1 mo-h1"></i>
+                            <h5 class="mo-h3">Maintenance & Legacy</h5>
+                            <p class="mo-h6">Stabilisation et reprise d’applications existantes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {# Section Skills #}
+    <section class="section mo-section-skill" id="skills">
+        <div class="mo-container mo-text-center">
+            <h6 class="mo-subtitle">🛠 Compétences</h6>
+            <h6 class="mo-section-title mb-4">Pourquoi me choisir</h6>
+            <p class="mb-5 pb-4">Voici les comptences que je peux mettre en profit au sein de votre environnement. <br> et à noter que je suis néophyte dans Dev Mobile.</p>
+            <div class="text-left">
+                <div class="mo-content mo-text-left">
+                    <div id="app-skills"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {# Section Projet #}
+    <section id="projet" class="section mo-section-projet">
+        <div class="mo-container mo-text-center">
+            <h6 class="mo-subtitle">🚀Projets</h6>
+            <h6 class="mo-section-title mb-4">Projet en cours de réalisation</h6>
+            <p class="mb-5 pb-4">Tous les projets présentés ici sont en cours de réalisation ou déjà opérationnels, tandis que d’autres sont en cours de mise à jour.</p>
+            <div class="mo-row">
+                <div class="mo-col-lg-4">
+                    <div class="mo-card">
+                        <div class="mo-card-header">
+                            <div class="mo-card-img">
+                                <img src="./images/projet/projet-1.jpg" alt="" class="mo-card-img-top w-100">
+                            </div>
+                        </div>
+                        <div class="mo-card-body">
+                            <h5 class="mo-card-title">
+                                <a href="javascript:void(0)">Wenzischool</a>
+                            </h5>
+                            <p class="mo-card-text">Application mobile pour les écoles (API backend).</p>
+                        </div>
+                        <div class="mo-card-footer">
+                            <a href="https://play.google.com/apps/internaltest/4700551388783200911" class="mo-btn mo-warning mo-rounded" target="_blank">voir</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mo-col-lg-4">
+                    <div class="mo-card">
+                        <div class="mo-card-header">
+                            <div class="mo-card-img">
+                                <img src="./images/projet/projet-2.jpg" alt="" class="mo-card-img-top w-100">
+                            </div>
+                        </div>
+                        <div class="mo-card-body">
+                            <h5 class="mo-card-title">
+                                <a href="javascript:void(0)">Api school</a>
+                            </h5>
+                            <p class="mo-card-text">Plateforme API centralisée.<br/><br/></p>
+                        </div>
+                        <div class="mo-card-footer">
+                            <a href="{{ url_for('doc.index') }}" class="mo-btn mo-warning mo-rounded">voir</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mo-col-lg-4">
+                    <div class="mo-card">
+                        <div class="mo-card-header">
+                            <div class="mo-card-img">
+                                <img src="./images/projet/projet-3.jpg" alt="" class="mo-card-img-top w-100">
+                            </div>
+                        </div>
+                        <div class="mo-card-body">
+                            <h5 class="mo-card-title">
+                                <a href="javascript:void(0)">Validator FORM</a>
+                            </h5>
+                            <p class="mo-card-text">Composant PHP de validation.<br/><br/></p>
+                        </div>
+                        <div class="mo-card-footer">
+                            <a href="https://github.com/manzowa/validator" target="_blank" class="mo-btn mo-warning mo-rounded">voir</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

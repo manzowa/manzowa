@@ -14,10 +14,6 @@
   position: relative;
   overflow: hidden;
 }
-.mo-card-header {
-}
-.mo-card-footer {
-}
 .mo-card-body {
   @include m.flex;
   flex-direction: column;
@@ -33,7 +29,6 @@
 }
 .mo-card-text {
   font-size: v.$font-size;
-  text-align: justify;
   font-weight: normal;
   color: v.$primary;
 }

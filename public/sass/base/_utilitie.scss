@@ -29,6 +29,11 @@
   -moz-box-shadow: 0 4px 8px v.$primary;
   box-shadow: 0 4px 8px v.$primary;
 }
+.mo-shadowNormal {
+    -webkit-box-shadow: 0px 5px 3px -4px v.$primary,0px 0px 50px -84px v.$primary;
+    -moz-box-shadow: 0px 5px 3px -4px v.$primary,0px 0px 50px -84px v.$primary;
+    box-shadow: 0px 5px 3px -4px v.$primary,0px 0px 50px -84px v.$primary;
+}
 .mo-btn-warning {
   color: v.$white;
   background-color: v.$orange;
@@ -254,6 +259,12 @@ nav[aria-labelledby="pagination"]  {
 .mo-text-right {
   text-align: right;
 }
+.mo-textCenter { text-align: center;} 
+.mo-textLeft { text-align: left;}
+.mo-textRight { text-align: right; }
+.mo-textJustify { text-align: justify; }
+.mo-textUppercase { text-transform: uppercase; }
+
 /* The end text Color */
 
 /* Suggestion */

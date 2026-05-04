@@ -38,20 +38,16 @@ import { sgjs } from "../lib/sgjs/js/sgjs.js";
             Function: "progress",
           })
           .add({
-            titre: "Langage & Framework",
+            titre: "Stack technique",
             frames: [
-              { name: "PHP/OOP", level: 8 },
-              { name: "MySQL/SQL", level: 8 },
-              { name: "HTML/CSS/SASS", level: 9 },
-              { name: "JavaScript/TypeScript", level: 7 },
-              { name: "RxJS", level: 5 },
-              { name: "Symfony", level: 6 },
+              { name: "PHP", level: 8 },
+              { name: "Symfony", level: 7 },
+              { name: "MySQL", level: 8 },
+              { name: "PostgreSQL", level: 6 },
               { name: "React", level: 6 },
-              { name: "Drupal", level: 6 },
-              { name: "Agile", level: 7 },
-              { name: "Wordpress", level: 7 },
-              { name: "C#/C/Python", level: 5 },
-              { name: "SEO", level: 5 },
+              { name: "Wordpress", level: 8 },
+              { name: "CI/CD", level: 8 },
+              { name: "Go", level: 5 }
             ],
           })
           .animate();

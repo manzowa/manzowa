@@ -1,26 +1,19 @@
 @use "../base/variable" as v;
 @use "../base/mixin" as m;
-@use "sass:color";
 @use "sass:map";
+@use "sass:color";
+
 
 /* =========== Header layout =================== */
 .mo-layout-header {
   height: 94vh;
   min-height: 650px;
-  border-bottom: 1px solid #dee2e6;
-  background-image: url("./../images/vecteezy_vector-concept.jpg");
-  background-repeat: no-repeat;
-  background-position-x: center;
-  background-position-y: center;
-  background-size: cover;
+  background: rgb(236.5086206897, 238.75, 240.9913793103);
 
   .mo-layout-header-content {
     position: relative;
-    width: 20em;
-    top: 35vh;
+    top: 30vh;
     left: 6vw;
-    background-color: v.$white;
-    border: 2px dotted v.$primary;
     padding: 0.5rem;
   }
 }

@@ -9,7 +9,7 @@
 	padding: 8.5rem 0;
 	&:nth-child(even) {
         background: color.adjust(map.get(v.$grays, "300") , $lightness: 5%, $alpha: 0.2);
-  }
+    }
 	&.bg-white {background-color: v.$white;}
 	&.bg-gray {
         background: color.adjust(map.get(v.$grays, "200") , $lightness: 5%, $alpha: 0.2);
@@ -21,11 +21,9 @@
 		color: v.$white;
 	}
 }
-.mo-section-service {}
-.mo-section-skill {}
-.mo-section-portfolio{}
-.mo-section-projet{}
-
+.section-except {
+	background: color.adjust(map.get(v.$grays, "200") , $lightness: 5%, $alpha: 0.2);
+}
 @media (width <= 599px) {
 }
 /* =========== FIN Section layout =================== */

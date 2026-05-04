@@ -231,6 +231,12 @@ aside {
   box-shadow: 0 4px 8px #002141;
 }
 
+.mo-shadowNormal {
+  -webkit-box-shadow: 0px 5px 3px -4px #002141, 0px 0px 50px -84px #002141;
+  -moz-box-shadow: 0px 5px 3px -4px #002141, 0px 0px 50px -84px #002141;
+  box-shadow: 0px 5px 3px -4px #002141, 0px 0px 50px -84px #002141;
+}
+
 .mo-btn-warning {
   color: #ffffff;
   background-color: #ffa801;
@@ -1449,6 +1455,26 @@ nav[aria-labelledby=pagination] .mo-pagination li .active {
   text-align: right;
 }
 
+.mo-textCenter {
+  text-align: center;
+}
+
+.mo-textLeft {
+  text-align: left;
+}
+
+.mo-textRight {
+  text-align: right;
+}
+
+.mo-textJustify {
+  text-align: justify;
+}
+
+.mo-textUppercase {
+  text-transform: uppercase;
+}
+
 /* The end text Color */
 /* Suggestion */
 .suggestion {
@@ -1672,7 +1698,6 @@ nav[aria-labelledby=pagination] .mo-pagination li .active {
 
 .mo-card-text {
   font-size: 1.25rem;
-  text-align: justify;
   font-weight: normal;
   color: #002141;
 }
@@ -1831,20 +1856,8 @@ nav[aria-labelledby=pagination] .mo-pagination li .active {
 }
 .mo-layout-nav .mo-nav-menu ul .mo-nav-item {
   margin: 0.8rem;
-  /* unvisited link */
-  border-bottom: 1px solid #ffffff;
-  /* visited link */
-  /* mouse over link */
-  /* selected link */
-}
-.mo-layout-nav .mo-nav-menu ul .mo-nav-item:visited {
-  border-bottom: 1px solid #a9cce3;
-}
-.mo-layout-nav .mo-nav-menu ul .mo-nav-item:hover {
-  border-bottom: 1px solid #f5b041;
-}
-.mo-layout-nav .mo-nav-menu ul .mo-nav-item:active {
-  border-bottom: 1px solid #002141;
+  padding: 0.6rem;
+  border: 1px solid #ffa801;
 }
 .mo-layout-nav .mo-nav-menu ul .mo-nav-link {
   font-size: 1.8rem;
@@ -1852,14 +1865,18 @@ nav[aria-labelledby=pagination] .mo-pagination li .active {
   /* unvisited link */
   color: #002141;
   /* visited link */
-  /* mouse over link */
-  /* selected link */
 }
 .mo-layout-nav .mo-nav-menu ul .mo-nav-link:visited {
   color: #002141;
 }
+.mo-layout-nav .mo-nav-menu ul .mo-nav-link {
+  /* mouse over link */
+}
 .mo-layout-nav .mo-nav-menu ul .mo-nav-link:hover {
   color: #f5b041;
+}
+.mo-layout-nav .mo-nav-menu ul .mo-nav-link {
+  /* selected link */
 }
 .mo-layout-nav .mo-nav-menu ul .mo-nav-link:active {
   color: #002141;
@@ -1966,6 +1983,13 @@ nav[aria-labelledby=pagination] .mo-pagination li .active {
   background-color: #a9cce3;
   color: #ffffff;
   border: 2px solid #ffffff;
+}
+
+.mo-btnDisabled {
+  border: 1px solid #999999 !important;
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
 }
 
 button[disabled] {
@@ -2194,20 +2218,12 @@ body {
 .mo-layout-header {
   height: 94vh;
   min-height: 650px;
-  border-bottom: 1px solid #dee2e6;
-  background-image: url("./../images/vecteezy_vector-concept.jpg");
-  background-repeat: no-repeat;
-  background-position-x: center;
-  background-position-y: center;
-  background-size: cover;
+  background: rgb(236.5086206897, 238.75, 240.9913793103);
 }
 .mo-layout-header .mo-layout-header-content {
   position: relative;
-  width: 20em;
-  top: 35vh;
+  top: 30vh;
   left: 6vw;
-  background-color: #ffffff;
-  border: 2px dotted #002141;
   padding: 0.5rem;
 }
 
@@ -2276,6 +2292,10 @@ body {
 }
 #service h6 {
   color: #ffffff;
+}
+
+.section-except {
+  background: hsl(220, 75%, 100.2941176471%);
 }
 
 /* =========== FIN Section layout =================== */
