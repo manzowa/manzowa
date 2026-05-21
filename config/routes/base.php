@@ -3,60 +3,72 @@
 ### ───────────────────────────────────────────────
 ### @route Base
 ### ───────────────────────────────────────────────
-$app->get('/', [\App\Controller\IndexController::class, 'index'])->setName('index');
+use Slim\App;
+use App\Controller\IndexController;
+use App\Controller\AuthController;
+use App\Controller\ContactController;
+use App\Controller\Account\IndexController as AccountIndexController;
+use App\Controller\Account\SchoolController as AccountSchoolController;
+use App\Controller\Account\ImageController as AccountImageController;
+use App\Middleware\DatabaseConnectionMiddleware;
+use App\Middleware\CheckAuthMiddleware;
 
-$app->group('/authentification', function ($group) {
-    $group->map(
-        ['GET', 'POST'], '/connexion', 
-        [\App\Controller\AuthController::class, 'indexAction']
-    )->setName('auth.login');
-    $group->get('/deconnexion', [\App\Controller\AuthController::class, 'logoutAction'])
-    ->setName('auth.logout');
-});
+return function (App $app) {
+    $app->get('/', [IndexController::class, 'index'])->setName('index');
 
-$app->map(
-    ['GET', 'POST'],'/contact', 
-    [\App\Controller\ContactController::class, 'indexAction']
-)->setName('contact.index');
-
-### ───────────────────────────────────────────────
-### @route Account
-### ───────────────────────────────────────────────
-$app->group('/compte', function ($group) {
-    $group->get(
-        '/profil', 
-        [\App\Controller\Account\IndexController::class, 'indexAction']
-    )->setName('account.index');
-
-    $group->group('/ecoles', function($group){
-        $group->group('/{id:[0-9]+}', function($group){
-            $group->get(
-                '/voir', 
-                [\App\Controller\Account\SchoolController::class, 'showAction']
-            )->setName('account.show_ecole');
-            $group->map(['GET', 'POST'], '/edit', 
-                [\App\Controller\Account\SchoolController::class, 'editAction']
-            )->setName('account.edit_ecole');
-            $group->map(['GET', 'POST'], '/images', 
-                [\App\Controller\Account\ImageController::class, 'addAction']
-            )->setName('account.add_image_ecole');
-
-        });
-        $group->get(
-            '/liste', 
-            [\App\Controller\Account\SchoolController::class, 'indexAction']
-        )->setName('account.liste_ecole');
-
-        $group->map(['GET', 'POST'], '/ajouter', 
-            [\App\Controller\Account\SchoolController::class, 'addAction']
-        )->setName('account.add_ecole');
-        
-        $group->get(
-            '/supprimer', 
-            [\App\Controller\Account\SchoolController::class, 'deleteAction']
-        )->setName('account.delete_ecole');
+    $app->group('/authentification', function ($group) {
+        $group->map(
+            ['GET', 'POST'], '/connexion', 
+            [AuthController::class, 'indexAction']
+        )->setName('auth.login');
+        $group->get('/deconnexion', [AuthController::class, 'logoutAction'])
+        ->setName('auth.logout');
     });
 
+    $app->map(
+        ['GET', 'POST'],'/contact', 
+        [ContactController::class, 'indexAction']
+    )->setName('contact.index');
 
-})->add(new App\Middleware\DatabaseConnectionMiddleware())
-->add(new App\Middleware\CheckAuthMiddleware());
+    ### ───────────────────────────────────────────────
+    ### @route Account
+    ### ───────────────────────────────────────────────
+    $app->group('/compte', function ($group) {
+        $group->get(
+            '/profil', 
+            [AccountIndexController::class, 'indexAction']
+        )->setName('account.index');
+
+        $group->group('/ecoles', function($group){
+            $group->group('/{id:[0-9]+}', function($group){
+                $group->get(
+                    '/voir', 
+                    [AccountSchoolController::class, 'showAction']
+                )->setName('account.show_ecole');
+                $group->map(['GET', 'POST'], '/edit', 
+                    [AccountSchoolController::class, 'editAction']
+                )->setName('account.edit_ecole');
+                $group->map(['GET', 'POST'], '/images', 
+                    [AccountImageController::class, 'addAction']
+                )->setName('account.add_image_ecole');
+
+            });
+            $group->get(
+                '/liste', 
+                [AccountSchoolController::class, 'indexAction']
+            )->setName('account.liste_ecole');
+
+            $group->map(['GET', 'POST'], '/ajouter', 
+                [AccountSchoolController::class, 'addAction']
+            )->setName('account.add_ecole');
+            
+            $group->get(
+                '/supprimer', 
+                [AccountSchoolController::class, 'deleteAction']
+            )->setName('account.delete_ecole');
+        });
+
+
+    })->add(new DatabaseConnectionMiddleware())
+    ->add(new CheckAuthMiddleware());
+};

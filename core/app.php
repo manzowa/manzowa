@@ -38,6 +38,9 @@ require_once App\path('vendor', 'autoload.php');
 App\session();
 \Dotenv\Dotenv::createUnsafeImmutable(APP_ROOT)->load();
 
+// EntityManager
+//$entityManager= requice_once App\path('config', 'doctrine.php');
+
 // Messager alter
 $alter_message = include_once App\path('config', 'message.php');
 
@@ -46,6 +49,15 @@ $container = new Container();
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 $responseFactory = $app->getResponseFactory();
+
+### ───────────────────────────────────────────────
+### EntityManager
+### ───────────────────────────────────────────────
+// $app->set(
+//     'em',
+//     $entityManager
+// );
+
 
 ### ───────────────────────────────────────────────
 ### SERVICES
@@ -127,8 +139,8 @@ $app->add(new App\Middleware\ErrorTypeMiddleware($container->get(Twig::class)));
 ### ───────────────────────────────────────────────
 ### ROUTES Principal
 ### ───────────────────────────────────────────────
-require_once App\path('config', 'routes', "base.php");
-require_once App\path('config', 'routes', "api.php");
+(require_once App\path('config', 'routes', "base.php"))($app);
+(require_once App\path('config', 'routes', "api.php"))($app);
 
 ### ───────────────────────────────────────────────
 ### MIDDLEWARES
